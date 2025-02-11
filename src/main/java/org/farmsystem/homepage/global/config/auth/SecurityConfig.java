@@ -25,6 +25,12 @@ public class SecurityConfig {
 
     // 토큰 없이 접근 가능한 URL
     private static final String[] whiteList = {"/",
+            /* swagger */
+            "swagger/**",
+            "swagger-ui/**",
+            "v3/api-docs/**",
+
+            /* api */
             "token/**",
             };
 
