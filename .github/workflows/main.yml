@@ -12,12 +12,6 @@ jobs:
     permissions:
       contents: read
 
-    env:
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
     steps:
     - uses: actions/checkout@v4
 
@@ -68,21 +62,15 @@ jobs:
             sudo docker rm docker-test
           fi
 
-          echo "📝 환경 변수 설정 중..."
-          touch ~/.env
-          sed -i '/^DB_URL=/d' ~/.env
-          sed -i '/^DB_USERNAME=/d' ~/.env
-          sed -i '/^DB_PASSWORD=/d' ~/.env
-          sed -i '/^JWT_SECRET=/d' ~/.env
-          echo "DB_URL=${{ secrets.DB_URL }}" >> ~/.env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/.env
-          chmod 600 ~/.env  # 환경 변수 보안 강화
+          echo "📂 yml 파일을 저장할 디렉토리 생성"
+          mkdir -p ~/app/src/main/resources
+
+          echo "📄 yml 파일 생성 및 GitHub Secrets 값 적용"
+          echo "${{ secrets.APPLICATION }}" > ~/app/src/main/resources/application.yml
 
           echo "🚀 새 컨테이너 실행 중..."
           sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
-            --env-file ~/.env \
+            -v ~/app/src/main/resources:/app/src/main/resources \
             --restart always \
             ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
