@@ -16,6 +16,7 @@ jobs:
       DB_URL: ${{ secrets.DB_URL }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     steps:
     - uses: actions/checkout@v4
@@ -66,6 +67,7 @@ jobs:
           echo "DB_URL=${{ secrets.DB_URL }}" > ~/.env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/.env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/.env
          
           # 새 컨테이너 실행 및 환경 변수 전달
           sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
