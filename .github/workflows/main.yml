@@ -21,7 +21,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Gradle 캐시 설정 (Gradle Wrapper 포함)
+    # 📂 빌드 전 환경변수 로드
+    - name: Create application.yml for build
+      run: |
+        mkdir -p ./src/main/resources
+        echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+
+    # Gradle 캐시 설정
     - name: Cache Gradle packages
       uses: actions/cache@v3
       with:
