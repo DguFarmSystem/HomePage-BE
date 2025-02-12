@@ -60,28 +60,31 @@ jobs:
           set -e  # 에러 발생 시 즉시 스크립트 종료
 
           echo "🚀 최신 Docker 이미지 Pull 중..."
-          docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
           echo "🛑 기존 컨테이너 중지 및 삭제"
-          if [ "$(docker inspect --format="{{.State.Running}}" docker-test 2>/dev/null)" = "true" ]; then
-            docker stop docker-test
-            docker rm docker-test
+          if [ "$(sudo docker inspect --format="{{.State.Running}}" docker-test 2>/dev/null)" = "true" ]; then
+            sudo docker stop docker-test
+            sudo docker rm docker-test
           fi
 
           echo "📂 yml 파일을 저장할 디렉토리 생성"
-          mkdir -p /home/ubuntu/app/src/main/resources
+          sudo mkdir -p /home/ubuntu/app/src/main/resources
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/app  # ubuntu 사용자가 접근 가능하도록 변경
+          sudo chmod -R 755 /home/ubuntu/app            # 디렉토리에 읽기, 쓰기, 실행 권한 부여
 
           echo "📄 yml 파일 생성 및 GitHub Secrets 값 적용"
-          echo "${{ secrets.APPLICATION }}" > /home/ubuntu/app/src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION }}" | sudo tee /home/ubuntu/app/src/main/resources/application.yml > /dev/null
+          sudo chmod 644 /home/ubuntu/app/src/main/resources/application.yml  # 모든 사용자 읽기 가능, 소유자만 쓰기 가능
 
           echo "🚀 새 컨테이너 실행 중..."
-          docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
+          sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
             -v /home/ubuntu/app/src/main/resources:/app/src/main/resources \
             --restart always \
             ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
           echo "✅ 실행 중인 컨테이너 확인"
-          docker ps -a | grep "docker-test"
+          sudo docker ps -a | grep "docker-test"
 
           echo "🧹 사용하지 않는 Docker 이미지 정리"
-          docker system prune -af
+          sudo docker system prune -af
