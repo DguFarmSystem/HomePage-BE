@@ -27,11 +27,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Gradle 캐시 설정
+    # Gradle 캐시 설정 (Gradle Wrapper 포함)
     - name: Cache Gradle packages
       uses: actions/cache@v3
       with:
-        path: ~/.gradle/caches
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
         key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           gradle-${{ runner.os }}-
@@ -42,9 +44,10 @@ jobs:
     # Docker 빌드 및 Docker Hub에 푸시
     - name: Docker build & push to Docker Hub
       run: |
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-test:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
+        docker logout
 
     # EC2에 배포
     - name: Docker image pull & deploy to EC2
@@ -54,28 +57,37 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         script: |
-          # 최신 이미지 Pull
+          set -e  # 에러 발생 시 즉시 스크립트 종료
+
+          echo "🚀 최신 Docker 이미지 Pull 중..."
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
-          # 기존 컨테이너 중지 및 삭제
-          if [ "$(sudo docker ps -q -f name=docker-test)" ]; then
+          echo "🛑 기존 컨테이너 중지 및 삭제"
+          if [ "$(sudo docker inspect --format="{{.State.Running}}" docker-test 2>/dev/null)" = "true" ]; then
             sudo docker stop docker-test
             sudo docker rm docker-test
           fi
 
-          # 환경 변수 파일 생성
-          echo "DB_URL=${{ secrets.DB_URL }}" > ~/.env
+          echo "📝 환경 변수 설정 중..."
+          touch ~/.env
+          sed -i '/^DB_URL=/d' ~/.env
+          sed -i '/^DB_USERNAME=/d' ~/.env
+          sed -i '/^DB_PASSWORD=/d' ~/.env
+          sed -i '/^JWT_SECRET=/d' ~/.env
+          echo "DB_URL=${{ secrets.DB_URL }}" >> ~/.env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/.env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/.env
-         
-          # 새 컨테이너 실행 및 환경 변수 전달
+          chmod 600 ~/.env  # 환경 변수 보안 강화
+
+          echo "🚀 새 컨테이너 실행 중..."
           sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
             --env-file ~/.env \
+            --restart always \
             ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
-          # 실행 중인 컨테이너 확인
+          echo "✅ 실행 중인 컨테이너 확인"
           sudo docker ps -a | grep "docker-test"
 
-          # 사용하지 않는 이미지 및 컨테이너 정리
-          sudo docker image prune -a -f
+          echo "🧹 사용하지 않는 Docker 이미지 정리"
+          sudo docker system prune -af
