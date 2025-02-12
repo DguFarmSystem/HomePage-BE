@@ -21,13 +21,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # 📂 빌드 전 환경변수 로드
+    # 📂 빌드 전에 환경변수를 로드하도록 설정
     - name: Create application.yml for build
       run: |
         mkdir -p ./src/main/resources
         echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
 
-    # Gradle 캐시 설정
+    # Gradle 캐시 설정 (Gradle Wrapper 포함)
     - name: Cache Gradle packages
       uses: actions/cache@v3
       with:
@@ -60,28 +60,28 @@ jobs:
           set -e  # 에러 발생 시 즉시 스크립트 종료
 
           echo "🚀 최신 Docker 이미지 Pull 중..."
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
           echo "🛑 기존 컨테이너 중지 및 삭제"
-          if [ "$(sudo docker inspect --format="{{.State.Running}}" docker-test 2>/dev/null)" = "true" ]; then
-            sudo docker stop docker-test
-            sudo docker rm docker-test
+          if [ "$(docker inspect --format="{{.State.Running}}" docker-test 2>/dev/null)" = "true" ]; then
+            docker stop docker-test
+            docker rm docker-test
           fi
 
           echo "📂 yml 파일을 저장할 디렉토리 생성"
-          mkdir -p ~/app/src/main/resources
+          mkdir -p /home/ubuntu/app/src/main/resources
 
           echo "📄 yml 파일 생성 및 GitHub Secrets 값 적용"
-          echo "${{ secrets.APPLICATION }}" > ~/app/src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION }}" > /home/ubuntu/app/src/main/resources/application.yml
 
           echo "🚀 새 컨테이너 실행 중..."
-          sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
-            -v ~/app/src/main/resources:/app/src/main/resources \
+          docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
+            -v /home/ubuntu/app/src/main/resources:/app/src/main/resources \
             --restart always \
             ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
           echo "✅ 실행 중인 컨테이너 확인"
-          sudo docker ps -a | grep "docker-test"
+          docker ps -a | grep "docker-test"
 
           echo "🧹 사용하지 않는 Docker 이미지 정리"
-          sudo docker system prune -af
+          docker system prune -af
