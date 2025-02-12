@@ -12,12 +12,6 @@ jobs:
     permissions:
       contents: read
 
-    env:
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
     steps:
     - uses: actions/checkout@v4
 
@@ -26,6 +20,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+
+    # 📂 빌드 전에 환경변수를 로드하도록 설정
+    - name: Create application.yml for build
+      run: |
+        mkdir -p ./src/main/resources
+        echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
 
     # Gradle 캐시 설정 (Gradle Wrapper 포함)
     - name: Cache Gradle packages
@@ -68,21 +68,18 @@ jobs:
             sudo docker rm docker-test
           fi
 
-          echo "📝 환경 변수 설정 중..."
-          touch ~/.env
-          sed -i '/^DB_URL=/d' ~/.env
-          sed -i '/^DB_USERNAME=/d' ~/.env
-          sed -i '/^DB_PASSWORD=/d' ~/.env
-          sed -i '/^JWT_SECRET=/d' ~/.env
-          echo "DB_URL=${{ secrets.DB_URL }}" >> ~/.env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ~/.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ~/.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/.env
-          chmod 600 ~/.env  # 환경 변수 보안 강화
+          echo "📂 yml 파일을 저장할 디렉토리 생성"
+          sudo mkdir -p /home/ubuntu/app/src/main/resources
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/app  # ubuntu 사용자가 접근 가능하도록 변경
+          sudo chmod -R 755 /home/ubuntu/app            # 디렉토리에 읽기, 쓰기, 실행 권한 부여
+
+          echo "📄 yml 파일 생성 및 GitHub Secrets 값 적용"
+          echo "${{ secrets.APPLICATION }}" | sudo tee /home/ubuntu/app/src/main/resources/application.yml > /dev/null
+          sudo chmod 644 /home/ubuntu/app/src/main/resources/application.yml  # 모든 사용자 읽기 가능, 소유자만 쓰기 가능
 
           echo "🚀 새 컨테이너 실행 중..."
           sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
-            --env-file ~/.env \
+            -v /home/ubuntu/app/src/main/resources:/app/src/main/resources \
             --restart always \
             ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
 
