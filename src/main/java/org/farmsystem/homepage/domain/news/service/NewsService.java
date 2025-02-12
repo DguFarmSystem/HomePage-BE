@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.news.dto.request.NewsRequestDTO;
 import org.farmsystem.homepage.domain.news.entity.News;
 import org.farmsystem.homepage.domain.news.repository.NewsRepository;
+import org.farmsystem.homepage.global.error.ErrorCode;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,7 @@ public class NewsService {
 
     public News getNewsById(Long newsId) {
         return newsRepository.findById(newsId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 소식을 찾을 수 없습니다. ID: " + newsId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ENTITY_NOT_FOUND));
     }
 
     @Transactional
@@ -43,7 +45,7 @@ public class NewsService {
     @Transactional
     public void deleteNews(Long newsId) {
         if (!newsRepository.existsById(newsId)) {
-            throw new IllegalArgumentException("존재하지 않는 소식입니다. ID: " + newsId);
+            throw new BusinessException(ErrorCode.ENTITY_NOT_FOUND);
         }
         newsRepository.deleteById(newsId);
     }
