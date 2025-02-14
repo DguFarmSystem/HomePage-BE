@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.apply.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,11 @@ public class AnswerChoice {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "choice_id")
     private Choice choice;
+
+    @Builder
+    public AnswerChoice(AnswerChoiceId id, Answer answer, Choice choice) {
+        this.id = id;
+        this.answer = answer;
+        this.choice = choice;
+    }
 }

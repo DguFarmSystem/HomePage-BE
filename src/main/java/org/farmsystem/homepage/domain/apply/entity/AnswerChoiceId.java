@@ -1,10 +1,7 @@
 package org.farmsystem.homepage.domain.apply.entity;
 
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Embeddable
 @Getter
@@ -15,4 +12,10 @@ public class AnswerChoiceId {
     private Long answerId;
 
     private Long choiceId;
+
+    @Builder
+    public AnswerChoiceId(Long answerId, Long choiceId) {
+        this.answerId = answerId;
+        this.choiceId = choiceId;
+    }
 }

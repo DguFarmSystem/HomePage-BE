@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.apply.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,7 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long answerId;
 
-    @Column(nullable = false, length = 1000)
+    @Column(length = 1000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +30,17 @@ public class Answer {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    @Builder
+    public Answer(String content, Apply apply, Question question) {
+        this.content = content;
+        this.apply = apply;
+        this.question = question;
+    }
+
     @OneToMany(mappedBy = "answer")
     private List<AnswerChoice> answerChoices = new ArrayList<>();
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

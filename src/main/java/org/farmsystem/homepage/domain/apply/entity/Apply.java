@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.apply.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.farmsystem.homepage.global.common.BaseTimeEntity;
@@ -45,6 +46,21 @@ public class Apply extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private ApplyStatus status;
 
+    @Builder
+    public Apply(String password, String name, String major, String studentNumber, String phoneNumber, String email) {
+        this.password = password;
+        this.name = name;
+        this.major = major;
+        this.studentNumber = studentNumber;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.status = ApplyStatus.DRAFT;
+    }
+
     @OneToMany(mappedBy = "apply")
     private List<Answer> answers = new ArrayList<>();
+
+    public void updateStatus(ApplyStatus status) {
+        this.status = status;
+    }
 }
