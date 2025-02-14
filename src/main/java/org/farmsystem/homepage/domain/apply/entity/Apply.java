@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.farmsystem.homepage.global.common.BaseTimeEntity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Table(name = "apply")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Apply {
+public class Apply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +44,6 @@ public class Apply {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ApplyStatus status;
-
-    @Column(nullable = false, length = 20)
-    private LocalDateTime submittedAt;
 
     @OneToMany(mappedBy = "apply")
     private List<Answer> answers = new ArrayList<>();
