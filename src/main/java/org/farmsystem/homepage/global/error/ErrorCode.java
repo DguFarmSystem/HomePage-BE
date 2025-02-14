@@ -46,7 +46,12 @@ public enum ErrorCode {
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+
+    /**
+     * news 관련 에러 처리
+     */
+    NEWS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 뉴스를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
