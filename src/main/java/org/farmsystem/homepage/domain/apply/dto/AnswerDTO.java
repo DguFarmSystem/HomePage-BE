@@ -5,6 +5,6 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AnswerDto(Long questionId, String content, List<Long> choiceId) {
+public record AnswerDTO(Long questionId, String content, List<Long> choiceId) {
     // TODO: Validation 추가
 }

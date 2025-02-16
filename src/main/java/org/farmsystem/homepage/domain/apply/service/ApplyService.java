@@ -2,12 +2,12 @@ package org.farmsystem.homepage.domain.apply.service;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.dto.*;
-import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDto;
-import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDto;
-import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDto;
+import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.entity.*;
 import org.farmsystem.homepage.domain.apply.exception.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
@@ -28,10 +28,10 @@ public class ApplyService {
     private final ChoiceRepository choiceRepository;
     private final AnswerChoiceRepository answerChoiceRepository;
 
-    public List<QuestionDto> getQuestions() {
+    public List<QuestionDTO> getQuestions() {
         List<Question> questions = questionRepository.findAll();
         return questions.stream()
-                .map(question -> QuestionDto.builder()
+                .map(question -> QuestionDTO.builder()
                         .questionId(question.getQuestionId())
                         .track(question.getTrack())
                         .isRequired(question.getIsRequired())
@@ -41,7 +41,7 @@ public class ApplyService {
                         .isDuplicated(question.getIsDuplicated())
                         .priority(question.getPriority())
                         .choices(question.getChoices().stream()
-                                .map(choice -> ChoiceDto.builder()
+                                .map(choice -> ChoiceDTO.builder()
                                         .choiceId(choice.getChoiceId())
                                         .content(choice.getContent())
                                         .build())
@@ -52,7 +52,7 @@ public class ApplyService {
     }
 
     @Transactional
-    public CreateApplyResponseDto createApply(CreateApplyRequestDto request) {
+    public CreateApplyResponseDTO createApply(CreateApplyRequestDTO request) {
         Apply apply = Apply.builder()
                 .password(request.password())
                 // TODO: password 암호화
@@ -63,13 +63,13 @@ public class ApplyService {
                 .email(request.email())
                 .build();
         Apply savedApply = applyRepository.save(apply);
-        return CreateApplyResponseDto.builder()
+        return CreateApplyResponseDTO.builder()
                 .applyId(savedApply.getApplyId())
                 .build();
     }
 
     @Transactional
-    public ApplyResponseDto saveApply(ApplyRequestDto request, boolean submitFlag) {
+    public ApplyResponseDTO saveApply(ApplyRequestDTO request, boolean submitFlag) {
         Apply apply = applyRepository.findById(request.applyId())
                 .orElseThrow(ApplyNotFoundException::new);
         if (apply.getStatus() == ApplyStatus.SUBMITTED) {
@@ -80,21 +80,21 @@ public class ApplyService {
             case DRAFT -> handleDraftStatus(apply, request);
             case SAVED -> handleSavedStatus(request);
         }
-        return ApplyResponseDto.builder()
+        return ApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .build();
     }
 
-    public LoadApplyResponseDto loadApply(LoadApplyRequestDto request) {
+    public LoadApplyResponseDTO loadApply(LoadApplyRequestDTO request) {
         // TODO: password 암호화
         Apply apply = applyRepository.findByStudentNumberAndPassword(request.studentNumber(), request.password())
                 .orElseThrow(ApplyNotFoundException::new);
-        return LoadApplyResponseDto.builder()
+        return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
                 .updatedAt(apply.getUpdatedAt())
                 .answers(apply.getAnswers().stream()
-                        .map(answer -> AnswerDto.builder()
+                        .map(answer -> AnswerDTO.builder()
                                 .questionId(answer.getQuestion().getQuestionId())
                                 .content(answer.getContent())
                                 .choiceId(answer.getAnswerChoices().stream()
@@ -117,8 +117,8 @@ public class ApplyService {
         }
     }
 
-    private void handleDraftStatus(Apply apply, ApplyRequestDto request) {
-        for (AnswerDto answer : request.answers()) {
+    private void handleDraftStatus(Apply apply, ApplyRequestDTO request) {
+        for (AnswerDTO answer : request.answers()) {
             Question question = questionRepository.findById(answer.questionId())
                     .orElseThrow(QuestionNotFoundException::new);
             Answer savedAnswer = answerRepository.save(Answer.builder()
@@ -130,8 +130,8 @@ public class ApplyService {
         }
     }
 
-    private void handleSavedStatus(ApplyRequestDto request) {
-        for (AnswerDto answer : request.answers()) {
+    private void handleSavedStatus(ApplyRequestDTO request) {
+        for (AnswerDTO answer : request.answers()) {
             Answer savedAnswer = answerRepository.findByApplyApplyIdAndQuestionQuestionId(request.applyId(), answer.questionId())
                     .orElseThrow(AnswerNotFoundException::new);
             savedAnswer.updateContent(answer.content());
@@ -140,7 +140,7 @@ public class ApplyService {
         }
     }
 
-    private void saveAnswerChoices(AnswerDto answer, Answer savedAnswer) {
+    private void saveAnswerChoices(AnswerDTO answer, Answer savedAnswer) {
         if (answer.choiceId() != null) {
             for (Long choiceId : answer.choiceId()) {
                 Choice choice = choiceRepository.findById(choiceId)

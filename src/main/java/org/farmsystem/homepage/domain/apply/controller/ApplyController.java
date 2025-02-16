@@ -2,9 +2,9 @@ package org.farmsystem.homepage.domain.apply.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDto;
+import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.service.ApplyService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,22 +23,22 @@ public class ApplyController {
     }
 
     @PostMapping("/info")
-    public ResponseEntity<SuccessResponse<?>> createApply(@RequestBody @Valid CreateApplyRequestDto request) {
+    public ResponseEntity<SuccessResponse<?>> createApply(@RequestBody @Valid CreateApplyRequestDTO request) {
         return SuccessResponse.created(applyService.createApply(request));
     }
 
     @PostMapping("/save")
-    public ResponseEntity<SuccessResponse<?>> saveApply(@RequestBody @Valid ApplyRequestDto request) {
+    public ResponseEntity<SuccessResponse<?>> saveApply(@RequestBody @Valid ApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.saveApply(request, false));
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<SuccessResponse<?>> submitApply(@RequestBody @Valid ApplyRequestDto request) {
+    public ResponseEntity<SuccessResponse<?>> submitApply(@RequestBody @Valid ApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.saveApply(request, true));
     }
 
     @PostMapping("/load")
-    public ResponseEntity<SuccessResponse<?>> loadApply(@RequestBody @Valid LoadApplyRequestDto request) {
+    public ResponseEntity<SuccessResponse<?>> loadApply(@RequestBody @Valid LoadApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.loadApply(request));
     }
 }
