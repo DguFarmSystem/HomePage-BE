@@ -22,14 +22,11 @@ public class User {
     @Column(nullable = false, length = 20)
     private String studentNumber;
 
+    @Column(length = 500)
+    private String profileImageUrl;
+
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
-
-    @Column(nullable = false, length = 100)
-    private String email;
-
-    @Column(nullable = false, length = 500)
-    private String profileImageUrl;
 
     @ColumnDefault("false")
     private boolean isDeleted;
@@ -42,8 +39,4 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
-
-
-
-
 }
