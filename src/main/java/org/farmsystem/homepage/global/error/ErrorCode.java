@@ -55,7 +55,13 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "질문을 찾을 수 없습니다."),
     CHOICE_NOT_FOUND(HttpStatus.NOT_FOUND, "선택지를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
-    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다.");
+    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다."),
+
+    /**
+     * User Error
+     */
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String message;
