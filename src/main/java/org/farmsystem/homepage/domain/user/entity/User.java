@@ -3,6 +3,7 @@ package org.farmsystem.homepage.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.farmsystem.homepage.global.common.BaseTimeEntity;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -24,9 +25,11 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private String studentNumber;
 
+    @Setter
     @Column(length = 100)
     private String profileImageUrl;
 
+    @Setter
     @Column(length = 20)
     private String phoneNumber;
 

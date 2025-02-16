@@ -2,8 +2,10 @@ package org.farmsystem.homepage.domain.user.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserInfoUpdateResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.service.UserService;
@@ -11,6 +13,9 @@ import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
@@ -21,22 +26,31 @@ public class UserController {
     // 임시 토큰 발급 API. 추후 로그인 기능이 완성되면 삭제할 예정
     @PostMapping("/token/{userId}")
     public ResponseEntity<SuccessResponse<?>> getToken(@PathVariable Long userId) {
-        UserTokenResponseDTO userTokenResponse = userService.issueTempToken(userId);
-        return SuccessResponse.ok(userTokenResponse);
+        UserTokenResponseDTO userToken= userService.issueTempToken(userId);
+        return SuccessResponse.ok(userToken);
     }
 
     // 사용자 회원 인증 API
     @PostMapping("/verify")
     public ResponseEntity<SuccessResponse<?>> verifyUser(@RequestBody UserVerifyRequestDTO userVerifyRequest) {
-        UserVerifyResponseDTO userVerifyResponse = userService.verifyUser(userVerifyRequest);
-        return SuccessResponse.ok(userVerifyResponse);
+        UserVerifyResponseDTO userVerify = userService.verifyUser(userVerifyRequest);
+        return SuccessResponse.ok(userVerify);
     }
 
     // 마이페이지 사용자 정보 조회 API
     @GetMapping("/mypage")
     public ResponseEntity<SuccessResponse<?>> getUserInfo(@AuthenticationPrincipal Long userId) {
-        UserInfoResponseDTO userInfoResponse = userService.getUserInfo(userId);
-        return SuccessResponse.ok(userInfoResponse);
+        UserInfoResponseDTO userInfo = userService.getUserInfo(userId);
+        return SuccessResponse.ok(userInfo);
     }
 
+    // 사용자 정보 수정 API
+    @PutMapping("/mypage")
+    public ResponseEntity<SuccessResponse<?>> updateUserInfo( @AuthenticationPrincipal Long userId,
+                                                              @RequestPart(required = false) String phoneNumber,
+                                                              @RequestPart(required = false) MultipartFile profileImage) throws IOException {
+        UserInfoUpdateRequestDTO userInfoRequest = new UserInfoUpdateRequestDTO(phoneNumber, profileImage);
+        UserInfoUpdateResponseDTO userInfoUpdate = userService.updateUserInfo(userId, userInfoRequest);
+        return SuccessResponse.ok(userInfoUpdate);
+    }
 }
