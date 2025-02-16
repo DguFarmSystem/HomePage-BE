@@ -32,6 +32,7 @@ public class SecurityConfig {
 
             /* api */
             "token/**",
+            "api/apply/**",
             };
 
     @Bean
