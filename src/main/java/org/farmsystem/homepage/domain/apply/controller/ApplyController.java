@@ -2,9 +2,9 @@ package org.farmsystem.homepage.domain.apply.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.apply.dto.CreateApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.ApplyRequestDto;
-import org.farmsystem.homepage.domain.apply.dto.LoadApplyRequestDto;
+import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDto;
+import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDto;
+import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDto;
 import org.farmsystem.homepage.domain.apply.service.ApplyService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;

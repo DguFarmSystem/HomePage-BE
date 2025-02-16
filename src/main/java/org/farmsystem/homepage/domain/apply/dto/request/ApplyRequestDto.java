@@ -1,4 +1,6 @@
-package org.farmsystem.homepage.domain.apply.dto;
+package org.farmsystem.homepage.domain.apply.dto.request;
+
+import org.farmsystem.homepage.domain.apply.dto.AnswerDto;
 
 import java.util.List;
 

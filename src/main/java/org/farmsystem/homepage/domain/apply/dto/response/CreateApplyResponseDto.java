@@ -1,4 +1,4 @@
-package org.farmsystem.homepage.domain.apply.dto;
+package org.farmsystem.homepage.domain.apply.dto.response;
 
 import lombok.Builder;
 
