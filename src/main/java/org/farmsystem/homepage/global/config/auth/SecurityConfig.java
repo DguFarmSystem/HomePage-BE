@@ -31,9 +31,9 @@ public class SecurityConfig {
             "v3/api-docs/**",
 
             /* api */
-            "token/**",
-            "api/user/verify",
             "api/apply/**",
+            "api/user/token/**",
+            "api/user/verify/**",
             };
 
     @Bean

@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.global.config.auth.jwt.JwtProvider;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +17,21 @@ import static org.farmsystem.homepage.global.error.ErrorCode.AUTHENTICATION_FAIL
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-
+    private final JwtProvider jwtProvider;
     private final PassedApplyRepository passedApplyRepository;
+
+    public String issueNewAccessToken(Long userId) {
+        return jwtProvider.getIssueToken(userId, true);
+    }
+    public String issueNewRefreshToken(Long userId) {
+        return jwtProvider.getIssueToken(userId, false);
+    }
+
+    public UserTokenResponseDTO issueTempToken(Long userId) {
+        String accessToken = issueNewAccessToken(userId);
+        String refreshToken = issueNewRefreshToken(userId);
+        return new UserTokenResponseDTO(accessToken, refreshToken);
+    }
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         System.out.println("studentNumber = " + userVerifyRequest.studentNumber());
