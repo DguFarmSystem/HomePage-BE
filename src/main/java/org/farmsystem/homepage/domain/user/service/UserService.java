@@ -48,7 +48,7 @@ public class UserService {
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())
                 .orElseThrow(() -> new UnauthorizedException(AUTHENTICATION_FAILED));
-        return UserVerifyResponseDTO.from(true, verifiedUser.getName());
+        return UserVerifyResponseDTO.from(true, verifiedUser);
     }
 
     public UserInfoResponseDTO getUserInfo(Long userId) {
