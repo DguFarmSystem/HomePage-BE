@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,11 +27,11 @@ public class User extends BaseTimeEntity {
     private String studentNumber;
 
     @Setter
-    @Column(length = 100)
+    @Column(length = 500)
     private String profileImageUrl;
 
     @Setter
-    @Column(length = 20)
+    @Column(nullable = true, length = 20)
     private String phoneNumber;
 
     @Column(length = 100)
@@ -41,6 +42,8 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Track track;
+
+    @Column(nullable = true)
     private int generation;
 
     @ColumnDefault("false")
@@ -54,4 +57,12 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
+
+    @Builder
+    public User(String profileImageUrl,String name, String studentNumber, SocialType socialType) {
+        this.profileImageUrl = profileImageUrl;
+        this.name = name;
+        this.studentNumber = studentNumber;
+        this.socialType = socialType;
+    }
 }

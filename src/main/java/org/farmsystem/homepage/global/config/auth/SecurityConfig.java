@@ -34,6 +34,7 @@ public class SecurityConfig {
             "api/apply/**",
             "api/user/token/**",
             "api/user/verify/**",
+            "api/user/login/**",
             };
 
     @Bean

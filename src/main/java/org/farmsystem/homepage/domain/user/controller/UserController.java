@@ -47,9 +47,7 @@ public class UserController {
     // 사용자 정보 수정 API
     @PutMapping("/mypage")
     public ResponseEntity<SuccessResponse<?>> updateUserInfo( @AuthenticationPrincipal Long userId,
-                                                              @RequestPart(required = false) String phoneNumber,
-                                                              @RequestPart(required = false) MultipartFile profileImage) throws IOException {
-        UserInfoUpdateRequestDTO userInfoRequest = new UserInfoUpdateRequestDTO(phoneNumber, profileImage);
+                                                              @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest) throws IOException {
         UserInfoUpdateResponseDTO userInfoUpdate = userService.updateUserInfo(userId, userInfoRequest);
         return SuccessResponse.ok(userInfoUpdate);
     }
