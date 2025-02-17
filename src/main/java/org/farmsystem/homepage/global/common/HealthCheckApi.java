@@ -21,24 +21,5 @@ public interface HealthCheckApi {
             @ApiResponse(responseCode = "404", description = "서버를 찾을 수 없음")
     })
     ResponseEntity<SuccessResponse<?>> FarmSysytemServer();
-
-    @Operation(
-            summary = "임시 토큰 발급 API",
-            description = "UserId로 임시 토큰을 발급받는 API입니다."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "토큰 발급 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = SuccessResponse.class)
-                    )
-            ),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청")
-    })
-    ResponseEntity<SuccessResponse<?>> getToken(
-            @Parameter(description = "userId, 임의 입력값", required = true, example = "1")
-            Long userId
-    );
+    
 }
