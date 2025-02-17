@@ -1,4 +1,4 @@
-name: 🌱Farm Website CI/CD pipeline🌱
+name: 🌱Farm Website CI/CD pipeline on production environment🌱
 
 on:
   push:
@@ -39,12 +39,24 @@ jobs:
     - name: Build with Gradle Wrapper (Skip Tests)
       run: ./gradlew build -x test
 
+    - name: Extract branch name from pull request
+      id: pr_info
+      run: |
+        echo "SOURCE_BRANCH=${{ github.head_ref }}"
+        echo "::set-output name=branch::${{ github.head_ref }}"
+        
+    - name: Extract version info
+      id: vars
+      run: |
+        VERSION_NUMBER=${{ steps.pr_info.outputs.branch#release/v }}
+        echo "::set-output name=version::${VERSION_NUMBER}"
+
     # Docker 빌드 및 Docker Hub에 푸시
     - name: Docker build & push to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-test:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/farm-prod:${{ steps.vars.outputs.version }} .
+        docker push ${{ secrets.DOCKER_USERNAME }}/farm-prod:${{ steps.vars.outputs.version }}
         docker logout
 
     # EC2에 배포
@@ -58,12 +70,12 @@ jobs:
           set -e  # 에러 발생 시 즉시 스크립트 종료
 
           echo "🚀 최신 Docker 이미지 Pull 중..."
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/farm-prod:${{ steps.vars.outputs.version }}
 
           echo "🛑 기존 컨테이너 중지 및 삭제"
-          if [ "$(sudo docker inspect --format="{{.State.Running}}" docker-test 2>/dev/null)" = "true" ]; then
-            sudo docker stop docker-test
-            sudo docker rm docker-test
+          if [ "$(sudo docker inspect --format="{{.State.Running}}" farm-prod 2>/dev/null)" = "true" ]; then
+            sudo docker stop farm-prod
+            sudo docker rm farm-prod
           fi
 
           echo "📂 yml 파일을 저장할 디렉토리 생성"
@@ -76,13 +88,13 @@ jobs:
           sudo chmod 644 /home/ubuntu/app/src/main/resources/application.yml  # 모든 사용자 읽기 가능, 소유자만 쓰기 가능
 
           echo "🚀 새 컨테이너 실행 중..."
-          sudo docker run -d --log-driver=syslog --name docker-test -p 8080:8080 \
+          sudo docker run -d --log-driver=syslog --name farm-prod -p 8080:8080 \
             -v /home/ubuntu/app/src/main/resources:/app/src/main/resources \
             --restart always \
-            ${{ secrets.DOCKER_USERNAME }}/docker-test:latest
+            ${{ secrets.DOCKER_USERNAME }}/farm-prod:${{ steps.vars.outputs.version }}
 
           echo "✅ 실행 중인 컨테이너 확인"
-          sudo docker ps -a | grep "docker-test"
+          sudo docker ps -a | grep "farm-prod"
 
           echo "🧹 사용하지 않는 Docker 이미지 정리"
           sudo docker system prune -af
