@@ -27,23 +27,9 @@ import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
-    private final JwtProvider jwtProvider;
     private final S3Service s3Service;
     private final UserRepository userRepository;
     private final PassedApplyRepository passedApplyRepository;
-
-    public String issueNewAccessToken(Long userId) {
-        return jwtProvider.getIssueToken(userId, true);
-    }
-    public String issueNewRefreshToken(Long userId) {
-        return jwtProvider.getIssueToken(userId, false);
-    }
-
-    public UserTokenResponseDTO issueTempToken(Long userId) {
-        String accessToken = issueNewAccessToken(userId);
-        String refreshToken = issueNewRefreshToken(userId);
-        return UserTokenResponseDTO.of(accessToken, refreshToken);
-    }
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())
@@ -59,16 +45,16 @@ public class UserService {
 
     // 사용자 정보 수정
     @Transactional
-    public UserInfoUpdateResponseDTO updateUserInfo(Long userId, UserInfoUpdateRequestDTO userUpdateRequestDTO) throws IOException {
+    public UserInfoUpdateResponseDTO updateUserInfo(Long userId, UserInfoUpdateRequestDTO userUpdateRequest) throws IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        if (userUpdateRequestDTO.phoneNumber() != null) {
-            user.setPhoneNumber(userUpdateRequestDTO.phoneNumber());
+        if (userUpdateRequest.phoneNumber() != null) {
+            user.setPhoneNumber(userUpdateRequest.phoneNumber());
         }
 
-        if (userUpdateRequestDTO.profileImage() != null) {
-            String profileImageUrl = s3Service.uploadFile(userUpdateRequestDTO.profileImage(), "profile");
+        if (userUpdateRequest.profileImage() != null) {
+            String profileImageUrl = s3Service.uploadFile(userUpdateRequest.profileImage(), "profile");
             user.setProfileImageUrl(profileImageUrl);
         }
 

@@ -23,13 +23,6 @@ import java.io.IOException;
 public class UserController {
     private final UserService userService;
 
-    // 임시 토큰 발급 API. 추후 로그인 기능이 완성되면 삭제할 예정
-    @PostMapping("/token/{userId}")
-    public ResponseEntity<SuccessResponse<?>> getToken(@PathVariable Long userId) {
-        UserTokenResponseDTO userToken= userService.issueTempToken(userId);
-        return SuccessResponse.ok(userToken);
-    }
-
     // 사용자 회원 인증 API
     @PostMapping("/verify")
     public ResponseEntity<SuccessResponse<?>> verifyUser(@RequestBody UserVerifyRequestDTO userVerifyRequest) {

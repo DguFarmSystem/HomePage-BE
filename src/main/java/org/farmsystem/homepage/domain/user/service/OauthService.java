@@ -20,7 +20,8 @@ public class OauthService {
     private final OauthTokenProvider oauthTokenProvider;
     private final OauthUserResourceProvider oauthUserResourceProvider;
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final TokenService tokenService;
+
 
     @Transactional
     public UserTokenResponseDTO socialLogin(UserLoginRequestDTO userLoginRequest) {
@@ -42,9 +43,7 @@ public class OauthService {
             Long userId = saveOrUpdateUser(imageUrl, userLoginRequest);
 
             // JWT 토큰 발급
-            String refreshToken = userService.issueNewRefreshToken(userId);
-            String accessToken = userService.issueNewAccessToken(userId);
-            return UserTokenResponseDTO.of(accessToken, refreshToken);
+            return tokenService.issueToken(userId);
 
         } catch (Exception e) {
             throw new BusinessException(INTERNAL_SERVER_ERROR);
@@ -56,8 +55,7 @@ public class OauthService {
 
         if (existingUser != null) {
             return existingUser.getUserId();
-        }
-        else {
+        } else {
             User user = User.builder()
                     .profileImageUrl(imageUrl)
                     .name(userLoginRequest.name())
