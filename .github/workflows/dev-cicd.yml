@@ -41,7 +41,7 @@ jobs:
 
     - name: 버젼 정보 가져오기
       id: vars
-      run: echo ::set-output name=version::${GITHUB_REF#refs/heads/release/v}
+      run: echo "::set-output name=version::${GITHUB_REF#refs/heads/release/v}"
 
     # Docker 빌드 및 Docker Hub에 푸시
     - name: Docker build & push to Docker Hub
