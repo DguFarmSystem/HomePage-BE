@@ -60,7 +60,20 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "질문을 찾을 수 없습니다."),
     CHOICE_NOT_FOUND(HttpStatus.NOT_FOUND, "선택지를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
-    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다.");
+    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다."),
+
+    /**
+     * User Error
+     */
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+
+    /**
+     * Oauth Error
+     */
+    OAUTH_TOKEN_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 토큰 요청에 실패하였습니다."),
+    OAUTH_USER_RESOURCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 사용자 정보 조회에 실패하였습니다."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
