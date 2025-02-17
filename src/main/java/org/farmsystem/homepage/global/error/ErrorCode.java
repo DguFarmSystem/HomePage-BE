@@ -49,6 +49,11 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
 
     /**
+     * news 관련 에러 처리
+     */
+    NEWS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 뉴스를 찾을 수 없습니다."),
+  
+    /**
      * Apply Error
      */
     APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원 내용을 찾을 수 없습니다."),

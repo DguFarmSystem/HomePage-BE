@@ -23,7 +23,7 @@ public class NewsService {
 
     public News getNewsById(Long newsId) {
         return newsRepository.findById(newsId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NEWS_NOT_FOUND));
     }
 
     @Transactional
@@ -45,7 +45,7 @@ public class NewsService {
     @Transactional
     public void deleteNews(Long newsId) {
         if (!newsRepository.existsById(newsId)) {
-            throw new BusinessException(ErrorCode.ENTITY_NOT_FOUND);
+            throw new BusinessException(ErrorCode.NEWS_NOT_FOUND);
         }
         newsRepository.deleteById(newsId);
     }

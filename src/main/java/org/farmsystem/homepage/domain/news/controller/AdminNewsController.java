@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/news")
 @RequiredArgsConstructor
-public class AdminNewsController {
+public class AdminNewsController implements AdminNewsApi{
 
     private final NewsService newsService;
 
