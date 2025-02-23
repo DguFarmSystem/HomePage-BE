@@ -1,5 +1,6 @@
 package org.farmsystem.homepage.domain.user.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
@@ -15,18 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.farmsystem.homepage.global.error.ErrorCode.INTERNAL_SERVER_ERROR;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OauthService {
 
     private final OauthTokenProvider oauthTokenProvider;
     private final OauthUserResourceProvider oauthUserResourceProvider;
-    private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final UserService userService;
 
-
-    @Transactional
-    public UserTokenResponseDTO socialLogin(UserLoginRequestDTO userLoginRequest) {
-        try {
+    public UserTokenResponseDTO socialLogin(UserLoginRequestDTO userLoginRequest) throws JsonProcessingException {
             SocialType socialType = userLoginRequest.socialType();
 
             // OAuth 토큰 가져오기
@@ -39,29 +38,15 @@ public class OauthService {
             String imageUrl = socialType.equals(SocialType.GOOGLE)
                     ? userResource.path("picture").asText()
                     : userResource.path("kakao_account").path("profile").path("profile_image_url").asText();
+            String socialId = socialType.equals(SocialType.GOOGLE)
+                    ? userResource.path("sub").asText()
+                    : userResource.path("id").asText();
 
-            // 사용자 저장 후 User 객체 반환
-            User user = saveOrUpdateUser(imageUrl, userLoginRequest);
-
+            // 사용자 저장
+            User user = userService.saveUser(socialId, imageUrl, userLoginRequest);
             // JWT 토큰 발급
             return tokenService.issueToken(user.getUserId(), user.getRole());
 
-        } catch (Exception e) {
-            throw new BusinessException(INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public User saveOrUpdateUser(String imageUrl, UserLoginRequestDTO userLoginRequest) {
-        return userRepository.findByStudentNumber(userLoginRequest.studentNumber())
-                .orElseGet(() -> userRepository.save(
-                        User.builder()
-                                .profileImageUrl(imageUrl)
-                                .name(userLoginRequest.name())
-                                .studentNumber(userLoginRequest.studentNumber())
-                                .socialType(userLoginRequest.socialType())
-                                .role(Role.USER)
-                                .build()
-                ));
     }
 
 }

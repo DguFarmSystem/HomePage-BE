@@ -1,16 +1,14 @@
 package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
-
+@AllArgsConstructor
+@Builder
 @Getter
 @NoArgsConstructor
 @Table(name = "user")
@@ -27,6 +25,9 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
+
+    @Column
+    private String socialId;
 
     @Column(nullable = false, length = 10)
     private String name;
@@ -70,12 +71,4 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
 
-    @Builder
-    public User(String profileImageUrl,String name, String studentNumber, SocialType socialType, Role role) {
-        this.profileImageUrl = profileImageUrl;
-        this.name = name;
-        this.studentNumber = studentNumber;
-        this.socialType = socialType;
-        this.role = role;
-    }
 }

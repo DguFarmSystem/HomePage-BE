@@ -8,7 +8,6 @@ import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.config.auth.jwt.JwtProvider;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -53,6 +52,7 @@ public class TokenService {
 
         String accessToken = jwtProvider.getIssueToken(userId, role, true);
 
+        // refresh token이 이미 존재하면 기존 토큰 사용하고, 없으면 새로 발급
         String redisKey = "RT:" + userId;
         String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);
 

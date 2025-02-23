@@ -27,6 +27,9 @@ public class PassedApply {
     @Enumerated(EnumType.STRING)
     private Track track;
 
+    @Column
+    private Integer generation;
+
     @Column(nullable = false, length = 20)
     private String phoneNumber;
 
