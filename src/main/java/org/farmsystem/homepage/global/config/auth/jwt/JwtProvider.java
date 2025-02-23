@@ -1,5 +1,6 @@
 package org.farmsystem.homepage.global.config.auth.jwt;
 
+import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,9 +29,9 @@ public class JwtProvider {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getIssueToken(Long userId, boolean isAccessToken) {
-        if (isAccessToken) return generateToken(userId, ACCESS_TOKEN_EXPIRE_TIME);
-        else return generateToken(userId, REFRESH_TOKEN_EXPIRE_TIME);
+    public String getIssueToken(Long userId, Role role, boolean isAccessToken) {
+        if (isAccessToken) return generateToken(userId, role, ACCESS_TOKEN_EXPIRE_TIME);
+        else return generateToken(userId, role, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     public void validateAccessToken(String accessToken) {
@@ -65,12 +66,13 @@ public class JwtProvider {
                 .getSubject());
     }
 
-    private String generateToken(Long userId, long tokenTime) {
+    private String generateToken(Long userId, Role role, long tokenTime) {
         final Date now = new Date();
         final Date expiration = new Date(now.getTime() + tokenTime);
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setSubject(String.valueOf(userId))
+                .claim("role", role.name())
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -94,6 +96,11 @@ public class JwtProvider {
                 new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]), StandardCharsets.UTF_8),
                 Map.class
         ).get("sub").toString();
+    }
+
+    public Role getRole(String token) {
+        String role = getJwtParser().parseClaimsJws(token).getBody().get("role", String.class);
+        return Role.valueOf(role);
     }
 
 

@@ -1,5 +1,6 @@
 package org.farmsystem.homepage.global.config.auth.jwt;
 
+import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.global.config.auth.UserAuthentication;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -26,7 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String accessToken = getAccessTokenFromHttpServletRequest(request);
         jwtProvider.validateAccessToken(accessToken);
         final Long userId = jwtProvider.getSubject(accessToken);
-        setAuthentication(request, userId);
+        final Role role = jwtProvider.getRole(accessToken);
+        setAuthentication(request, userId, role);
         filterChain.doFilter(request, response);
     }
 
@@ -38,8 +41,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN);
     }
 
-    private void setAuthentication(HttpServletRequest request, Long userId) {
-        UserAuthentication authentication = new UserAuthentication(userId, null, null);
+    private void setAuthentication(HttpServletRequest request, Long userId, Role role) {
+        UserAuthentication authentication = new UserAuthentication(userId, null, List.of(role));
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }

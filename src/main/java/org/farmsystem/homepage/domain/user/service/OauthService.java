@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
+import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
@@ -39,31 +40,28 @@ public class OauthService {
                     ? userResource.path("picture").asText()
                     : userResource.path("kakao_account").path("profile").path("profile_image_url").asText();
 
-            // 사용자 저장
-            Long userId = saveOrUpdateUser(imageUrl, userLoginRequest);
+            // 사용자 저장 후 User 객체 반환
+            User user = saveOrUpdateUser(imageUrl, userLoginRequest);
 
             // JWT 토큰 발급
-            return tokenService.issueToken(userId);
+            return tokenService.issueToken(user.getUserId(), user.getRole());
 
         } catch (Exception e) {
             throw new BusinessException(INTERNAL_SERVER_ERROR);
         }
     }
 
-    public Long saveOrUpdateUser(String imageUrl, UserLoginRequestDTO userLoginRequest) {
-        User existingUser = userRepository.findByStudentNumber(userLoginRequest.studentNumber());
-
-        if (existingUser != null) {
-            return existingUser.getUserId();
-        } else {
-            User user = User.builder()
-                    .profileImageUrl(imageUrl)
-                    .name(userLoginRequest.name())
-                    .studentNumber(userLoginRequest.studentNumber())
-                    .socialType(userLoginRequest.socialType())
-                    .build();
-            User savedUser = userRepository.save(user);
-            return savedUser.getUserId();
-        }
+    public User saveOrUpdateUser(String imageUrl, UserLoginRequestDTO userLoginRequest) {
+        return userRepository.findByStudentNumber(userLoginRequest.studentNumber())
+                .orElseGet(() -> userRepository.save(
+                        User.builder()
+                                .profileImageUrl(imageUrl)
+                                .name(userLoginRequest.name())
+                                .studentNumber(userLoginRequest.studentNumber())
+                                .socialType(userLoginRequest.socialType())
+                                .role(Role.USER)
+                                .build()
+                ));
     }
+
 }
