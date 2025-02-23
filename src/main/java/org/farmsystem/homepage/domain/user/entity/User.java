@@ -25,25 +25,31 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
     @Column(nullable = false, length = 10)
     private String name;
 
     @Column(nullable = false, length = 20)
     private String studentNumber;
 
+    @Column(nullable = false, length = 50)
+    private String major;
+
     @Setter
     @Column(length = 500)
     private String profileImageUrl;
 
     @Setter
-    @Column(nullable = true, length = 20)
+    @Column(nullable = false, length = 20)
     private String phoneNumber;
 
-    @Column(length = 100)
-    private String email;
+    @Column(nullable = false, length = 100)
+    private String notionAccount;
 
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType;
+    @Column(nullable = false, length = 100)
+    private String githubAccount;
 
     @Enumerated(EnumType.STRING)
     private Track track;
