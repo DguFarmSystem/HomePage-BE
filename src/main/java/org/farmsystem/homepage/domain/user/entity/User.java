@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.farmsystem.homepage.global.common.BaseTimeEntity;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;

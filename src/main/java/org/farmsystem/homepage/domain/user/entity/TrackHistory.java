@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import org.farmsystem.homepage.domain.common.entity.Track;
 
 @NoArgsConstructor
 @Table(name = "track_history")

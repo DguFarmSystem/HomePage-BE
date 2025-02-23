@@ -1,6 +1,6 @@
 package org.farmsystem.homepage.domain.user.dto.response;
 
-import org.farmsystem.homepage.domain.user.entity.Track;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.user.entity.User;
 
 public record UserInfoResponseDTO(

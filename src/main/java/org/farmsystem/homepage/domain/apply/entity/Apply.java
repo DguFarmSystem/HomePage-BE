@@ -5,7 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.farmsystem.homepage.global.common.BaseTimeEntity;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
+import org.farmsystem.homepage.domain.common.entity.Track;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class Apply extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private ApplyTrack track;
+    private Track track;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
