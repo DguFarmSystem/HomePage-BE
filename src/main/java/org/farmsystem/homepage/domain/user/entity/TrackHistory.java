@@ -19,8 +19,8 @@ public class TrackHistory {
     @Column(nullable = false)
     private Track track;
 
-    @Column(nullable = false)
-    private int generation;
+    @Column
+    private Integer generation;
 
 
 
