@@ -34,6 +34,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private String studentNumber;
 
+    @Setter
     @Column(nullable = false, length = 50)
     private String major;
 
@@ -75,10 +76,6 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.studentNumber = studentNumber;
         this.socialType = socialType;
-        this.role = role;
-    }
-
-    public void updateRole(Role role) {
         this.role = role;
     }
 }

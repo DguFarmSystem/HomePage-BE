@@ -6,22 +6,20 @@ import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
 import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoUpdateResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.common.S3Service;
-import org.farmsystem.homepage.global.config.auth.jwt.JwtProvider;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static org.farmsystem.homepage.global.error.ErrorCode.AUTHENTICATION_FAILED;
-import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
+import static org.farmsystem.homepage.global.error.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,21 +43,23 @@ public class UserService {
 
     // 사용자 정보 수정
     @Transactional
-    public UserInfoUpdateResponseDTO updateUserInfo(Long userId, UserInfoUpdateRequestDTO userUpdateRequest) throws IOException {
+    public UserInfoResponseDTO updateUserInfo(Long userId, UserInfoUpdateRequestDTO userUpdateRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        if (userUpdateRequest.phoneNumber() != null) {
-            user.setPhoneNumber(userUpdateRequest.phoneNumber());
-        }
-
-        if (userUpdateRequest.profileImage() != null) {
-            String profileImageUrl = s3Service.uploadFile(userUpdateRequest.profileImage(), "profile");
-            user.setProfileImageUrl(profileImageUrl);
-        }
+        userUpdateRequest.phoneNumber().ifPresent(user::setPhoneNumber);
+        userUpdateRequest.major().ifPresent(user::setMajor);
+        userUpdateRequest.profileImage().ifPresent(profileImage -> user.setProfileImageUrl(uploadProfileImage(profileImage)));
 
         userRepository.save(user);
-        return UserInfoUpdateResponseDTO.from(user);
+        return UserInfoResponseDTO.from(user);
     }
 
+    private String uploadProfileImage(MultipartFile profileImage) {
+        try {
+            return s3Service.uploadFile(profileImage, "profile");
+        } catch (IOException e) {
+            throw new BusinessException(PROFILE_IMAGE_UPLOAD_FAILED);
+        }
+    }
 }
