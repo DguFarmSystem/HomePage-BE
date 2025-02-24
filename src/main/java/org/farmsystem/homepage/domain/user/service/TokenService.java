@@ -4,28 +4,43 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserTokenRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
+import org.farmsystem.homepage.domain.user.entity.Role;
+import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.config.auth.jwt.JwtProvider;
+import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class TokenService {
     private final JwtProvider jwtProvider;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
     @Value("${jwt.refresh-token-expire-time}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
 
     public String issueNewAccessToken(Long userId) {
-        return jwtProvider.getIssueToken(userId, true);
+        Role role = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND))
+                .getRole();
+
+        return jwtProvider.getIssueToken(userId, role, true);
     }
 
     public String issueNewRefreshToken(Long userId) {
-        return jwtProvider.getIssueToken(userId, false);
+        Role role = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND))
+                .getRole();
+
+        return jwtProvider.getIssueToken(userId, role, false);
     }
 
     public UserTokenResponseDTO issueTempToken(Long userId) {
@@ -34,9 +49,9 @@ public class TokenService {
         return UserTokenResponseDTO.of(accessToken, refreshToken);
     }
 
-    public UserTokenResponseDTO issueToken(Long userId) {
+    public UserTokenResponseDTO issueToken(Long userId, Role role) {
 
-        String accessToken = issueNewAccessToken(userId);
+        String accessToken = jwtProvider.getIssueToken(userId, role, true);
 
         String redisKey = "RT:" + userId;
         String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);

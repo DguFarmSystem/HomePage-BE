@@ -20,6 +20,10 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Column(nullable = false, length = 10)
     private String name;
 
@@ -43,8 +47,8 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Track track;
 
-    @Column(nullable = true)
-    private int generation;
+    @Column
+    private Integer generation;
 
     @ColumnDefault("false")
     private boolean isDeleted;
@@ -59,10 +63,15 @@ public class User extends BaseTimeEntity {
     private List<TrackHistory> trackHistories;
 
     @Builder
-    public User(String profileImageUrl,String name, String studentNumber, SocialType socialType) {
+    public User(String profileImageUrl,String name, String studentNumber, SocialType socialType, Role role) {
         this.profileImageUrl = profileImageUrl;
         this.name = name;
         this.studentNumber = studentNumber;
         this.socialType = socialType;
+        this.role = role;
+    }
+
+    public void updateRole(Role role) {
+        this.role = role;
     }
 }
