@@ -11,12 +11,14 @@ import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TokenService {
     private final JwtProvider jwtProvider;
@@ -58,26 +60,31 @@ public class TokenService {
 
         if (storedRefreshToken == null) {
             storedRefreshToken = issueNewRefreshToken(userId);
+
             redisTemplate.opsForValue().set(redisKey, storedRefreshToken, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
         }
 
         return UserTokenResponseDTO.of(accessToken, storedRefreshToken);
     }
 
-    public UserTokenResponseDTO reissue(UserTokenRequestDTO uerTokenRequest) throws JsonProcessingException {
-        Long userId = Long.valueOf(jwtProvider.decodeJwtPayloadSubject(uerTokenRequest.accessToken()));
+    public UserTokenResponseDTO reissue(UserTokenRequestDTO userTokenRequest) throws JsonProcessingException {
+        Long userId = Long.valueOf(jwtProvider.decodeJwtPayloadSubject(userTokenRequest.accessToken()));
 
-        String refreshToken = uerTokenRequest.refreshToken();
+        String refreshToken = userTokenRequest.refreshToken();
         String redisKey = "RT:" + userId;
 
+        // 리프레시 토큰 검증 (리프레시 토큰 만료시 재로그인 필요)
         jwtProvider.validateRefreshToken(refreshToken);
+
+        String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);
+
+        // 요청된 리프레시 토큰과 저장된 redis 저장된 리프레시 토큰 비교 검증
+        jwtProvider.equalsRefreshToken(refreshToken, storedRefreshToken);
 
         String newAccessToken = issueNewAccessToken(userId);
         String newRefreshToken = issueNewRefreshToken(userId);
-        redisTemplate.opsForValue().set(redisKey, newRefreshToken, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
 
-        String storedRefreshToken = redisTemplate.opsForValue().get(redisKey);
-        jwtProvider.equalsRefreshToken(newRefreshToken, storedRefreshToken);
+        redisTemplate.opsForValue().set(redisKey, newRefreshToken, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
 
         return UserTokenResponseDTO.of(newAccessToken, newRefreshToken);
     }
