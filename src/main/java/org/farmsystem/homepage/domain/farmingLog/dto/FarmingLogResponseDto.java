@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.farmingLog.dto;
 
 import org.farmsystem.homepage.domain.farmingLog.entity.FarmingLog;
+import org.farmsystem.homepage.domain.user.entity.User;
 
 public record FarmingLogResponseDto(
         Long farmingLogId,
@@ -8,22 +9,28 @@ public record FarmingLogResponseDto(
         String content,
         String category,
         String createdAt,
-        String updatedAt,
         String author,
+        String profileImageUrl,
+        String track,
+        Integer generation,
         boolean isOwner,
         boolean isLiked,
         long likeCount
 ) {
     public static FarmingLogResponseDto from(FarmingLog farmingLog, Long currentUserId, boolean isLiked, long likeCount) {
+        User user = farmingLog.getUser();
+
         return new FarmingLogResponseDto(
                 farmingLog.getFarmingLogId(),
                 farmingLog.getTitle(),
                 farmingLog.getContent(),
                 farmingLog.getCategory().name(),
                 farmingLog.getCreatedAt().toString(),
-                farmingLog.getUpdatedAt().toString(),
-                farmingLog.getUser().getName(),
-                farmingLog.getUser().getUserId().equals(currentUserId),
+                user.getName(),
+                user.getProfileImageUrl(),
+                user.getTrack() != null ? user.getTrack().name() : null,
+                user.getGeneration(),
+                user.getUserId().equals(currentUserId),
                 isLiked,
                 likeCount
         );
