@@ -40,18 +40,12 @@ jobs:
 
     - name: Build with Gradle Wrapper (Skip Tests)
       run: ./gradlew build -x test
-
-    - name: Extract branch name from pull request
-      id: pr_info
-      run: |
-        echo "SOURCE_BRANCH=${{ github.head_ref }}"
-        echo "::set-output name=branch::${{ github.head_ref }}"
         
     - name: Extract version info from Git tag
       id: vars
       run: |
         VERSION_TAG=$(git describe --tags --abbrev=0)
-        VERSION_NUMBER=${VERSION_NUMBER#v}
+        VERSION_NUMBER=${VERSION_TAG#v}
         echo "VERSION_NUMBER=${VERSION_NUMBER}"
         echo "::set-output name=version::${VERSION_NUMBER}"
 
