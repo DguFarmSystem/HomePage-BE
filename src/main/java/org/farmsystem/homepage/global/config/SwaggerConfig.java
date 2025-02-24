@@ -3,6 +3,7 @@ package org.farmsystem.homepage.global.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +30,11 @@ public class SwaggerConfig {
 
         Components components = new Components().addSecuritySchemes("token", securityScheme);
 
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("token");
+
         return new OpenAPI()
                 .info(info)
-                .components(components);
+                .components(components)
+                .addSecurityItem(securityRequirement);
     }
 }
