@@ -11,6 +11,7 @@ import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.entity.*;
 import org.farmsystem.homepage.domain.apply.exception.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class ApplyService {
     private final AnswerRepository answerRepository;
     private final ChoiceRepository choiceRepository;
     private final AnswerChoiceRepository answerChoiceRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<QuestionDTO> getQuestions() {
         List<Question> questions = questionRepository.findAll();
@@ -54,8 +56,7 @@ public class ApplyService {
     @Transactional
     public CreateApplyResponseDTO createApply(CreateApplyRequestDTO request) {
         Apply apply = Apply.builder()
-                .password(request.password())
-                // TODO: password 암호화
+                .password(passwordEncoder.encode(request.password()))
                 .name(request.name())
                 .major(request.major())
                 .studentNumber(request.studentNumber())
@@ -86,8 +87,7 @@ public class ApplyService {
     }
 
     public LoadApplyResponseDTO loadApply(LoadApplyRequestDTO request) {
-        // TODO: password 암호화
-        Apply apply = applyRepository.findByStudentNumberAndPassword(request.studentNumber(), request.password())
+        Apply apply = applyRepository.findByStudentNumberAndPassword(request.studentNumber(), passwordEncoder.encode(request.password()))
                 .orElseThrow(ApplyNotFoundException::new);
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
