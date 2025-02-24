@@ -48,7 +48,10 @@ jobs:
     - name: Extract version info
       id: vars
       run: |
-        VERSION_NUMBER=${{ steps.pr_info.outputs.branch#release/v }}
+        VERSION_NUMBER=${{ steps.pr_info.outputs.branch }}
+        # 접두사 "release/v"를 제거하여 버전 번호만 추출
+        VERSION_NUMBER=${VERSION_NUMBER#"release/v"}
+        echo "VERSION_NUMBER=${VERSION_NUMBER}"
         echo "::set-output name=version::${VERSION_NUMBER}"
 
     # Docker 빌드 및 Docker Hub에 푸시

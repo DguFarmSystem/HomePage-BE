@@ -32,10 +32,10 @@ public class SecurityConfig {
 
             /* api */
             "api/apply/**",
-            "api/user/token/**",
+            "api/auth/token/**",
+            "api/auth/login/**",
+            "api/auth/reissue/**",
             "api/user/verify/**",
-            "api/user/login/**",
-            "api/user/reissue/**",
             };
 
     @Bean
@@ -54,7 +54,11 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
+                        authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers(whiteList).permitAll()
+                                .anyRequest().authenticated()
+                )
                 .addFilter(corsConfig.corsFilter())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)

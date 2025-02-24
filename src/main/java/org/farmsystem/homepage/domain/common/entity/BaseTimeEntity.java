@@ -1,4 +1,4 @@
-package org.farmsystem.homepage.global.common;
+package org.farmsystem.homepage.domain.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

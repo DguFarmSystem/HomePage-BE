@@ -34,8 +34,8 @@ public class AdminNewsController implements AdminNewsApi{
     }
 
     @DeleteMapping("/{newsId}")
-    public ResponseEntity<Void> deleteNews(@PathVariable("newsId") Long newsId) {
+    public ResponseEntity<SuccessResponse<?>> deleteNews(@PathVariable("newsId") Long newsId) {
         newsService.deleteNews(newsId);
-        return ResponseEntity.noContent().build();
+        return SuccessResponse.noContent();
     }
 }

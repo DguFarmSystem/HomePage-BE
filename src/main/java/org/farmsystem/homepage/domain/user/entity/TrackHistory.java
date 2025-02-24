@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import org.farmsystem.homepage.domain.common.entity.Track;
 
 @NoArgsConstructor
 @Table(name = "track_history")
@@ -19,8 +20,8 @@ public class TrackHistory {
     @Column(nullable = false)
     private Track track;
 
-    @Column(nullable = false)
-    private int generation;
+    @Column
+    private Integer generation;
 
 
 

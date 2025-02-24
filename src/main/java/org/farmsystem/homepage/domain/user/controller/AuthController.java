@@ -14,23 +14,23 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/auth")
 @RestController
-public class OauthController {
+public class AuthController {
 
     private final OauthService oauthService;
     private final TokenService tokenService;
 
     // 임시 토큰 발급 API. 추후 로그인 기능이 완성되면 삭제할 예정
     @PostMapping("/token/{userId}")
-    public ResponseEntity<SuccessResponse<?>> getToken(@PathVariable Long userId) {
+    public ResponseEntity<SuccessResponse<?>> getTempToken(@PathVariable Long userId) {
         UserTokenResponseDTO userToken= tokenService.issueTempToken(userId);
         return SuccessResponse.ok(userToken);
     }
 
     // 소셜 로그인
     @PostMapping("/login")
-    ResponseEntity<SuccessResponse<?>> socialLogin(@RequestBody UserLoginRequestDTO userLoginRequest) {
+    ResponseEntity<SuccessResponse<?>> socialLogin(@RequestBody UserLoginRequestDTO userLoginRequest) throws JsonProcessingException {
         UserTokenResponseDTO userToken = oauthService.socialLogin(userLoginRequest);
         return SuccessResponse.ok(userToken);
     }

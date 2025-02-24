@@ -55,5 +55,5 @@ public interface AdminNewsApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 소식 ID")
     })
     @DeleteMapping("/api/admin/news/{newsId}")
-    ResponseEntity<Void> deleteNews(@PathVariable("newsId") Long newsId);
+    ResponseEntity<SuccessResponse<?>>  deleteNews(@PathVariable("newsId") Long newsId);
 }

@@ -1,10 +1,12 @@
 package org.farmsystem.homepage.domain.user.service;
 
+import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +19,8 @@ import static org.farmsystem.homepage.global.error.ErrorCode.OAUTH_TOKEN_REQUEST
 
 // OAuth 토큰 요청 클래스
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class OauthTokenProvider {
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -41,6 +45,10 @@ public class OauthTokenProvider {
 
     public String getOauthToken(String code, SocialType socialType) {
         try {
+            String oauthTokenApiUrl = socialType.equals(SocialType.GOOGLE)
+                    ? "https://oauth2.googleapis.com/token"
+                    : "https://kauth.kakao.com/oauth/token";
+
             String decodedCode = URLDecoder.decode(code, StandardCharsets.UTF_8); //구글 로그인 인가코드 인코딩 관련 오류 방지 (%2F -> /)
 
             HttpHeaders headers = new HttpHeaders();
@@ -55,17 +63,11 @@ public class OauthTokenProvider {
 
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    socialType.equals(SocialType.GOOGLE) ? "https://oauth2.googleapis.com/token" : "https://kauth.kakao.com/oauth/token",
-                    HttpMethod.POST, requestEntity, Map.class);
+            ResponseEntity<Map> response = restTemplate.exchange(oauthTokenApiUrl, HttpMethod.POST, requestEntity, Map.class);
 
-            Map<String, Object> responseBody = response.getBody();
-            if (responseBody != null && responseBody.containsKey("access_token")) {
-                return (String) responseBody.get("access_token");
-            } else {
-                throw new BusinessException(OAUTH_TOKEN_REQUEST_FAILED);
-            }
+            return (String) response.getBody().get("access_token");
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BusinessException(OAUTH_TOKEN_REQUEST_FAILED);
         }
     }

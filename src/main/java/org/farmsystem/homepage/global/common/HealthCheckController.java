@@ -11,7 +11,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 public class HealthCheckController implements HealthCheckApi {
-    private final JwtProvider jwtProvider;
 
     // 서버 상태 확인 API
     @GetMapping("/")
