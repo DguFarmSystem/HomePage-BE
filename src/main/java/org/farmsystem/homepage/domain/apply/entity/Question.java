@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.farmsystem.homepage.domain.common.entity.Track;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Question {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private ApplyTrack track;
+    private Track track;
 
     @Column(nullable = false)
     private Boolean isRequired;

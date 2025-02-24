@@ -1,7 +1,6 @@
 package org.farmsystem.homepage.global.common;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,8 @@ public class S3Service {
     private String bucketName;
 
     public String uploadFile(MultipartFile file, String directory) throws IOException {
-        String uniqueFileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
-        String filePath = uniqueFileName;
+        String fileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
+        String filePath = directory + "/" + fileName;
 
         try (InputStream inputStream = file.getInputStream()) {
             ObjectMetadata metadata = new ObjectMetadata();
@@ -35,15 +34,14 @@ public class S3Service {
 
             amazonS3.putObject(putObjectRequest);
         } catch (IOException e) {
-            throw new IOException("파일 업로드 중 오류 발생: " + e.getMessage(), e);
+            throw new IOException("S3 파일 업로드 중 오류 발생: " + e.getMessage(), e);
         }
 
         return amazonS3.getUrl(bucketName, filePath).toString();
     }
 
-
     private String getFileExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf(".");
-        return (lastDotIndex > 0) ? fileName.substring(lastDotIndex) : "";
+        return (lastDotIndex > 0) ? fileName.substring(lastDotIndex).toLowerCase() : "";
     }
 }

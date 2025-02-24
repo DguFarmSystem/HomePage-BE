@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.farmsystem.homepage.global.common.BaseTimeEntity;
-
-import java.time.LocalDateTime;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 
 @Getter
 @Entity

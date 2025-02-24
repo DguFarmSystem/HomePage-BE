@@ -32,10 +32,10 @@ public class SecurityConfig {
 
             /* api */
             "api/apply/**",
-            "api/user/token/**",
+            "api/auth/token/**",
+            "api/auth/login/**",
+            "api/auth/reissue/**",
             "api/user/verify/**",
-            "api/user/login/**",
-            "api/user/reissue/**",
             };
 
     @Bean

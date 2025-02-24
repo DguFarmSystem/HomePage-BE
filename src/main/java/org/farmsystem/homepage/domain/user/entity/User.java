@@ -1,15 +1,14 @@
 package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.farmsystem.homepage.global.common.BaseTimeEntity;
+import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
-
+@AllArgsConstructor
+@Builder
 @Getter
 @NoArgsConstructor
 @Table(name = "user")
@@ -24,6 +23,12 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
+    @Column
+    private String socialId;
+
     @Column(nullable = false, length = 10)
     private String name;
 
@@ -31,18 +36,22 @@ public class User extends BaseTimeEntity {
     private String studentNumber;
 
     @Setter
+    @Column(nullable = false, length = 50)
+    private String major;
+
+    @Setter
     @Column(length = 500)
     private String profileImageUrl;
 
     @Setter
-    @Column(nullable = true, length = 20)
+    @Column(nullable = false, length = 20)
     private String phoneNumber;
 
-    @Column(length = 100)
-    private String email;
+    @Column(nullable = false, length = 100)
+    private String notionAccount;
 
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType;
+    @Column(nullable = false, length = 100)
+    private String githubAccount;
 
     @Enumerated(EnumType.STRING)
     private Track track;
@@ -62,16 +71,4 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
 
-    @Builder
-    public User(String profileImageUrl,String name, String studentNumber, SocialType socialType, Role role) {
-        this.profileImageUrl = profileImageUrl;
-        this.name = name;
-        this.studentNumber = studentNumber;
-        this.socialType = socialType;
-        this.role = role;
-    }
-
-    public void updateRole(Role role) {
-        this.role = role;
-    }
 }
