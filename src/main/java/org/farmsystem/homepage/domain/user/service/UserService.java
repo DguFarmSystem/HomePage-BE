@@ -8,6 +8,7 @@ import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
@@ -85,6 +86,18 @@ public class UserService {
         return existedUser;
     }
 
+    public UserSearchResponseDTO searchUser(String query) {
+        User user = userRepository.findByName(query)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        return UserSearchResponseDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .profileImageUrl(user.getProfileImageUrl())
+                .track(user.getTrack())
+                .generation(user.getGeneration())
+                .build();
+    }
+
     private User getExistedUser(String socialId, SocialType socialType) {
         return userRepository.findBySocialTypeAndSocialId(socialType, socialId).orElse(null);
     }
@@ -94,6 +107,7 @@ public class UserService {
             throw new BusinessException(USER_ALREADY_EXISTS);
         }
     }
+
     private User createUserFromPassedUser(String studentNumber, UserLoginRequestDTO userLoginRequest, String socialId, String imageUrl) {
         PassedApply passedUser = passedApplyRepository.findByStudentNumber(studentNumber)
                 .orElseThrow(() -> new EntityNotFoundException(PASSED_USER_NOT_FOUND));
