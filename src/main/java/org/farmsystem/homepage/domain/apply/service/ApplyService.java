@@ -87,12 +87,20 @@ public class ApplyService {
     }
 
     public LoadApplyResponseDTO loadApply(LoadApplyRequestDTO request) {
-        Apply apply = applyRepository.findByStudentNumberAndPassword(request.studentNumber(), passwordEncoder.encode(request.password()))
+        Apply apply = applyRepository.findByStudentNumber(request.studentNumber())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
+        if (!passwordEncoder.matches(request.password(), apply.getPassword())) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
                 .updatedAt(apply.getUpdatedAt())
+                .name(apply.getName())
+                .major(apply.getMajor())
+                .phoneNumber(apply.getPhoneNumber())
+                .email(apply.getEmail())
+                .track(apply.getTrack())
                 .answers(apply.getAnswers().stream()
                         .map(answer -> AnswerDTO.builder()
                                 .questionId(answer.getQuestion().getQuestionId())

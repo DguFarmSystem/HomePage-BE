@@ -40,6 +40,7 @@ public class ApplyController {
         return SuccessResponse.ok(applyService.saveApply(request, true));
     }
 
+    // 지원서 불러오기
     @PostMapping("/load")
     public ResponseEntity<SuccessResponse<?>> loadApply(@RequestBody @Valid LoadApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.loadApply(request));

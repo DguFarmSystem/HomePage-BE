@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ApplyRepository extends JpaRepository<Apply, Long> {
 
-    Optional<Apply> findByStudentNumberAndPassword(String studentNumber, String password);
+    Optional<Apply> findByStudentNumber(String studentNumber);
 }
