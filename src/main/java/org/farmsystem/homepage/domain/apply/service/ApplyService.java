@@ -90,7 +90,7 @@ public class ApplyService {
         Apply apply = applyRepository.findByStudentNumber(request.studentNumber())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
         if (!passwordEncoder.matches(request.password(), apply.getPassword())) {
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+            throw new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD);
         }
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
@@ -118,6 +118,7 @@ public class ApplyService {
     private void handleApplyStatus(Apply apply, boolean isSubmit) {
         if (isSubmit) {
             applyStatusRepository.save(ApplyStatus.builder().studentNumber(apply.getStudentNumber()).build());
+            apply.updateStatus(ApplyStatusEnum.SUBMITTED);
         } else {
             if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
                 apply.updateStatus(ApplyStatusEnum.SAVED);
