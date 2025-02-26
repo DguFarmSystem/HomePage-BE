@@ -58,12 +58,8 @@ public class ApplyService {
     @Transactional
     public CreateApplyResponseDTO createApply(CreateApplyRequestDTO request) {
         Apply apply = Apply.builder()
-                .password(passwordEncoder.encode(request.password()))
-                .name(request.name())
-                .major(request.major())
                 .studentNumber(request.studentNumber())
-                .phoneNumber(request.phoneNumber())
-                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
         Apply savedApply = applyRepository.save(apply);
         return CreateApplyResponseDTO.builder()

@@ -22,7 +22,8 @@ public class ApplyController {
         return SuccessResponse.ok(applyService.getQuestions());
     }
 
-    @PostMapping("/info")
+    // 지원서 생성
+    @PostMapping
     public ResponseEntity<SuccessResponse<?>> createApply(@RequestBody @Valid CreateApplyRequestDTO request) {
         return SuccessResponse.created(applyService.createApply(request));
     }
