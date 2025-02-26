@@ -45,7 +45,7 @@ public class Apply extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private ApplyStatus status;
+    private ApplyStatusEnum status;
 
     @Builder
     public Apply(String password, String name, String major, String studentNumber, String phoneNumber, String email) {
@@ -55,13 +55,13 @@ public class Apply extends BaseTimeEntity {
         this.studentNumber = studentNumber;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.status = ApplyStatus.DRAFT;
+        this.status = ApplyStatusEnum.DRAFT;
     }
 
     @OneToMany(mappedBy = "apply")
     private List<Answer> answers = new ArrayList<>();
 
-    public void updateStatus(ApplyStatus status) {
+    public void updateStatus(ApplyStatusEnum status) {
         this.status = status;
     }
 }

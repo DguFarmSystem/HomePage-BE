@@ -73,7 +73,7 @@ public class ApplyService {
     public ApplyResponseDTO saveApply(ApplyRequestDTO request, boolean submitFlag) {
         Apply apply = applyRepository.findById(request.applyId())
                 .orElseThrow(ApplyNotFoundException::new);
-        if (apply.getStatus() == ApplyStatus.SUBMITTED) {
+        if (apply.getStatus() == ApplyStatusEnum.SUBMITTED) {
             throw new ApplyAlreadySubmittedException();
         }
         handleApplyStatus(apply, submitFlag);
@@ -109,10 +109,10 @@ public class ApplyService {
 
     private void handleApplyStatus(Apply apply, boolean isSubmit) {
         if (isSubmit) {
-            apply.updateStatus(ApplyStatus.SUBMITTED);
+            apply.updateStatus(ApplyStatusEnum.SUBMITTED);
         } else {
-            if (apply.getStatus() == ApplyStatus.DRAFT) {
-                apply.updateStatus(ApplyStatus.SAVED);
+            if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
+                apply.updateStatus(ApplyStatusEnum.SAVED);
             }
         }
     }
