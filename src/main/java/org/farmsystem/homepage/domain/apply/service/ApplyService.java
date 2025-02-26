@@ -31,6 +31,7 @@ public class ApplyService {
     private final ChoiceRepository choiceRepository;
     private final AnswerChoiceRepository answerChoiceRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplyStatusRepository applyStatusRepository;
 
     public List<QuestionDTO> getQuestions() {
         List<Question> questions = questionRepository.findAll();
@@ -71,14 +72,15 @@ public class ApplyService {
     public ApplyResponseDTO saveApply(ApplyRequestDTO request, boolean submitFlag) {
         Apply apply = applyRepository.findById(request.applyId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
-        if (apply.getStatus() == ApplyStatusEnum.SUBMITTED) {
+        if (applyStatusRepository.existsByStudentNumber(apply.getStudentNumber())) {
             throw new BusinessException(ErrorCode.APPLY_ALREADY_SUBMITTED);
         }
-        handleApplyStatus(apply, submitFlag);
+        handleApplyInfo(apply, request);
         switch (apply.getStatus()) {
             case DRAFT -> handleDraftStatus(apply, request);
-            case SAVED -> handleSavedStatus(request);
+            case SAVED -> handleSavedStatus(apply, request);
         }
+        handleApplyStatus(apply, submitFlag);
         return ApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .build();
@@ -107,12 +109,20 @@ public class ApplyService {
 
     private void handleApplyStatus(Apply apply, boolean isSubmit) {
         if (isSubmit) {
-            apply.updateStatus(ApplyStatusEnum.SUBMITTED);
+            applyStatusRepository.save(ApplyStatus.builder().studentNumber(apply.getStudentNumber()).build());
         } else {
             if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
                 apply.updateStatus(ApplyStatusEnum.SAVED);
             }
         }
+    }
+
+    private void handleApplyInfo(Apply apply, ApplyRequestDTO request) {
+        apply.updateName(request.name());
+        apply.updateMajor(request.major());
+        apply.updatePhoneNumber(request.phoneNumber());
+        apply.updateEmail(request.email());
+        apply.updateTrack(request.track());
     }
 
     private void handleDraftStatus(Apply apply, ApplyRequestDTO request) {
@@ -128,10 +138,18 @@ public class ApplyService {
         }
     }
 
-    private void handleSavedStatus(ApplyRequestDTO request) {
+    private void handleSavedStatus(Apply apply, ApplyRequestDTO request) {
         for (AnswerDTO answer : request.answers()) {
             Answer savedAnswer = answerRepository.findByApplyApplyIdAndQuestionQuestionId(request.applyId(), answer.questionId())
-                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ANSWER_NOT_FOUND));
+                    .orElseGet(() -> {
+                        Question question = questionRepository.findById(answer.questionId())
+                                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.QUESTION_NOT_FOUND));
+                        Answer newAnswer = Answer.builder()
+                                .apply(apply)
+                                .question(question)
+                                .build();
+                        return answerRepository.save(newAnswer);
+                    });
             savedAnswer.updateContent(answer.content());
             answerChoiceRepository.deleteByAnswerAnswerId(savedAnswer.getAnswerId());
             saveAnswerChoices(answer, savedAnswer);

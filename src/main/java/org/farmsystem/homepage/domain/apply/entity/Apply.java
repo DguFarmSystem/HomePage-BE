@@ -64,4 +64,24 @@ public class Apply extends BaseTimeEntity {
     public void updateStatus(ApplyStatusEnum status) {
         this.status = status;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateMajor(String major) {
+        this.major = major;
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updateTrack(Track track) {
+        this.track = track;
+    }
 }
