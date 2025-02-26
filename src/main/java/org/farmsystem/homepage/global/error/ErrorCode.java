@@ -56,11 +56,11 @@ public enum ErrorCode {
     /**
      * Apply Error
      */
-    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원 내용을 찾을 수 없습니다."),
+    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "질문을 찾을 수 없습니다."),
     CHOICE_NOT_FOUND(HttpStatus.NOT_FOUND, "선택지를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
-    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다."),
+    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원서입니다."),
 
     /**
      * User Error
