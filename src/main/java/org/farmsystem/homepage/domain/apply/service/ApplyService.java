@@ -9,8 +9,10 @@ import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.entity.*;
-import org.farmsystem.homepage.domain.apply.exception.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
+import org.farmsystem.homepage.global.error.ErrorCode;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
+import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,9 +74,9 @@ public class ApplyService {
     @Transactional
     public ApplyResponseDTO saveApply(ApplyRequestDTO request, boolean submitFlag) {
         Apply apply = applyRepository.findById(request.applyId())
-                .orElseThrow(ApplyNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
         if (apply.getStatus() == ApplyStatusEnum.SUBMITTED) {
-            throw new ApplyAlreadySubmittedException();
+            throw new BusinessException(ErrorCode.APPLY_ALREADY_SUBMITTED);
         }
         handleApplyStatus(apply, submitFlag);
         switch (apply.getStatus()) {
@@ -88,7 +90,7 @@ public class ApplyService {
 
     public LoadApplyResponseDTO loadApply(LoadApplyRequestDTO request) {
         Apply apply = applyRepository.findByStudentNumberAndPassword(request.studentNumber(), passwordEncoder.encode(request.password()))
-                .orElseThrow(ApplyNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
@@ -120,7 +122,7 @@ public class ApplyService {
     private void handleDraftStatus(Apply apply, ApplyRequestDTO request) {
         for (AnswerDTO answer : request.answers()) {
             Question question = questionRepository.findById(answer.questionId())
-                    .orElseThrow(QuestionNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.QUESTION_NOT_FOUND));
             Answer savedAnswer = answerRepository.save(Answer.builder()
                     .content(answer.content())
                     .apply(apply)
@@ -133,7 +135,7 @@ public class ApplyService {
     private void handleSavedStatus(ApplyRequestDTO request) {
         for (AnswerDTO answer : request.answers()) {
             Answer savedAnswer = answerRepository.findByApplyApplyIdAndQuestionQuestionId(request.applyId(), answer.questionId())
-                    .orElseThrow(AnswerNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ANSWER_NOT_FOUND));
             savedAnswer.updateContent(answer.content());
             answerChoiceRepository.deleteByAnswerAnswerId(savedAnswer.getAnswerId());
             saveAnswerChoices(answer, savedAnswer);
@@ -144,7 +146,7 @@ public class ApplyService {
         if (answer.choiceId() != null) {
             for (Long choiceId : answer.choiceId()) {
                 Choice choice = choiceRepository.findById(choiceId)
-                        .orElseThrow(ChoiceNotFoundException::new);
+                        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CHOICE_NOT_FOUND));
                 AnswerChoice answerChoice = AnswerChoice.builder()
                         .id(AnswerChoiceId.builder()
                                 .answerId(savedAnswer.getAnswerId())
