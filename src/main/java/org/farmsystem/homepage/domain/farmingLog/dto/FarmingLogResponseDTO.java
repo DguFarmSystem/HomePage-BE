@@ -3,7 +3,7 @@ package org.farmsystem.homepage.domain.farmingLog.dto;
 import org.farmsystem.homepage.domain.farmingLog.entity.FarmingLog;
 import org.farmsystem.homepage.domain.user.entity.User;
 
-public record FarmingLogResponseDto(
+public record FarmingLogResponseDTO(
         Long farmingLogId,
         String title,
         String content,
@@ -17,10 +17,10 @@ public record FarmingLogResponseDto(
         boolean isLiked,
         long likeCount
 ) {
-    public static FarmingLogResponseDto from(FarmingLog farmingLog, Long currentUserId, boolean isLiked, long likeCount) {
+    public static FarmingLogResponseDTO from(FarmingLog farmingLog, Long currentUserId, boolean isLiked, long likeCount) {
         User user = farmingLog.getUser();
 
-        return new FarmingLogResponseDto(
+        return new FarmingLogResponseDTO(
                 farmingLog.getFarmingLogId(),
                 farmingLog.getTitle(),
                 farmingLog.getContent(),

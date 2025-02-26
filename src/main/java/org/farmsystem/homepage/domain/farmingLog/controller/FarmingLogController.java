@@ -1,8 +1,8 @@
 package org.farmsystem.homepage.domain.farmingLog.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogRequestDto;
-import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogResponseDto;
+import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogRequestDTO;
+import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogResponseDTO;
 import org.farmsystem.homepage.domain.farmingLog.service.FarmingLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,25 +17,25 @@ public class FarmingLogController {
     private final FarmingLogService farmingLogService;
 
     @GetMapping
-    public Page<FarmingLogResponseDto> getAllFarmingLogs(@AuthenticationPrincipal Long userId, Pageable pageable) {
+    public Page<FarmingLogResponseDTO> getAllFarmingLogs(@AuthenticationPrincipal Long userId, Pageable pageable) {
         return farmingLogService.getAllFarmingLogs(userId, pageable);
     }
 
     @GetMapping("/my")
-    public Page<FarmingLogResponseDto> getMyFarmingLogs(@AuthenticationPrincipal Long userId, Pageable pageable) {
+    public Page<FarmingLogResponseDTO> getMyFarmingLogs(@AuthenticationPrincipal Long userId, Pageable pageable) {
         return farmingLogService.getMyFarmingLogs(userId, pageable);
     }
 
     @PostMapping
-    public FarmingLogResponseDto createFarmingLog(@AuthenticationPrincipal Long userId,
-                                                  @RequestBody FarmingLogRequestDto requestDto) {
+    public FarmingLogResponseDTO createFarmingLog(@AuthenticationPrincipal Long userId,
+                                                  @RequestBody FarmingLogRequestDTO requestDto) {
         return farmingLogService.createFarmingLog(userId, requestDto);
     }
 
     @PatchMapping("/{farmingLogId}")
-    public FarmingLogResponseDto updateFarmingLog(@AuthenticationPrincipal Long userId,
+    public FarmingLogResponseDTO updateFarmingLog(@AuthenticationPrincipal Long userId,
                                                   @PathVariable Long farmingLogId,
-                                                  @RequestBody FarmingLogRequestDto requestDto) {
+                                                  @RequestBody FarmingLogRequestDTO requestDto) {
         return farmingLogService.updateFarmingLog(userId, farmingLogId, requestDto);
     }
 

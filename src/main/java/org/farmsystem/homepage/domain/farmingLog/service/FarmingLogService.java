@@ -1,8 +1,8 @@
 package org.farmsystem.homepage.domain.farmingLog.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogRequestDto;
-import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogResponseDto;
+import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogRequestDTO;
+import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogResponseDTO;
 import org.farmsystem.homepage.domain.farmingLog.entity.FarmingLog;
 import org.farmsystem.homepage.domain.farmingLog.repository.FarmingLogLikeRepository;
 import org.farmsystem.homepage.domain.farmingLog.repository.FarmingLogRepository;
@@ -23,15 +23,15 @@ public class FarmingLogService {
     private final FarmingLogLikeRepository farmingLogLikeRepository;
     private final UserRepository userRepository;
 
-    private FarmingLogResponseDto mapToFarmingLogResponse(FarmingLog farmingLog, User currentUser) {
+    private FarmingLogResponseDTO mapToFarmingLogResponse(FarmingLog farmingLog, User currentUser) {
         boolean isLiked = farmingLogLikeRepository.existsByUserAndFarmingLog(currentUser, farmingLog);
         long likeCount = farmingLogLikeRepository.countByFarmingLog(farmingLog);
 
-        return FarmingLogResponseDto.from(farmingLog, currentUser.getUserId(), isLiked, likeCount);
+        return FarmingLogResponseDTO.from(farmingLog, currentUser.getUserId(), isLiked, likeCount);
     }
 
     @Transactional(readOnly = true)
-    public Page<FarmingLogResponseDto> getAllFarmingLogs(Long userId, Pageable pageable) {
+    public Page<FarmingLogResponseDTO> getAllFarmingLogs(Long userId, Pageable pageable) {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -40,7 +40,7 @@ public class FarmingLogService {
     }
 
     @Transactional(readOnly = true)
-    public Page<FarmingLogResponseDto> getMyFarmingLogs(Long userId, Pageable pageable) {
+    public Page<FarmingLogResponseDTO> getMyFarmingLogs(Long userId, Pageable pageable) {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -49,7 +49,7 @@ public class FarmingLogService {
     }
 
     @Transactional
-    public FarmingLogResponseDto createFarmingLog(Long userId, FarmingLogRequestDto requestDto) {
+    public FarmingLogResponseDTO createFarmingLog(Long userId, FarmingLogRequestDTO requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -61,11 +61,11 @@ public class FarmingLogService {
                 .build();
 
         farmingLogRepository.save(farmingLog);
-        return FarmingLogResponseDto.from(farmingLog, userId, false, 0);
+        return FarmingLogResponseDTO.from(farmingLog, userId, false, 0);
     }
 
     @Transactional
-    public FarmingLogResponseDto updateFarmingLog(Long userId, Long farmingLogId, FarmingLogRequestDto requestDto) {
+    public FarmingLogResponseDTO updateFarmingLog(Long userId, Long farmingLogId, FarmingLogRequestDTO requestDto) {
         FarmingLog farmingLog = farmingLogRepository.findById(farmingLogId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUNT));
 
@@ -74,7 +74,7 @@ public class FarmingLogService {
         }
 
         farmingLog.update(requestDto.title(), requestDto.content(), requestDto.category());
-        return FarmingLogResponseDto.from(farmingLog, userId, false, 0);
+        return FarmingLogResponseDTO.from(farmingLog, userId, false, 0);
     }
 
     @Transactional
