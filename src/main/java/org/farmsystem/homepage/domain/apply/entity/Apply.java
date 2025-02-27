@@ -13,7 +13,10 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "apply")
+@Table(
+        name = "apply",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"student_number", "password"})
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Apply extends BaseTimeEntity {
 
@@ -45,7 +48,7 @@ public class Apply extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private ApplyStatus status;
+    private ApplyStatusEnum status;
 
     @Builder
     public Apply(String password, String name, String major, String studentNumber, String phoneNumber, String email) {
@@ -55,13 +58,33 @@ public class Apply extends BaseTimeEntity {
         this.studentNumber = studentNumber;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.status = ApplyStatus.DRAFT;
+        this.status = ApplyStatusEnum.DRAFT;
     }
 
     @OneToMany(mappedBy = "apply")
     private List<Answer> answers = new ArrayList<>();
 
-    public void updateStatus(ApplyStatus status) {
+    public void updateStatus(ApplyStatusEnum status) {
         this.status = status;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateMajor(String major) {
+        this.major = major;
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updateTrack(Track track) {
+        this.track = track;
     }
 }

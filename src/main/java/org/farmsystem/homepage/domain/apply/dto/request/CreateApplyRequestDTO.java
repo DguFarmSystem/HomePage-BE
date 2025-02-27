@@ -1,5 +1,15 @@
 package org.farmsystem.homepage.domain.apply.dto.request;
 
-public record CreateApplyRequestDTO(String password, String name, String major, String studentNumber, String phoneNumber, String email) {
-    // TODO: Validation 추가
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record CreateApplyRequestDTO(
+        @NotBlank
+        @Size(min = 10, max = 10)
+        String studentNumber,
+
+        @NotBlank
+        @Size(min = 6, max = 6)
+        String password
+) {
 }

@@ -22,21 +22,25 @@ public class ApplyController {
         return SuccessResponse.ok(applyService.getQuestions());
     }
 
-    @PostMapping("/info")
+    // 지원서 생성
+    @PostMapping
     public ResponseEntity<SuccessResponse<?>> createApply(@RequestBody @Valid CreateApplyRequestDTO request) {
         return SuccessResponse.created(applyService.createApply(request));
     }
 
+    // 지원서 임시저장
     @PostMapping("/save")
     public ResponseEntity<SuccessResponse<?>> saveApply(@RequestBody @Valid ApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.saveApply(request, false));
     }
 
+    // 지원서 제출
     @PostMapping("/submit")
     public ResponseEntity<SuccessResponse<?>> submitApply(@RequestBody @Valid ApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.saveApply(request, true));
     }
 
+    // 지원서 불러오기
     @PostMapping("/load")
     public ResponseEntity<SuccessResponse<?>> loadApply(@RequestBody @Valid LoadApplyRequestDTO request) {
         return SuccessResponse.ok(applyService.loadApply(request));
