@@ -34,7 +34,7 @@ public class ApplyService {
     private final ApplyStatusRepository applyStatusRepository;
 
     public List<QuestionDTO> getQuestions() {
-        List<Question> questions = questionRepository.findAll();
+        List<Question> questions = questionRepository.findAllByOrderByTrackAscPriorityAsc();
         return questions.stream()
                 .map(question -> QuestionDTO.builder()
                         .questionId(question.getQuestionId())
