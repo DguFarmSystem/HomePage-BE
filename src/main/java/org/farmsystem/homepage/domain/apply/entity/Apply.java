@@ -27,19 +27,19 @@ public class Apply extends BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String major;
 
     @Column(nullable = false, length = 20)
     private String studentNumber;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private String phoneNumber;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String email;
 
     @Enumerated(EnumType.STRING)
