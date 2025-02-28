@@ -2,7 +2,6 @@ package org.farmsystem.homepage.domain.apply.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +15,6 @@ public class ApplyStatus {
     @Column(nullable = false, length = 20)
     private String studentNumber;
 
-    @Builder
     public ApplyStatus(String studentNumber) {
         this.studentNumber = studentNumber;
     }

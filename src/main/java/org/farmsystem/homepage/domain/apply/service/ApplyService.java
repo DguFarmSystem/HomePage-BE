@@ -117,12 +117,10 @@ public class ApplyService {
 
     private void handleApplyStatus(Apply apply, boolean isSubmit) {
         if (isSubmit) {
-            applyStatusRepository.save(ApplyStatus.builder().studentNumber(apply.getStudentNumber()).build());
+            applyStatusRepository.save(new ApplyStatus(apply.getStudentNumber()));
             apply.updateStatus(ApplyStatusEnum.SUBMITTED);
-        } else {
-            if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
-                apply.updateStatus(ApplyStatusEnum.SAVED);
-            }
+        } else if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
+            apply.updateStatus(ApplyStatusEnum.SAVED);
         }
     }
 
