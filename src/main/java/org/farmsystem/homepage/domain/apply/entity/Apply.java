@@ -13,10 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(
-        name = "apply",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"student_number", "password"})
-)
+@Table(name = "apply")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Apply extends BaseTimeEntity {
 
