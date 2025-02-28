@@ -5,6 +5,7 @@ import org.farmsystem.homepage.domain.blog.dto.request.BlogRequestDTO;
 import org.farmsystem.homepage.domain.blog.dto.response.BlogResponseDTO;
 import org.farmsystem.homepage.domain.blog.dto.response.MyApplicationResponseDTO;
 import org.farmsystem.homepage.domain.blog.service.BlogService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -46,4 +47,16 @@ public class BlogController {
     public ResponseEntity<List<MyApplicationResponseDTO>> getMyBlogs(@AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(blogService.getMyBlogs(userId));
     }
+
+    /**
+     * 홍보 페이지에서 게시(승인)된 블로그 페이지로 조회
+     */
+    @GetMapping("/page")
+    public ResponseEntity<Page<BlogResponseDTO>> getApprovedBlogsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(blogService.getApprovedBlogsPaged(page, size));
+    }
+
 }
