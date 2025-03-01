@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 @RestController
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final OauthService oauthService;
     private final TokenService tokenService;
@@ -30,21 +30,21 @@ public class AuthController {
 
     // 소셜 로그인
     @PostMapping("/login")
-    ResponseEntity<SuccessResponse<?>> socialLogin(@RequestBody UserLoginRequestDTO userLoginRequest) throws JsonProcessingException {
+    public ResponseEntity<SuccessResponse<?>> socialLogin(@RequestBody UserLoginRequestDTO userLoginRequest) {
         UserTokenResponseDTO userToken = oauthService.socialLogin(userLoginRequest);
         return SuccessResponse.ok(userToken);
     }
 
     // 로그아웃
     @PostMapping("/logout")
-    ResponseEntity<SuccessResponse<?>> logout(@AuthenticationPrincipal Long userId) {
+    public ResponseEntity<SuccessResponse<?>> logout(@AuthenticationPrincipal Long userId) {
         tokenService.logout(userId);
         return SuccessResponse.ok(null);
     }
 
     // 리프레쉬 토큰 재발급
     @PostMapping("/reissue")
-    public ResponseEntity<SuccessResponse<?>> reissueToken(@RequestBody UserTokenRequestDTO uerTokenRequest) throws JsonProcessingException {
+    public ResponseEntity<SuccessResponse<?>> reissueToken(@RequestBody UserTokenRequestDTO uerTokenRequest) {
         UserTokenResponseDTO userToken = tokenService.reissue(uerTokenRequest);
         return SuccessResponse.ok(userToken);
     }
