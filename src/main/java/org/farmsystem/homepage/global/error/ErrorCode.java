@@ -76,6 +76,7 @@ public enum ErrorCode {
      */
     OAUTH_TOKEN_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 토큰 요청에 실패하였습니다."),
     OAUTH_USER_RESOURCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 사용자 정보 조회에 실패하였습니다."),
+    JSON_PARSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 파싱에 실패하였습니다."),
     ;
 
     private final HttpStatus httpStatus;
