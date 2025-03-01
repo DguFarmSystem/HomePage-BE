@@ -15,7 +15,7 @@ import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-리
+
 @Tag(name = "인증 API", description = "인증 관련 API")
 public interface AuthApi {
 
