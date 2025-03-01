@@ -49,18 +49,20 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
 
     /**
-     * news 관련 에러 처리
+     * News Error
      */
     NEWS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 뉴스를 찾을 수 없습니다."),
   
     /**
      * Apply Error
      */
-    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원 내용을 찾을 수 없습니다."),
+    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "질문을 찾을 수 없습니다."),
     CHOICE_NOT_FOUND(HttpStatus.NOT_FOUND, "선택지를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
-    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다."),
+    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원서입니다."),
+    APPLY_INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+    APPLY_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 지원서입니다."),
 
     /**
      * User Error
@@ -77,6 +79,10 @@ public enum ErrorCode {
     OAUTH_TOKEN_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 토큰 요청에 실패하였습니다."),
     OAUTH_USER_RESOURCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 사용자 정보 조회에 실패하였습니다."),
     JSON_PARSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 파싱에 실패하였습니다."),
+    /**
+     * Farming Log Error
+     */
+    FARMING_LOG_NOT_FOUNT(HttpStatus.NOT_FOUND, "파밍로그를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
