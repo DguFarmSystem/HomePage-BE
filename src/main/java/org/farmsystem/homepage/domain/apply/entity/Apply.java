@@ -30,7 +30,7 @@ public class Apply extends BaseTimeEntity {
     @Column(nullable = false, length = 50)
     private String major;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String studentNumber;
 
     @Column(nullable = false, length = 20)
