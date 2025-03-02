@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +13,9 @@ import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${api.base-url}")
+    private String baseUrl;
 
     @Bean
     public OpenAPI openAPI() {
@@ -29,8 +33,12 @@ public class SwaggerConfig {
 
         Components components = new Components().addSecuritySchemes("token", securityScheme);
 
+        Server server = new Server();
+        server.setUrl(baseUrl);
+
         return new OpenAPI()
                 .info(info)
-                .components(components);
+                .components(components)
+                .addServersItem(server);
     }
 }

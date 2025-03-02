@@ -8,16 +8,15 @@ import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.service.UserService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 @RestController
-public class UserController {
+public class UserController implements UserApi {
     private final UserService userService;
 
     // 사용자 회원 인증 API
@@ -35,9 +34,9 @@ public class UserController {
     }
 
     // 사용자 정보 수정 API
-    @PutMapping("/mypage")
+    @PatchMapping(value = "/mypage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse<?>> updateUserInfo(@AuthenticationPrincipal Long userId,
-                                                             @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest) throws IOException {
+                                                             @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest) {
         UserInfoResponseDTO updatedUserInfo = userService.updateUserInfo(userId, userInfoRequest);
         return SuccessResponse.ok(updatedUserInfo);
     }
