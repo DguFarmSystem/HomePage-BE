@@ -34,7 +34,7 @@ public class UserController implements UserApi {
     }
 
     // 사용자 정보 수정 API
-    @PutMapping(value = "/mypage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/mypage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse<?>> updateUserInfo(@AuthenticationPrincipal Long userId,
                                                              @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest) {
         UserInfoResponseDTO updatedUserInfo = userService.updateUserInfo(userId, userInfoRequest);
