@@ -34,7 +34,7 @@ public class ApplyService {
     private final ApplyStatusRepository applyStatusRepository;
 
     public List<QuestionDTO> getQuestions() {
-        List<Question> questions = questionRepository.findAll();
+        List<Question> questions = questionRepository.findAllByOrderByTrackAscPriorityAsc();
         return questions.stream()
                 .map(question -> QuestionDTO.builder()
                         .questionId(question.getQuestionId())
@@ -58,6 +58,10 @@ public class ApplyService {
 
     @Transactional
     public CreateApplyResponseDTO createApply(CreateApplyRequestDTO request) {
+        List<Apply> applies = applyRepository.findAllByStudentNumber(request.studentNumber());
+        if (applies.stream().anyMatch(apply -> passwordEncoder.matches(request.password(), apply.getPassword()))) {
+            throw new BusinessException(ErrorCode.APPLY_ALREADY_EXIST);
+        }
         Apply apply = Apply.builder()
                 .studentNumber(request.studentNumber())
                 .password(passwordEncoder.encode(request.password()))
@@ -117,12 +121,10 @@ public class ApplyService {
 
     private void handleApplyStatus(Apply apply, boolean isSubmit) {
         if (isSubmit) {
-            applyStatusRepository.save(ApplyStatus.builder().studentNumber(apply.getStudentNumber()).build());
+            applyStatusRepository.save(new ApplyStatus(apply.getStudentNumber()));
             apply.updateStatus(ApplyStatusEnum.SUBMITTED);
-        } else {
-            if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
-                apply.updateStatus(ApplyStatusEnum.SAVED);
-            }
+        } else if (apply.getStatus() == ApplyStatusEnum.DRAFT) {
+            apply.updateStatus(ApplyStatusEnum.SAVED);
         }
     }
 

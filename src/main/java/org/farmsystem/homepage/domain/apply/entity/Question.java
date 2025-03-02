@@ -43,5 +43,6 @@ public class Question {
     private List<Answer> answers = new ArrayList<>();
 
     @OneToMany(mappedBy = "question")
+    @OrderBy("priority ASC")
     private List<Choice> choices =  new ArrayList<>();
 }
