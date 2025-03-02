@@ -95,11 +95,11 @@ public class ApplyService {
 
     // 지원서 불러오기
     public LoadApplyResponseDTO loadApply(LoadApplyRequestDTO request) {
-        Apply apply = applyRepository.findByStudentNumber(request.studentNumber())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
-        if (!passwordEncoder.matches(request.password(), apply.getPassword())) {
-            throw new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD);
-        }
+        List<Apply> applies = applyRepository.findAllByStudentNumber(request.studentNumber());
+        Apply apply = applies.stream()
+                .filter(applyItem -> passwordEncoder.matches(request.password(), applyItem.getPassword()))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD));
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
