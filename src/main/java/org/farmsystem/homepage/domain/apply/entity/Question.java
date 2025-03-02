@@ -37,6 +37,7 @@ public class Question {
 
     private Boolean isDuplicated;
 
+    @Column(nullable = false)
     private int priority;
 
     @OneToMany(mappedBy = "question")
