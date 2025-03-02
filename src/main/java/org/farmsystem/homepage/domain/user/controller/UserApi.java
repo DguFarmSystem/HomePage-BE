@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public interface UserApi {
 
     @Operation(
-            summary = "사용자 인증 API",
+            summary = "사용자 회원 인증 API",
             description = "주어진 학번을 통해 인증된 사용자(팜 회원)인지 확인하고 사용자 이름(확인용)을 반환하는 API입니다. "
     )
     @ApiResponses({
