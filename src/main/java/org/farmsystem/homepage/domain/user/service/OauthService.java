@@ -10,6 +10,8 @@ import org.farmsystem.homepage.domain.user.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -31,13 +33,9 @@ public class OauthService {
         JsonNode userResource = oauthUserResourceProvider.getUserResource(oauthToken, socialType);
 
         // 사용자 정보 처리
-        String socialId = socialType.equals(SocialType.GOOGLE)
-                ? userResource.path("sub").asText()
-                : userResource.path("id").asText();
-
-        String imageUrl = socialType.equals(SocialType.GOOGLE)
-                ? userResource.path("picture").asText()
-                : userResource.path("kakao_account").path("profile").path("profile_image_url").asText();
+        Map<String, String> userInfo = oauthUserResourceProvider.extractUserInfo(userResource, socialType);
+        String socialId = userInfo.get("socialId");
+        String imageUrl = userInfo.get("imageUrl");
 
         // 사용자 저장
         User user = userService.saveUser(socialId, imageUrl, userLoginRequest);
@@ -46,5 +44,8 @@ public class OauthService {
         return tokenService.issueToken(user.getUserId(), user.getRole());
 
     }
+
+
+
 
 }
