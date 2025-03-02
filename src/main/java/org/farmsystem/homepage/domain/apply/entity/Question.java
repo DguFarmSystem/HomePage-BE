@@ -37,7 +37,7 @@ public class Question {
 
     private Boolean isDuplicated;
 
-    private Integer priority;
+    private int priority;
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();

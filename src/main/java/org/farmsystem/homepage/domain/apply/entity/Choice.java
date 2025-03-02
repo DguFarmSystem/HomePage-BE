@@ -25,7 +25,7 @@ public class Choice {
     @Column(nullable = false, length = 50)
     private String content;
 
-    private Integer priority;
+    private int priority;
 
     @OneToMany(mappedBy = "choice")
     private List<AnswerChoice> answerChoices = new ArrayList<>();
