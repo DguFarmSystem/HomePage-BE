@@ -3,13 +3,11 @@ package org.farmsystem.homepage.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
+import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.*;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
@@ -22,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.farmsystem.homepage.global.error.ErrorCode.*;
 
@@ -96,6 +96,20 @@ public class UserService {
                 .track(user.getTrack())
                 .generation(user.getGeneration())
                 .build();
+    }
+
+    public List<UserSearchResponseDTO> searchUserSuggest(String query) {
+        List<User> userList = userRepository.findByNameJamoStartsWith(JamoUtil.convertToJamo(query));
+        return userList.stream()
+                .map(user -> UserSearchResponseDTO.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .profileImageUrl(user.getProfileImageUrl())
+                        .track(user.getTrack())
+                        .generation(user.getGeneration())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     private User getExistedUser(String socialId, SocialType socialType) {

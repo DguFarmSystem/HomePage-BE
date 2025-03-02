@@ -47,4 +47,10 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> searchUser(@RequestParam String query) {
         return SuccessResponse.ok(userService.searchUser(query));
     }
+
+    // 사용자 검색 자동완성 API
+    @GetMapping("/suggest")
+    public ResponseEntity<SuccessResponse<?>> searchUserSuggest(@RequestParam String query) {
+        return SuccessResponse.ok(userService.searchUserSuggest(query));
+    }
 }
