@@ -33,6 +33,7 @@ public class ApplyService {
     private final PasswordEncoder passwordEncoder;
     private final ApplyStatusRepository applyStatusRepository;
 
+    // 전체 질문 조회
     public List<QuestionDTO> getQuestions() {
         List<Question> questions = questionRepository.findAllByOrderByTrackAscPriorityAsc();
         return questions.stream()
@@ -56,6 +57,7 @@ public class ApplyService {
                 .collect(Collectors.toList());
     }
 
+    // 지원서 생성
     @Transactional
     public CreateApplyResponseDTO createApply(CreateApplyRequestDTO request) {
         List<Apply> applies = applyRepository.findAllByStudentNumber(request.studentNumber());
@@ -72,6 +74,7 @@ public class ApplyService {
                 .build();
     }
 
+    // 지원서 임시저장/제출
     @Transactional
     public ApplyResponseDTO saveApply(ApplyRequestDTO request, boolean submitFlag) {
         Apply apply = applyRepository.findById(request.applyId())
@@ -90,12 +93,13 @@ public class ApplyService {
                 .build();
     }
 
+    // 지원서 불러오기
     public LoadApplyResponseDTO loadApply(LoadApplyRequestDTO request) {
-        Apply apply = applyRepository.findByStudentNumber(request.studentNumber())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
-        if (!passwordEncoder.matches(request.password(), apply.getPassword())) {
-            throw new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD);
-        }
+        List<Apply> applies = applyRepository.findAllByStudentNumber(request.studentNumber());
+        Apply apply = applies.stream()
+                .filter(applyItem -> passwordEncoder.matches(request.password(), applyItem.getPassword()))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD));
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
@@ -119,6 +123,7 @@ public class ApplyService {
                 .build();
     }
 
+    // 지원서 상태 처리
     private void handleApplyStatus(Apply apply, boolean isSubmit) {
         if (isSubmit) {
             applyStatusRepository.save(new ApplyStatus(apply.getStudentNumber()));
@@ -128,6 +133,7 @@ public class ApplyService {
         }
     }
 
+    // 지원서 개인정보 업데이트
     private void handleApplyInfo(Apply apply, ApplyRequestDTO request) {
         apply.updateName(request.name());
         apply.updateMajor(request.major());
@@ -136,6 +142,7 @@ public class ApplyService {
         apply.updateTrack(request.track());
     }
 
+    // 최초작성 상태에서 저장/제출 처리
     private void handleDraftStatus(Apply apply, ApplyRequestDTO request) {
         for (AnswerDTO answer : request.answers()) {
             Question question = questionRepository.findById(answer.questionId())
@@ -149,6 +156,7 @@ public class ApplyService {
         }
     }
 
+    // 임시저장 상태에서 저장/제출 처리
     private void handleSavedStatus(Apply apply, ApplyRequestDTO request) {
         for (AnswerDTO answer : request.answers()) {
             Answer savedAnswer = answerRepository.findByApplyApplyIdAndQuestionQuestionId(request.applyId(), answer.questionId())
@@ -167,6 +175,7 @@ public class ApplyService {
         }
     }
 
+    // 선택지 저장 처리
     private void saveAnswerChoices(AnswerDTO answer, Answer savedAnswer) {
         if (answer.choiceId() != null) {
             for (Long choiceId : answer.choiceId()) {
