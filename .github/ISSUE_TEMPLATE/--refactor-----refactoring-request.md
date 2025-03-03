@@ -1,7 +1,7 @@
 ---
 name: "[ refactor ] - refactoring request"
 about: "♻️ Refactor Template"
-title: "[ refactor ] - "
+title: "[ refactor ] "
 labels: "♻️ refactor"
 assignees: ''
 
