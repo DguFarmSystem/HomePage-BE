@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class Answer {
     }
 
     @OneToMany(mappedBy = "answer")
+    @BatchSize(size = 5)
     private List<AnswerChoice> answerChoices = new ArrayList<>();
 
     public void updateContent(String content) {
