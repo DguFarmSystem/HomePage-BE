@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+
 import static org.farmsystem.homepage.global.error.ErrorCode.OAUTH_USER_RESOURCE_FAILED;
 
 // OAuth 토큰으로 사용자 정보 요청 클래스
@@ -41,5 +43,16 @@ public class OauthUserResourceProvider {
             e.printStackTrace();
             throw new BusinessException(OAUTH_USER_RESOURCE_FAILED);
         }
+    }
+
+    public Map<String, String> extractUserInfo(JsonNode userResource, SocialType socialType) {
+        String socialId = socialType.equals(SocialType.GOOGLE)
+                ? userResource.path("sub").asText()
+                : userResource.path("id").asText();
+
+        String imageUrl = socialType.equals(SocialType.GOOGLE)
+                ? userResource.path("picture").asText()
+                : userResource.path("kakao_account").path("profile").path("profile_image_url").asText();
+        return Map.of("socialId", socialId, "imageUrl", imageUrl);
     }
 }
