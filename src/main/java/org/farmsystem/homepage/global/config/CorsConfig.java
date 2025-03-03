@@ -17,6 +17,9 @@ public class CorsConfig implements WebMvcConfigurer {
     @Value("${deployment.frontend.production}")
     private String frontendProduction;
 
+    @Value("${deployment.frontend.www-production}")
+    private String frontendWwwProduction;
+
     @Value("${deployment.frontend.test}")
     private String frontendTest;
 
@@ -36,6 +39,7 @@ public class CorsConfig implements WebMvcConfigurer {
         List<String> allowedOrigins = Arrays.asList(
                 "http://localhost:5173",
                 frontendProduction,
+                frontendWwwProduction,
                 frontendTest,
                 backendProduction,
                 backendTest
