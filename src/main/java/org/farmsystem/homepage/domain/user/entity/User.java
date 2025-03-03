@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
+import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
@@ -68,7 +69,14 @@ public class User extends BaseTimeEntity {
     @ColumnDefault("0")
     private int totalSeed;
 
+    @Column(nullable = false, length = 100)
+    private String nameJamo;
+
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
 
+    @PrePersist
+    public void initNameJamo() {
+        this.nameJamo = JamoUtil.convertToJamo(this.name);
+    }
 }
