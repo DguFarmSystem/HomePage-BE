@@ -4,6 +4,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
+import org.farmsystem.homepage.global.error.exception.InvalidValueException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,8 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static org.farmsystem.homepage.global.error.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3Service {
 
     private final AmazonS3 amazonS3;
@@ -21,7 +27,14 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    public String uploadFile(MultipartFile file, String directory) throws IOException {
+    @Value("${spring.servlet.multipart.maxFileSize}")
+    private String maxFileSize;
+
+    @Value("${s3.profile-directory}")
+    private String profileDirectory;
+
+    // 파일 업로드
+    public String uploadFile(MultipartFile file, String directory) {
         String fileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
         return uploadFileToS3(file, directory, fileName);
     }
@@ -53,19 +66,12 @@ public class S3Service {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
-
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, filePath, inputStream, metadata);
-
             amazonS3.putObject(putObjectRequest);
         } catch (IOException e) {
-            throw new IOException("S3 파일 업로드 중 오류 발생: " + e.getMessage(), e);
+            log.error("S3 파일 업로드 실패", e);
+            throw new BusinessException(FILE_UPLOAD_FAILED);
         }
-
         return amazonS3.getUrl(bucketName, filePath).toString();
-    }
-
-    private String getFileExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf(".");
-        return (lastDotIndex > 0) ? fileName.substring(lastDotIndex).toLowerCase() : "";
     }
 }
