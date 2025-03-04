@@ -23,7 +23,30 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file, String directory) throws IOException {
         String fileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
+        return uploadFileToS3(file, directory, fileName);
     }
+
+    // 사용자 아이디 기반 프로필 이미지 파일 업로드
+    public String uploadFileByUserId(MultipartFile file, Long userId) {
+        String fileExtension = getFileExtension(file.getOriginalFilename());
+        if (!isValidProfilImageExtension(fileExtension)) {throw new InvalidValueException(INVALID_IMAGE_FORMAT);}
+        String fileName = "profile_user" + userId + fileExtension;
+        return uploadFileToS3(file, profileDirectory, fileName);
+    }
+
+    // 파일 확장자 추출
+    private String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf(".");
+        return (lastDotIndex > 0) ? fileName.substring(lastDotIndex).toLowerCase() : "";
+    }
+
+    // 프로필 이미지 확장자 유효성 검사
+    private boolean isValidProfilImageExtension(String extension) {
+        return extension.equals(".jpg") || extension.equals(".jpeg") || extension.equals(".png");
+    }
+
+    // S3에 파일 업로드
+    private String uploadFileToS3(MultipartFile file, String directory, String fileName) {
         String filePath = directory + "/" + fileName;
 
         try (InputStream inputStream = file.getInputStream()) {
