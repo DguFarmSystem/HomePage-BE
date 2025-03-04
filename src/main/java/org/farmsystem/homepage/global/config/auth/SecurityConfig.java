@@ -36,6 +36,7 @@ public class SecurityConfig {
             "api/auth/login/**",
             "api/auth/reissue/**",
             "api/user/verify/**",
+            "api/news/**"
             };
 
     @Bean
