@@ -80,7 +80,7 @@ public enum ErrorCode {
     /**
      * Farming Log Error
      */
-    FARMING_LOG_NOT_FOUNT(HttpStatus.NOT_FOUND, "파밍로그를 찾을 수 없습니다."),
+    FARMING_LOG_NOT_FOUND(HttpStatus.NOT_FOUND, "파밍로그를 찾을 수 없습니다."),
 
     /**
      * Blog/Project Error
