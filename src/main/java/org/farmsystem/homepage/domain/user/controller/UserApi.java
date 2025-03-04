@@ -52,7 +52,8 @@ public interface UserApi {
     @Operation(
             summary = "마이페이지 사용자 정보 수정",
             description = "토큰 필요. 사용자의 정보를 수정하는 API입니다.  \n" +
-                    "multipart/form-data형식이고 phoneNumber, major, profileImage 중 하나 이상 수정 요청 가능합니다.",
+                    "multipart/form-data형식이고 phoneNumber, major, profileImage 중 하나 이상 수정 요청 가능합니다.  \n" +
+                    "프로필 이미지 파일 크기는 5MB 이하, 파일 형식은 jpg(JPG), jpeg(JPEG), png(PNG)만 가능합니다. (원하면 조정 가능 & 해당 내용에 대해 사용자에게 알림 필요) ",
             security = @SecurityRequirement(name = "token")
     )
     @ApiResponses({
@@ -61,7 +62,9 @@ public interface UserApi {
                             mediaType = "application/json",
                             schema = @Schema(implementation = UserInfoResponseDTO.class)
                     )),
-            @ApiResponse(responseCode = "500", description = "프로필 이미지 업로드 실패")
+            @ApiResponse(responseCode = "413", description = "프로필 이미지 파일 크기 초과"),
+            @ApiResponse(responseCode = "415", description = "프로필 이미지 파일 형식 오류"),
+            @ApiResponse(responseCode = "500", description = "사용자 정보 수정 실패")
     })
     ResponseEntity<SuccessResponse<?>> updateUserInfo(
             Long userId,
