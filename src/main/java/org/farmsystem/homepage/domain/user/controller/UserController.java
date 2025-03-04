@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.user.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
@@ -21,7 +22,7 @@ public class UserController implements UserApi {
 
     // 사용자 회원 인증 API
     @PostMapping("/verify")
-    public ResponseEntity<SuccessResponse<?>> verifyUser(@RequestBody UserVerifyRequestDTO userVerifyRequest) {
+    public ResponseEntity<SuccessResponse<?>> verifyUser(@RequestBody @Valid UserVerifyRequestDTO userVerifyRequest) {
         UserVerifyResponseDTO userVerify = userService.verifyUser(userVerifyRequest);
         return SuccessResponse.ok(userVerify);
     }
