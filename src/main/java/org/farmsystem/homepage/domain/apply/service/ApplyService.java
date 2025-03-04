@@ -5,11 +5,13 @@ import org.farmsystem.homepage.domain.apply.dto.*;
 import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.ApplyListResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.entity.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
@@ -121,6 +123,24 @@ public class ApplyService {
                         .collect(Collectors.toList())
                 )
                 .build();
+    }
+
+    // 관리자 - 지원서 확인하기
+    public List<ApplyListResponseDTO> getApplyList(Track track) {
+        List<Apply> applyList;
+        if (track == null) {
+            applyList = applyRepository.findAllSubmitted();
+        } else {
+            applyList = applyRepository.findAllSubmittedByTrack(track);
+        }
+        return applyList.stream()
+                .map(apply -> ApplyListResponseDTO.builder()
+                        .applyId(apply.getApplyId())
+                        .name(apply.getName())
+                        .track(apply.getTrack())
+                        .updatedAt(apply.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // 지원서 상태 처리
