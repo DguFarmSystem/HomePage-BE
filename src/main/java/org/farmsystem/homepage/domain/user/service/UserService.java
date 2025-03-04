@@ -53,18 +53,14 @@ public class UserService {
 
         userUpdateRequest.phoneNumber().ifPresent(user::setPhoneNumber);
         userUpdateRequest.major().ifPresent(user::setMajor);
-        userUpdateRequest.profileImage().ifPresent(profileImage -> user.setProfileImageUrl(uploadProfileImage(profileImage)));
+        userUpdateRequest.profileImage().ifPresent(profileImage -> user.setProfileImageUrl(uploadProfileImage(profileImage, userId)));
 
         userRepository.save(user);
         return UserInfoResponseDTO.from(user);
     }
 
-    private String uploadProfileImage(MultipartFile profileImage) {
-        try {
-            return s3Service.uploadFile(profileImage, "profile");
-        } catch (IOException e) {
-            throw new BusinessException(PROFILE_IMAGE_UPLOAD_FAILED);
-        }
+    private String uploadProfileImage(MultipartFile profileImage, Long userId) {
+        return s3Service.uploadFileByUserId(profileImage, userId);
     }
 
     // 사용자 정보 저장

@@ -23,6 +23,7 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file, String directory) throws IOException {
         String fileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
+    }
         String filePath = directory + "/" + fileName;
 
         try (InputStream inputStream = file.getInputStream()) {
