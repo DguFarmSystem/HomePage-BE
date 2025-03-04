@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +18,10 @@ import java.util.Map;
 
 import static org.farmsystem.homepage.global.error.ErrorCode.OAUTH_TOKEN_REQUEST_FAILED;
 
-// OAuth 토큰 요청 클래스
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class OauthTokenProvider {
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -67,7 +68,7 @@ public class OauthTokenProvider {
 
             return (String) response.getBody().get("access_token");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("OAuth 토큰 요청 중 오류 발생: ", e);
             throw new BusinessException(OAUTH_TOKEN_REQUEST_FAILED);
         }
     }
