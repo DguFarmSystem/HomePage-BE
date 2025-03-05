@@ -15,9 +15,15 @@ public class AdminApplyController implements AdminApplyApi {
 
     private final ApplyService applyService;
 
-    // [관리자] 지원서 확인 API
+    // 지원서 목록 API
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getApplyList(@RequestParam(required = false) Track track) {
         return SuccessResponse.ok(applyService.getApplyList(track));
+    }
+
+    // 지원서 상세 API
+    @GetMapping("{applyId}")
+    public ResponseEntity<SuccessResponse<?>> getApply(@PathVariable Long applyId) {
+        return SuccessResponse.ok(applyService.getApply(applyId));
     }
 }

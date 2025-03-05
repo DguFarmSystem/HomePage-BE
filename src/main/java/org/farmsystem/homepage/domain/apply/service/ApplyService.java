@@ -102,6 +102,35 @@ public class ApplyService {
                 .filter(applyItem -> passwordEncoder.matches(request.password(), applyItem.getPassword()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD));
+        return convertApplyToResponse(apply);
+    }
+
+    // 관리자 - 지원서 목록
+    public List<ApplyListResponseDTO> getApplyList(Track track) {
+        List<Apply> applyList;
+        if (track == null) {
+            applyList = applyRepository.findAllSubmitted();
+        } else {
+            applyList = applyRepository.findAllSubmittedByTrack(track);
+        }
+        return applyList.stream()
+                .map(apply -> ApplyListResponseDTO.builder()
+                        .applyId(apply.getApplyId())
+                        .name(apply.getName())
+                        .track(apply.getTrack())
+                        .updatedAt(apply.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    // 관리자 - 지원서 상세
+    public LoadApplyResponseDTO getApply(Long applyId) {
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
+        return convertApplyToResponse(apply);
+    }
+
+    private LoadApplyResponseDTO convertApplyToResponse(Apply apply) {
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
@@ -123,24 +152,6 @@ public class ApplyService {
                         .collect(Collectors.toList())
                 )
                 .build();
-    }
-
-    // 관리자 - 지원서 확인하기
-    public List<ApplyListResponseDTO> getApplyList(Track track) {
-        List<Apply> applyList;
-        if (track == null) {
-            applyList = applyRepository.findAllSubmitted();
-        } else {
-            applyList = applyRepository.findAllSubmittedByTrack(track);
-        }
-        return applyList.stream()
-                .map(apply -> ApplyListResponseDTO.builder()
-                        .applyId(apply.getApplyId())
-                        .name(apply.getName())
-                        .track(apply.getTrack())
-                        .updatedAt(apply.getUpdatedAt())
-                        .build())
-                .collect(Collectors.toList());
     }
 
     // 지원서 상태 처리
