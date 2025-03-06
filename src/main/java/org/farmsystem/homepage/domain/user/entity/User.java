@@ -38,15 +38,12 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 20, unique = true)
     private String studentNumber;
 
-    @Setter
     @Column(nullable = false, length = 50)
     private String major;
 
-    @Setter
     @Column(length = 500)
     private String profileImageUrl;
 
-    @Setter
     @Column(nullable = false, length = 20)
     private String phoneNumber;
 
@@ -62,7 +59,6 @@ public class User extends BaseTimeEntity {
     @Column
     private Integer generation;
 
-    @Setter
     @ColumnDefault("false")
     private boolean isDeleted;
 
@@ -82,4 +78,11 @@ public class User extends BaseTimeEntity {
     public void initNameJamo() {
         this.nameJamo = JamoUtil.convertToJamo(this.name);
     }
+
+    public void updateProfileImageUrl(String profileImageUrl) {this.profileImageUrl = profileImageUrl;}
+    public void updatePhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
+    public void updateMajor(String major) {this.major = major;}
+    public void updateRole(Role role) {this.role = role;}
+    public void delete() {this.isDeleted = true;}
+
 }
