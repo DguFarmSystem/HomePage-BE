@@ -5,11 +5,13 @@ import org.farmsystem.homepage.domain.apply.dto.*;
 import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.ApplyListResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
 import org.farmsystem.homepage.domain.apply.entity.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
@@ -100,6 +102,35 @@ public class ApplyService {
                 .filter(applyItem -> passwordEncoder.matches(request.password(), applyItem.getPassword()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD));
+        return convertApplyToResponse(apply);
+    }
+
+    // 관리자 - 지원서 목록
+    public List<ApplyListResponseDTO> getApplyList(Track track) {
+        List<Apply> applyList;
+        if (track == null) {
+            applyList = applyRepository.findAllSubmitted();
+        } else {
+            applyList = applyRepository.findAllSubmittedByTrack(track);
+        }
+        return applyList.stream()
+                .map(apply -> ApplyListResponseDTO.builder()
+                        .applyId(apply.getApplyId())
+                        .name(apply.getName())
+                        .track(apply.getTrack())
+                        .updatedAt(apply.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    // 관리자 - 지원서 상세
+    public LoadApplyResponseDTO getApply(Long applyId) {
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
+        return convertApplyToResponse(apply);
+    }
+
+    private LoadApplyResponseDTO convertApplyToResponse(Apply apply) {
         return LoadApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
