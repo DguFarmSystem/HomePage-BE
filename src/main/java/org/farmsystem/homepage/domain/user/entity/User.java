@@ -6,6 +6,7 @@ import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 @AllArgsConstructor
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "user")
 @Entity
+@Where(clause = "is_deleted = false")
 public class User extends BaseTimeEntity {
 
     @Id
@@ -60,6 +62,7 @@ public class User extends BaseTimeEntity {
     @Column
     private Integer generation;
 
+    @Setter
     @ColumnDefault("false")
     private boolean isDeleted;
 

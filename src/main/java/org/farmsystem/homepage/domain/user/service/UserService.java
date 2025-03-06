@@ -129,4 +129,13 @@ public class UserService {
         return userRepository.save(UserSaveResponseDTO.fromPassedUser(passedUser, userLoginRequest.socialType(), socialId, imageUrl));
     }
 
+    // 사용자 정보 삭제
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        user.setDeleted(true);
+        userRepository.save(user);
+    }
+
 }
