@@ -166,7 +166,14 @@ public class UserService {
                 (query.major() == null || user.getMajor().equalsIgnoreCase(query.major()));
     }
 
+    // [관리자] 삭제된 사용자 조회
+    public PagingUserListResponseDTO getDeletedUsers(Pageable pageable) {
+        Page<User> userPage = userRepository.findDeletedUsers(pageable);
 
+        List<UserInfoResponseDTO> deletedUsers = userPage.getContent().stream()
+                .map(UserInfoResponseDTO::from)
+                .collect(Collectors.toList());
 
-
+        return PagingUserListResponseDTO.of(userPage, pageable, deletedUsers);
+    }
 }

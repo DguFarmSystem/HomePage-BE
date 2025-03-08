@@ -48,4 +48,12 @@ public class AdminUserController {
         return SuccessResponse.ok(users);
     }
 
+    // [관리자] 삭제된 사용자 조회
+    @GetMapping("/deleted")
+    public ResponseEntity<SuccessResponse<?>> getDeletedUsers(Pageable pageable) {
+        PagingUserListResponseDTO users = userService.getDeletedUsers(pageable);
+        return SuccessResponse.ok(users);
+    }
+
+
 }
