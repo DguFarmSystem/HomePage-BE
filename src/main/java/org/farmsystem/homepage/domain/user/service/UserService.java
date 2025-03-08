@@ -4,14 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
-import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.request.*;
+import org.farmsystem.homepage.domain.user.dto.response.*;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
@@ -97,26 +91,13 @@ public class UserService {
     public UserSearchResponseDTO searchUser(String query) {
         User user = userRepository.findByName(query)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        return UserSearchResponseDTO.builder()
-                .userId(user.getUserId())
-                .name(user.getName())
-                .profileImageUrl(user.getProfileImageUrl())
-                .track(user.getTrack())
-                .generation(user.getGeneration())
-                .build();
+        return UserSearchResponseDTO.from(user);
     }
 
     public List<UserSearchResponseDTO> searchUserSuggest(String query) {
         List<User> userList = userRepository.findByNameJamoStartsWith(JamoUtil.convertToJamo(query));
         return userList.stream()
-                .map(user -> UserSearchResponseDTO.builder()
-                        .userId(user.getUserId())
-                        .name(user.getName())
-                        .profileImageUrl(user.getProfileImageUrl())
-                        .track(user.getTrack())
-                        .generation(user.getGeneration())
-                        .build()
-                )
+                .map(UserSearchResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -137,7 +118,7 @@ public class UserService {
         return userRepository.save(UserSaveResponseDTO.fromPassedUser(passedUser, userLoginRequest.socialType(), socialId, imageUrl));
     }
 
-    // 사용자 정보 삭제
+    // [관리자] 사용자 정보 삭제
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -145,7 +126,7 @@ public class UserService {
         user.delete();
     }
 
-    // 관리자 사용자 정보 수정
+    // [관리자] 사용자 정보 수정
     @Transactional
     public UserInfoResponseDTO updateUserByAdmin(Long userId, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
         User user = userRepository.findById(userId)

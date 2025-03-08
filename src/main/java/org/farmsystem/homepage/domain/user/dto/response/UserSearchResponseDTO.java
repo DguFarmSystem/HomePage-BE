@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.user.dto.response;
 
 import lombok.Builder;
 import org.farmsystem.homepage.domain.common.entity.Track;
+import org.farmsystem.homepage.domain.user.entity.User;
 
 @Builder
 public record UserSearchResponseDTO(
@@ -11,4 +12,13 @@ public record UserSearchResponseDTO(
         Track track,
         Integer generation
 ) {
+    public static UserSearchResponseDTO from(User user) {
+        return UserSearchResponseDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .profileImageUrl(user.getProfileImageUrl())
+                .track(user.getTrack())
+                .generation(user.getGeneration())
+                .build();
+    }
 }
