@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
-import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.*;
+import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
@@ -47,15 +51,19 @@ public class UserService {
 
     // 사용자 정보 수정
     @Transactional
-    public UserInfoResponseDTO updateUserInfo(Long userId, UserInfoUpdateRequestDTO userUpdateRequest) {
+    public UserInfoResponseDTO updateUserInfo(Long userId, UserUpdateRequestDTO userUpdateRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        userUpdateRequest.phoneNumber().ifPresent(user::setPhoneNumber);
-        userUpdateRequest.major().ifPresent(user::setMajor);
-        userUpdateRequest.profileImage().ifPresent(profileImage -> user.setProfileImageUrl(uploadProfileImage(profileImage)));
+        // 프로필 이미지가 있으면 s3 업로드
+        String profileImageUrl = null;
+        if (userUpdateRequest.profileImage() != null) {
+            profileImageUrl = uploadProfileImage(userUpdateRequest.profileImage());
+        }
 
+        user.updateUser(userUpdateRequest.toEntity(profileImageUrl));
         userRepository.save(user);
+
         return UserInfoResponseDTO.from(user);
     }
 
@@ -134,8 +142,17 @@ public class UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        user.setDeleted(true);
+        user.delete();
+    }
+
+    // 관리자 사용자 정보 수정
+    @Transactional
+    public UserInfoResponseDTO updateUserByAdmin(Long userId, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        user.updateUserByAdmin(adminUserUpdateRequest.toEntity());
         userRepository.save(user);
+        return UserInfoResponseDTO.from(user);
     }
 
 }
