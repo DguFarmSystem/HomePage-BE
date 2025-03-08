@@ -6,6 +6,7 @@ import org.farmsystem.homepage.global.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,6 +56,22 @@ public class GlobalExceptionHandler {
         final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorBaseResponse);
     }
+
+    /**
+     * 잘못된 Enum 값에 대한 error를 handling합니다. (HttpMessageNotReadableException)
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        if (e.getMessage().contains("Enum")) {
+            log.error(">>> handle: HttpMessageNotReadableException (Invalid Enum value)", e);
+            final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
+        }
+        log.error(">>> handle: HttpMessageNotReadableException (General parse error)", e);
+        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
+    }
+
 
     /**
      * BusinessException을 handling합니다.
