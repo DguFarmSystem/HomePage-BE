@@ -20,8 +20,14 @@ public class CorsConfig implements WebMvcConfigurer {
     @Value("${deployment.frontend.www-production}")
     private String frontendWwwProduction;
 
+    @Value("${deployment.frontend.farminglog-production}")
+    private String frontendFarminglogProduction;
+
     @Value("${deployment.frontend.test}")
     private String frontendTest;
+
+    @Value("${deployment.frontend.farminglog-test}")
+    private String frontendFarminglogTest;
 
     @Value("${deployment.backend.production}")
     private String backendProduction;
@@ -40,7 +46,9 @@ public class CorsConfig implements WebMvcConfigurer {
                 "http://localhost:5173",
                 frontendProduction,
                 frontendWwwProduction,
+                frontendFarminglogProduction,
                 frontendTest,
+                frontendFarminglogTest,
                 backendProduction,
                 backendTest
         );
