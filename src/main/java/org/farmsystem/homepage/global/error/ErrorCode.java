@@ -70,6 +70,7 @@ public enum ErrorCode {
      * User Error
      */
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),
+    PASSED_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 합격자 정보입니다."),
     PASSED_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "합격자 정보를 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "다른 소셜 계정으로 이미 가입된 사용자입니다."),
