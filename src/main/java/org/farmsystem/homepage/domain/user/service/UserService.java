@@ -13,6 +13,8 @@ import org.farmsystem.homepage.global.common.S3Service;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -144,5 +146,27 @@ public class UserService {
         userRepository.save(user);
         return UserInfoResponseDTO.from(user);
     }
+
+    // [관리자] 사용자 정보 조회 (페이징)
+    public PagingUserListResponseDTO getAllUsers(Pageable pageable, AdminUserSearchRequestDTO query) {
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        List<UserInfoResponseDTO> filteredUser = userPage.getContent().stream()
+                .filter(user -> filterUser(user, query))
+                .map(UserInfoResponseDTO::from)
+                .collect(Collectors.toList());
+
+        return PagingUserListResponseDTO.of(userPage, pageable, filteredUser);
+    }
+
+    private boolean filterUser(User user, AdminUserSearchRequestDTO query) {
+        return (query.track() == null || user.getTrack() == query.track()) &&
+                (query.generation() == null || user.getGeneration().equals(query.generation())) &&
+                (query.role() == null || user.getRole() == query.role()) &&
+                (query.major() == null || user.getMajor().equalsIgnoreCase(query.major()));
+    }
+
+
+
 
 }

@@ -2,11 +2,14 @@ package org.farmsystem.homepage.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.AdminUserRegisterRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.request.AdminUserSearchRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.PagingUserListResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserRegisterResponseDTO;
 import org.farmsystem.homepage.domain.user.service.UserService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +39,13 @@ public class AdminUserController {
     public ResponseEntity<SuccessResponse<?>> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return SuccessResponse.ok(null);
+    }
+
+    // [관리자] 사용자 정보 전체 조회 API
+    @GetMapping
+    public ResponseEntity<SuccessResponse<?>> getAllUsers(Pageable pageable, @ModelAttribute AdminUserSearchRequestDTO query) {
+        PagingUserListResponseDTO users = userService.getAllUsers(pageable, query);
+        return SuccessResponse.ok(users);
     }
 
 }
