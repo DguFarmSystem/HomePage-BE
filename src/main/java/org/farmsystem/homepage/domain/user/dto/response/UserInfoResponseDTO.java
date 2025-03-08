@@ -5,6 +5,7 @@ import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.domain.user.entity.User;
 
 public record UserInfoResponseDTO(
+        Long userId,
         Role role,
         String name,
         String studentNumber,
@@ -20,6 +21,7 @@ public record UserInfoResponseDTO(
 ) {
     public static UserInfoResponseDTO from(User user) {
         return new UserInfoResponseDTO(
+                user.getUserId(),
                 user.getRole(),
                 user.getName(),
                 user.getStudentNumber(),
@@ -34,5 +36,4 @@ public record UserInfoResponseDTO(
                 user.getTotalSeed()
         );
     }
-
 }
