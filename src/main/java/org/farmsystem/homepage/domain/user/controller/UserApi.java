@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
@@ -65,6 +65,6 @@ public interface UserApi {
     })
     ResponseEntity<SuccessResponse<?>> updateUserInfo(
             Long userId,
-            @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest
+            @ModelAttribute UserUpdateRequestDTO userInfoRequest
     );
 }
