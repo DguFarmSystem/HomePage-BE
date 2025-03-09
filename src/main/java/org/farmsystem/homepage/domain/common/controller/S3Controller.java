@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/s3")
 @RestController
-public class S3Controller {
+public class S3Controller implements S3Api{
 
     private final S3Service s3Service;
 
