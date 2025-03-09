@@ -8,13 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Tag(name = "사용자 API", description = "사용자 관련 API")
 public interface UserApi {
@@ -52,7 +51,8 @@ public interface UserApi {
     @Operation(
             summary = "마이페이지 사용자 정보 수정",
             description = "토큰 필요. 사용자의 정보를 수정하는 API입니다.  \n" +
-                    "multipart/form-data형식이고 phoneNumber, major, profileImage 중 하나 이상 수정 요청 가능합니다.",
+                    "phoneNumber, major, profileImage 중 하나 이상 수정 요청 가능합니다.  \n" +
+                    "profileImage(프로필 이미지)는 <프로필 사진 업로드용 Presigned URL 생성 API>를 통해 S3 업로드 가능하며 수정 요청시 해당 객체 URL(String)을 전달해야 합니다.",
             security = @SecurityRequirement(name = "token")
     )
     @ApiResponses({
@@ -61,10 +61,10 @@ public interface UserApi {
                             mediaType = "application/json",
                             schema = @Schema(implementation = UserInfoResponseDTO.class)
                     )),
-            @ApiResponse(responseCode = "500", description = "프로필 이미지 업로드 실패")
+            @ApiResponse(responseCode = "500", description = "사용자 정보 수정 실패")
     })
     ResponseEntity<SuccessResponse<?>> updateUserInfo(
             Long userId,
-            @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest
+            @RequestBody UserUpdateRequestDTO userInfoRequest
     );
 }

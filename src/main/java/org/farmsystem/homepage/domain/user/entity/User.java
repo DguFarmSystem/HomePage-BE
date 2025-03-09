@@ -79,4 +79,10 @@ public class User extends BaseTimeEntity {
     public void initNameJamo() {
         this.nameJamo = JamoUtil.convertToJamo(this.name);
     }
+
+    public void updateUser(User user){
+        if (user.getProfileImageUrl() != null) this.profileImageUrl = user.getProfileImageUrl();
+        if (user.getPhoneNumber() != null) this.phoneNumber = user.getPhoneNumber();
+        if (user.getMajor() != null) this.major = user.getMajor();
+    }
 }
