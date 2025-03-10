@@ -1,7 +1,6 @@
 package org.farmsystem.homepage.domain.user.controller;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
@@ -25,7 +24,7 @@ public class AuthController implements AuthApi {
     // 임시 토큰 발급 API. 추후 로그인 기능이 완성되면 삭제할 예정
     @PostMapping("/token/{userId}")
     public ResponseEntity<SuccessResponse<?>> getTempToken(@PathVariable Long userId) {
-        UserTokenResponseDTO userToken= tokenService.issueTempToken(userId);
+        UserTokenResponseDTO userToken = tokenService.issueTempToken(userId);
         return SuccessResponse.ok(userToken);
     }
 

@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.news.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,7 +19,12 @@ import jakarta.validation.Valid;
 @Tag(name = "[관리자] 소식 API", description = "관리자용 소식 관련 API")
 public interface AdminNewsApi {
 
-    @Operation(summary = "[관리자] 소식 생성", description = "새로운 소식을 등록합니다.")
+    @Operation(
+            summary = "[관리자] 소식 생성",
+            description = "새로운 소식을 등록합니다.",
+            security = @SecurityRequirement(name = "token")
+    )
+
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
@@ -32,7 +38,11 @@ public interface AdminNewsApi {
     @PostMapping("/api/admin/news")
     ResponseEntity<SuccessResponse<?>> createNews(@RequestBody @Valid NewsRequestDTO request);
 
-    @Operation(summary = "[관리자] 소식 수정", description = "기존 소식 제목과 내용을 수정합니다.")
+    @Operation(
+            summary = "[관리자] 소식 수정",
+            description = "기존 소식 제목과 내용을 수정합니다.",
+            security = @SecurityRequirement(name = "token")
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -49,7 +59,11 @@ public interface AdminNewsApi {
             @PathVariable("newsId") Long newsId,
             @RequestBody @Valid NewsRequestDTO request);
 
-    @Operation(summary = "[관리자] 소식 삭제", description = "ID를 통해 특정 소식을 삭제합니다.")
+    @Operation(
+            summary = "[관리자] 소식 삭제",
+            description = "ID를 통해 특정 소식을 삭제합니다.",
+            security = @SecurityRequirement(name = "token")
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 소식 ID")

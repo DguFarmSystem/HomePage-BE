@@ -11,12 +11,16 @@ import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.request.*;
+import org.farmsystem.homepage.domain.user.dto.response.*;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,26 +82,13 @@ public class UserService {
     public UserSearchResponseDTO searchUser(String query) {
         User user = userRepository.findByName(query)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        return UserSearchResponseDTO.builder()
-                .userId(user.getUserId())
-                .name(user.getName())
-                .profileImageUrl(user.getProfileImageUrl())
-                .track(user.getTrack())
-                .generation(user.getGeneration())
-                .build();
+        return UserSearchResponseDTO.from(user);
     }
 
     public List<UserSearchResponseDTO> searchUserSuggest(String query) {
         List<User> userList = userRepository.findByNameJamoStartsWith(JamoUtil.convertToJamo(query));
         return userList.stream()
-                .map(user -> UserSearchResponseDTO.builder()
-                        .userId(user.getUserId())
-                        .name(user.getName())
-                        .profileImageUrl(user.getProfileImageUrl())
-                        .track(user.getTrack())
-                        .generation(user.getGeneration())
-                        .build()
-                )
+                .map(UserSearchResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -118,4 +109,60 @@ public class UserService {
         return userRepository.save(UserSaveResponseDTO.fromPassedUser(passedUser, userLoginRequest.socialType(), socialId, imageUrl));
     }
 
+    // [관리자] 사용자 정보 등록
+    @Transactional
+    public UserRegisterResponseDTO registerUser(AdminUserRegisterRequestDTO adminUserRegisterRequest) {
+        passedApplyRepository.findByStudentNumber(adminUserRegisterRequest.studentNumber())
+                .ifPresent(user -> {throw new BusinessException(PASSED_USER_ALREADY_EXISTS);});
+        PassedApply registeredUser = passedApplyRepository.save(adminUserRegisterRequest.toEntity());
+        return UserRegisterResponseDTO.from(registeredUser);
+    }
+
+    // [관리자] 사용자 정보 삭제
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        user.delete();
+    }
+
+    // [관리자] 사용자 정보 수정
+    @Transactional
+    public UserInfoResponseDTO updateUserByAdmin(Long userId, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        user.updateUserByAdmin(adminUserUpdateRequest.toEntity());
+        userRepository.save(user);
+        return UserInfoResponseDTO.from(user);
+    }
+
+    // [관리자] 사용자 정보 조회 (페이징)
+    public PagingUserListResponseDTO getAllUsers(Pageable pageable, AdminUserSearchRequestDTO query) {
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        List<UserInfoResponseDTO> filteredUser = userPage.getContent().stream()
+                .filter(user -> filterUser(user, query))
+                .map(UserInfoResponseDTO::from)
+                .collect(Collectors.toList());
+
+        return PagingUserListResponseDTO.of(userPage, pageable, filteredUser);
+    }
+
+    private boolean filterUser(User user, AdminUserSearchRequestDTO query) {
+        return (query.track() == null || user.getTrack() == query.track()) &&
+                (query.generation() == null || user.getGeneration().equals(query.generation())) &&
+                (query.role() == null || user.getRole() == query.role()) &&
+                (query.major() == null || user.getMajor().equalsIgnoreCase(query.major()));
+    }
+
+    // [관리자] 삭제된 사용자 조회
+    public PagingUserListResponseDTO getDeletedUsers(Pageable pageable) {
+        Page<User> userPage = userRepository.findDeletedUsers(pageable);
+
+        List<UserInfoResponseDTO> deletedUsers = userPage.getContent().stream()
+                .map(UserInfoResponseDTO::from)
+                .collect(Collectors.toList());
+
+        return PagingUserListResponseDTO.of(userPage, pageable, deletedUsers);
+    }
 }
