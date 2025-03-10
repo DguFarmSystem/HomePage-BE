@@ -1,14 +1,13 @@
 package org.farmsystem.homepage.domain.user.dto.request;
 
 import org.farmsystem.homepage.domain.user.entity.User;
-import org.springframework.web.multipart.MultipartFile;
 
 public record UserUpdateRequestDTO(
         String phoneNumber,
-        MultipartFile profileImage,
+        String profileImageUrl,
         String major
 ) {
-    public User toEntity(String profileImageUrl) {
+    public User toEntity() {
         return User.builder()
                 .phoneNumber(phoneNumber)
                 .profileImageUrl(profileImageUrl)
