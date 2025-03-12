@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import org.farmsystem.homepage.domain.news.dto.response.NewsResponseDTO;
+import org.farmsystem.homepage.domain.news.dto.response.NewsDetailResponseDTO;
+import org.farmsystem.homepage.domain.news.dto.response.NewsListResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public interface NewsApi {
                     description = "조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = NewsResponseDTO.class))
+                            array = @ArraySchema(schema = @Schema(implementation = NewsListResponseDTO.class))
                     )
             )
     })
@@ -39,7 +40,7 @@ public interface NewsApi {
                     description = "조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = NewsResponseDTO.class)
+                            schema = @Schema(implementation = NewsDetailResponseDTO.class)
                     )
             ),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 소식 ID")
