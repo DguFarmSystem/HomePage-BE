@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "news")
@@ -22,15 +24,26 @@ public class News extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false)
+    private String thumbnailUrl;
+
+    @ElementCollection
+    @CollectionTable(name = "news_images", joinColumns = @JoinColumn(name = "news_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls;
+
     @Builder
-    public News(String title, String content) {
+    public News(String title, String content, String thumbnailUrl, List<String> imageUrls) {
         this.title = title;
         this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
+        this.imageUrls = imageUrls;
     }
 
-    public void updateTitleAndContent(String title, String content) {
+    public void updateNews(String title, String content, String thumbnailUrl, List<String> imageUrls) {
         this.title = title;
         this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
+        this.imageUrls = imageUrls;
     }
-
 }

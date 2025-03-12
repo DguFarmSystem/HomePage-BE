@@ -6,12 +6,16 @@ import org.farmsystem.homepage.global.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
 
 @Slf4j
 @ControllerAdvice
@@ -54,6 +58,41 @@ public class GlobalExceptionHandler {
         log.error(">>> handle: HttpRequestMethodNotSupportedException ", e);
         final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorBaseResponse);
+    }
+
+    /**
+     * 지원하지 않는 리소스 요청 시 발생하는 error를 handling합니다.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.error(">>> handle: NoResourceFoundException ", e);
+        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.RESOURCE_NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBaseResponse);
+    }
+
+    /**
+     * 잘못된 Enum 값에 대한 error를 handling합니다. (HttpMessageNotReadableException)
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        if (e.getMessage().contains("Enum")) {
+            log.error(">>> handle: HttpMessageNotReadableException (Invalid Enum value)", e);
+            final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
+        }
+        log.error(">>> handle: HttpMessageNotReadableException (General parse error)", e);
+        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
+    }
+
+    /**
+     * 파일 업로드 시 파일 크기 초과로 발생하는 error를 handling합니다.
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.error(">>> handle: MaxUploadSizeExceededException (파일 크기 초과)", e);
+        final ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.FILE_SIZE_EXCEEDED);
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errorResponse);
     }
 
     /**

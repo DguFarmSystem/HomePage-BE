@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
+import org.farmsystem.homepage.domain.common.util.JamoUtil;
+import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 @AllArgsConstructor
@@ -13,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "user")
 @Entity
+@Where(clause = "is_deleted = false")
 public class User extends BaseTimeEntity {
 
     @Id
@@ -32,18 +36,15 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 10)
     private String name;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String studentNumber;
 
-    @Setter
     @Column(nullable = false, length = 50)
     private String major;
 
-    @Setter
     @Column(length = 500)
     private String profileImageUrl;
 
-    @Setter
     @Column(nullable = false, length = 20)
     private String phoneNumber;
 
@@ -56,6 +57,7 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Track track;
 
+    // 최근 활동 기수
     @Column
     private Integer generation;
 
@@ -68,7 +70,34 @@ public class User extends BaseTimeEntity {
     @ColumnDefault("0")
     private int totalSeed;
 
+    @Column(nullable = false, length = 100)
+    private String nameJamo;
+
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
+
+    @PrePersist
+    public void initNameJamo() {
+        this.nameJamo = JamoUtil.convertToJamo(this.name);
+    }
+
+    public void delete() {this.isDeleted = true;}
+
+    public void updateUserByAdmin(User user) {
+        if (user.getRole() != null) this.role = user.getRole();
+        if (user.getStudentNumber() != null) this.studentNumber = user.getStudentNumber();
+        if (user.getNotionAccount() != null) this.notionAccount = user.getNotionAccount();
+        if (user.getGithubAccount() != null) this.githubAccount = user.getGithubAccount();
+        if (user.getTrack() != null) this.track = user.getTrack();
+        if (user.getGeneration() != null) this.generation = user.getGeneration();
+        if (user.getName() != null) {this.name = user.getName(); this.nameJamo = JamoUtil.convertToJamo(this.name);
+        }
+    }
+
+    public void updateUser(User user){
+        if (user.getProfileImageUrl() != null) this.profileImageUrl = user.getProfileImageUrl();
+        if (user.getPhoneNumber() != null) this.phoneNumber = user.getPhoneNumber();
+        if (user.getMajor() != null) this.major = user.getMajor();
+    }
 
 }

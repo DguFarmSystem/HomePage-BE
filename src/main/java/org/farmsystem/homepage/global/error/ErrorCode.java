@@ -12,6 +12,7 @@ public enum ErrorCode {
      * 400 Bad Request
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "ENUM 입력값이 올바르지 않습니다."),
     /**
      * 401 Unauthorized
      */
@@ -31,6 +32,7 @@ public enum ErrorCode {
     /**
      * 404 Not Found
      */
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리소스를 찾을 수 없습니다."),
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "엔티티를 찾을 수 없습니다."),
 
     /**
@@ -44,38 +46,52 @@ public enum ErrorCode {
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
 
     /**
+     * 413 Payload Too Large
+     */
+    FILE_SIZE_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "이미지 최대 크기를 초과하였습니다."),
+
+    /**
+     * 415 Unsupported Media Type
+     */
+    INVALID_IMAGE_FORMAT(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원하지 않는 이미지 형식입니다."),
+
+    /**
      * 500 Internal Server Error
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패하였습니다."),
 
     /**
      * News Error
      */
     NEWS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 뉴스를 찾을 수 없습니다."),
-  
+
     /**
      * Apply Error
      */
-    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원 내용을 찾을 수 없습니다."),
+    APPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "지원서를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "질문을 찾을 수 없습니다."),
     CHOICE_NOT_FOUND(HttpStatus.NOT_FOUND, "선택지를 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "답변을 찾을 수 없습니다."),
-    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원 내용입니다."),
+    APPLY_ALREADY_SUBMITTED(HttpStatus.BAD_REQUEST, "이미 제출한 지원서입니다."),
+    APPLY_INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+    APPLY_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 지원서입니다."),
 
     /**
      * User Error
      */
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),
+    PASSED_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 합격자 정보입니다."),
     PASSED_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "합격자 정보를 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "다른 소셜 계정으로 이미 가입된 사용자입니다."),
-    PROFILE_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 업로드에 실패하였습니다."),
 
     /**
      * Oauth Error
      */
     OAUTH_TOKEN_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 토큰 요청에 실패하였습니다."),
     OAUTH_USER_RESOURCE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "OAuth 사용자 정보 조회에 실패하였습니다."),
+    JSON_PARSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 파싱에 실패하였습니다."),
 
     /**
      * Farming Log Error

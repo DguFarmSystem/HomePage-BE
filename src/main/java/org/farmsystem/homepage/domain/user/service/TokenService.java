@@ -8,6 +8,7 @@ import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.config.auth.jwt.JwtProvider;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
+import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
+import static org.farmsystem.homepage.global.error.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,8 +68,13 @@ public class TokenService {
         return UserTokenResponseDTO.of(accessToken, storedRefreshToken);
     }
 
-    public UserTokenResponseDTO reissue(UserTokenRequestDTO userTokenRequest) throws JsonProcessingException {
-        Long userId = Long.valueOf(jwtProvider.decodeJwtPayloadSubject(userTokenRequest.accessToken()));
+    public UserTokenResponseDTO reissue(UserTokenRequestDTO userTokenRequest){
+        Long userId;
+        try {
+            userId = Long.valueOf(jwtProvider.decodeJwtPayloadSubject(userTokenRequest.accessToken()));
+        } catch (JsonProcessingException e) {
+            throw new UnauthorizedException(JSON_PARSING_FAILED);
+        }
 
         String refreshToken = userTokenRequest.refreshToken();
         String redisKey = "RT:" + userId;

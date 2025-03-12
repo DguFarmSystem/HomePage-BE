@@ -1,11 +1,11 @@
 package org.farmsystem.homepage.domain.apply.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.Track;
 
+@AllArgsConstructor
+@Builder
 @Entity
 @Getter
 @Table(name = "passed_apply")

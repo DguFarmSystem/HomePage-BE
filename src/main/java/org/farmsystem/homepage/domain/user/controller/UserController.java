@@ -1,8 +1,9 @@
 package org.farmsystem.homepage.domain.user.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.user.dto.request.UserInfoUpdateRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
@@ -12,17 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 @RestController
-public class UserController {
+public class UserController implements UserApi {
     private final UserService userService;
 
     // 사용자 회원 인증 API
     @PostMapping("/verify")
-    public ResponseEntity<SuccessResponse<?>> verifyUser(@RequestBody UserVerifyRequestDTO userVerifyRequest) {
+    public ResponseEntity<SuccessResponse<?>> verifyUser(@RequestBody @Valid UserVerifyRequestDTO userVerifyRequest) {
         UserVerifyResponseDTO userVerify = userService.verifyUser(userVerifyRequest);
         return SuccessResponse.ok(userVerify);
     }
@@ -35,10 +34,22 @@ public class UserController {
     }
 
     // 사용자 정보 수정 API
-    @PutMapping("/mypage")
+    @PatchMapping(value = "/mypage")
     public ResponseEntity<SuccessResponse<?>> updateUserInfo(@AuthenticationPrincipal Long userId,
-                                                             @ModelAttribute UserInfoUpdateRequestDTO userInfoRequest) throws IOException {
+                                                             @RequestBody UserUpdateRequestDTO userInfoRequest) {
         UserInfoResponseDTO updatedUserInfo = userService.updateUserInfo(userId, userInfoRequest);
         return SuccessResponse.ok(updatedUserInfo);
+    }
+
+    // 사용자 검색 API
+    @GetMapping("/search")
+    public ResponseEntity<SuccessResponse<?>> searchUser(@RequestParam String query) {
+        return SuccessResponse.ok(userService.searchUser(query));
+    }
+
+    // 사용자 검색 자동완성 API
+    @GetMapping("/suggest")
+    public ResponseEntity<SuccessResponse<?>> searchUserSuggest(@RequestParam String query) {
+        return SuccessResponse.ok(userService.searchUserSuggest(query));
     }
 }
