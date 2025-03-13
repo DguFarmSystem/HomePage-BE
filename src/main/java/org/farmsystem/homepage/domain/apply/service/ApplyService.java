@@ -5,10 +5,7 @@ import org.farmsystem.homepage.domain.apply.dto.*;
 import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.ApplyListResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.*;
 import org.farmsystem.homepage.domain.apply.entity.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
 import org.farmsystem.homepage.domain.common.entity.Track;
@@ -103,10 +100,10 @@ public class ApplyService {
     }
 
     // 관리자 - 지원서 상세
-    public LoadApplyResponseDTO getApply(Long applyId) {
+    public SubmittedApplyResponseDTO getApply(Long applyId) {
         Apply apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
-        return LoadApplyResponseDTO.from(apply);
+        return SubmittedApplyResponseDTO.from(apply);
     }
 
     // 지원서 상태 처리
