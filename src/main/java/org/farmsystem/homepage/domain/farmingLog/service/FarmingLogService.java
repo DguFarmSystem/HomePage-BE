@@ -67,7 +67,7 @@ public class FarmingLogService {
     @Transactional
     public FarmingLogResponseDTO updateFarmingLog(Long userId, Long farmingLogId, FarmingLogRequestDTO requestDto) {
         FarmingLog farmingLog = farmingLogRepository.findById(farmingLogId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUNT));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUND));
 
         if (!farmingLog.getUser().getUserId().equals(userId)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
@@ -80,7 +80,7 @@ public class FarmingLogService {
     @Transactional
     public void deleteFarmingLog(Long userId, Long farmingLogId) {
         FarmingLog farmingLog = farmingLogRepository.findById(farmingLogId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUNT));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUND));
 
         if (!farmingLog.getUser().getUserId().equals(userId)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
