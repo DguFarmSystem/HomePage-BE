@@ -38,6 +38,7 @@ public class SecurityConfig {
             "api/auth/login/**",
             "api/auth/reissue/**",
             "api/user/verify/**",
+            "api/blogs/page/**",
             "api/news/**"
             };
 

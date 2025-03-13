@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Builder
-public record LoadApplyResponseDTO(
+public record SubmittedApplyResponseDTO(
         Long applyId,
         ApplyStatusEnum status,
         LocalDateTime updatedAt,
@@ -23,8 +23,8 @@ public record LoadApplyResponseDTO(
         Track track,
         List<AnswerDTO> answers
 ) {
-    public static LoadApplyResponseDTO from(Apply apply) {
-        return LoadApplyResponseDTO.builder()
+    public static SubmittedApplyResponseDTO from(Apply apply) {
+        return SubmittedApplyResponseDTO.builder()
                 .applyId(apply.getApplyId())
                 .status(apply.getStatus())
                 .updatedAt(apply.getUpdatedAt())
@@ -35,6 +35,7 @@ public record LoadApplyResponseDTO(
                 .email(apply.getEmail())
                 .track(apply.getTrack())
                 .answers(apply.getAnswers().stream()
+                        .filter(answer -> answer.getQuestion().getTrack() == apply.getTrack())
                         .map(answer -> AnswerDTO.builder()
                                 .questionId(answer.getQuestion().getQuestionId())
                                 .content(answer.getContent())

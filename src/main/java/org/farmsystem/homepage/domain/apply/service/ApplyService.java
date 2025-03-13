@@ -5,10 +5,7 @@ import org.farmsystem.homepage.domain.apply.dto.*;
 import org.farmsystem.homepage.domain.apply.dto.request.ApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.CreateApplyRequestDTO;
 import org.farmsystem.homepage.domain.apply.dto.request.LoadApplyRequestDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.ApplyListResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.ApplyResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.CreateApplyResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.*;
 import org.farmsystem.homepage.domain.apply.entity.*;
 import org.farmsystem.homepage.domain.apply.repository.*;
 import org.farmsystem.homepage.domain.common.entity.Track;
@@ -39,23 +36,7 @@ public class ApplyService {
     public List<QuestionDTO> getQuestions() {
         List<Question> questions = questionRepository.findAllByOrderByTrackAscPriorityAsc();
         return questions.stream()
-                .map(question -> QuestionDTO.builder()
-                        .questionId(question.getQuestionId())
-                        .track(question.getTrack())
-                        .isRequired(question.getIsRequired())
-                        .content(question.getContent())
-                        .maxLength(question.getMaxLength())
-                        .type(question.getType())
-                        .isDuplicated(question.getIsDuplicated())
-                        .priority(question.getPriority())
-                        .choices(question.getChoices().stream()
-                                .map(choice -> ChoiceDTO.builder()
-                                        .choiceId(choice.getChoiceId())
-                                        .content(choice.getContent())
-                                        .build())
-                                .collect(Collectors.toList()))
-                        .build()
-                )
+                .map(QuestionDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -102,7 +83,7 @@ public class ApplyService {
                 .filter(applyItem -> passwordEncoder.matches(request.password(), applyItem.getPassword()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.APPLY_INVALID_PASSWORD));
-        return convertApplyToResponse(apply);
+        return LoadApplyResponseDTO.from(apply);
     }
 
     // 관리자 - 지원서 목록
@@ -114,44 +95,15 @@ public class ApplyService {
             applyList = applyRepository.findAllSubmittedByTrack(track);
         }
         return applyList.stream()
-                .map(apply -> ApplyListResponseDTO.builder()
-                        .applyId(apply.getApplyId())
-                        .name(apply.getName())
-                        .track(apply.getTrack())
-                        .updatedAt(apply.getUpdatedAt())
-                        .build())
+                .map(ApplyListResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
     // 관리자 - 지원서 상세
-    public LoadApplyResponseDTO getApply(Long applyId) {
+    public SubmittedApplyResponseDTO getApply(Long applyId) {
         Apply apply = applyRepository.findById(applyId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.APPLY_NOT_FOUND));
-        return convertApplyToResponse(apply);
-    }
-
-    private LoadApplyResponseDTO convertApplyToResponse(Apply apply) {
-        return LoadApplyResponseDTO.builder()
-                .applyId(apply.getApplyId())
-                .status(apply.getStatus())
-                .updatedAt(apply.getUpdatedAt())
-                .name(apply.getName())
-                .major(apply.getMajor())
-                .phoneNumber(apply.getPhoneNumber())
-                .email(apply.getEmail())
-                .track(apply.getTrack())
-                .answers(apply.getAnswers().stream()
-                        .map(answer -> AnswerDTO.builder()
-                                .questionId(answer.getQuestion().getQuestionId())
-                                .content(answer.getContent())
-                                .choiceId(answer.getAnswerChoices().stream()
-                                        .map(answerChoice -> answerChoice.getChoice().getChoiceId())
-                                        .collect(Collectors.toList())
-                                )
-                                .build())
-                        .collect(Collectors.toList())
-                )
-                .build();
+        return SubmittedApplyResponseDTO.from(apply);
     }
 
     // 지원서 상태 처리

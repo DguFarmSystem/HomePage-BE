@@ -96,7 +96,14 @@ public enum ErrorCode {
     /**
      * Farming Log Error
      */
-    FARMING_LOG_NOT_FOUNT(HttpStatus.NOT_FOUND, "파밍로그를 찾을 수 없습니다.")
+    FARMING_LOG_NOT_FOUND(HttpStatus.NOT_FOUND, "파밍로그를 찾을 수 없습니다."),
+
+    /**
+     * Blog/Project Error
+     */
+    BLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "블로그를 찾을 수 없습니다."),
+    BLOG_DUPLICATED(HttpStatus.CONFLICT, "이미 신청 처리된 블로그입니다."),
+    ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "이미 승인 처리된 블로그입니다.")
     ;
 
     private final HttpStatus httpStatus;
