@@ -25,7 +25,7 @@ public class FarmingLogLikeService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         FarmingLog farmingLog = farmingLogRepository.findById(farmingLogId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUNT));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUND));
 
         farmingLogLikeRepository.findByUserAndFarmingLog(user, farmingLog)
                 .ifPresentOrElse(
