@@ -1,0 +1,24 @@
+package org.farmsystem.homepage.domain.cheer.dto.response;
+
+import org.farmsystem.homepage.domain.cheer.entity.Cheer;
+import org.farmsystem.homepage.domain.cheer.entity.CheerTag;
+
+import java.time.LocalDateTime;
+
+public record CheerResponseDTO(
+        CheerUserDTO cheerer,
+        CheerUserDTO cheered,
+        String content,
+        CheerTag tag,
+        LocalDateTime createdAt
+) {
+    public static CheerResponseDTO from(Cheer cheer) {
+        return new CheerResponseDTO(
+                CheerUserDTO.from(cheer.getCheerer()),
+                CheerUserDTO.from(cheer.getCheered()),
+                cheer.getContent(),
+                cheer.getTag(),
+                cheer.getCreatedAt()
+        );
+    }
+}
