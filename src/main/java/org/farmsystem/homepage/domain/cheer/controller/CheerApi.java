@@ -41,7 +41,8 @@ public interface CheerApi {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CheerResponseDTO.class)
-                    ))
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
     })
     ResponseEntity<SuccessResponse<?>> createCheer(@RequestBody @Valid CheerRequestDTO request);
 }
