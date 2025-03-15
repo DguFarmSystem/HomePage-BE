@@ -6,6 +6,7 @@ import org.farmsystem.homepage.domain.cheer.entity.CheerTag;
 import java.time.LocalDateTime;
 
 public record CheerResponseDTO(
+        Long cheerId,
         CheerUserDTO cheerer,
         CheerUserDTO cheered,
         String content,
@@ -14,6 +15,7 @@ public record CheerResponseDTO(
 ) {
     public static CheerResponseDTO from(Cheer cheer) {
         return new CheerResponseDTO(
+                cheer.getCheerId(),
                 CheerUserDTO.from(cheer.getCheerer()),
                 CheerUserDTO.from(cheer.getCheered()),
                 cheer.getContent(),
