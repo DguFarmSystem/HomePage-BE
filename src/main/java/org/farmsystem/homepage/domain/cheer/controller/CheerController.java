@@ -1,13 +1,13 @@
 package org.farmsystem.homepage.domain.cheer.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.farmsystem.homepage.domain.cheer.dto.request.CheerRequestDTO;
 import org.farmsystem.homepage.domain.cheer.service.CheerService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,5 +20,11 @@ public class CheerController implements CheerApi {
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getAllCheer(Pageable pageable) {
         return SuccessResponse.ok(cheerService.getAllCheer(pageable));
+    }
+
+    // 응원 등록 API
+    @PostMapping
+    public ResponseEntity<SuccessResponse<?>> createCheer(@RequestBody @Valid CheerRequestDTO request) {
+        return SuccessResponse.created(cheerService.createCheer(request));
     }
 }

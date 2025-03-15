@@ -8,15 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.farmsystem.homepage.domain.apply.dto.response.ApplyListResponseDTO;
-import org.farmsystem.homepage.domain.apply.dto.response.LoadApplyResponseDTO;
+import jakarta.validation.Valid;
+import org.farmsystem.homepage.domain.cheer.dto.request.CheerRequestDTO;
 import org.farmsystem.homepage.domain.cheer.dto.response.CheerResponseDTO;
-import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "응원 API", description = "응원 관련 API")
 public interface CheerApi {
@@ -32,5 +30,18 @@ public interface CheerApi {
                             array = @ArraySchema(schema = @Schema(implementation = CheerResponseDTO.class))
                     ))
     })
-    public ResponseEntity<SuccessResponse<?>> getAllCheer(Pageable pageable);
+    ResponseEntity<SuccessResponse<?>> getAllCheer(Pageable pageable);
+
+    @Operation(
+            summary = "응원 등록 API",
+            description = "응원을 등록합니다.",
+            security = @SecurityRequirement(name = "token"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CheerResponseDTO.class)
+                    ))
+    })
+    ResponseEntity<SuccessResponse<?>> createCheer(@RequestBody @Valid CheerRequestDTO request);
 }

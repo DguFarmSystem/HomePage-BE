@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.cheer.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
@@ -28,4 +29,12 @@ public class Cheer extends BaseTimeEntity {
     private String content;
 
     private CheerTag tag;
+
+    @Builder
+    public Cheer(User cheerer, User cheered, String content, CheerTag tag) {
+        this.cheerer = cheerer;
+        this.cheered = cheered;
+        this.content = content;
+        this.tag = tag;
+    }
 }
