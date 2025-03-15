@@ -2,6 +2,8 @@ package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.apply.entity.Apply;
+import org.farmsystem.homepage.domain.cheer.entity.Cheer;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
@@ -9,6 +11,7 @@ import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.List;
 @AllArgsConstructor
 @Builder
@@ -75,6 +78,12 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
+
+    @OneToMany(mappedBy = "cheerer")
+    private List<Cheer> sentCheers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cheered")
+    private List<Cheer> receivedCheers = new ArrayList<>();
 
     @PrePersist
     public void initNameJamo() {
