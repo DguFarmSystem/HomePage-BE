@@ -4,24 +4,36 @@ import org.apache.commons.csv.CSVRecord;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.common.entity.Track;
 
-public record PassedApplyResponseDTO(
+public record PassedApplyRegisterResponseDTO(
         String name,
         String major,
         String studentNumber,
-        String track,
-        int generation,
+        Track track,
+        Integer generation,
         String phoneNumber,
         String notionAccount,
         String githubAccount
 ) {
+    public static PassedApplyRegisterResponseDTO from(PassedApply passedApply) {
+        return new PassedApplyRegisterResponseDTO(
+                passedApply.getName(),
+                passedApply.getMajor(),
+                passedApply.getStudentNumber(),
+                passedApply.getTrack(),
+                passedApply.getGeneration(),
+                passedApply.getPhoneNumber(),
+                passedApply.getNotionAccount(),
+                passedApply.getGithubAccount()
+        );
+    }
 
     // 실제 CSV 필드명으로 바꾸기
-    public static PassedApplyResponseDTO fromCsv(CSVRecord csvRecord) {
-        return new PassedApplyResponseDTO(
+    public static PassedApplyRegisterResponseDTO fromCsv(CSVRecord csvRecord) {
+        return new PassedApplyRegisterResponseDTO(
                 csvRecord.get("name"),
                 csvRecord.get("major"),
                 csvRecord.get("student_number"),
-                csvRecord.get("track"),
+                Track.valueOf(csvRecord.get("track")),
                 Integer.parseInt(csvRecord.get("generation")),
                 csvRecord.get("phone_number"),
                 csvRecord.get("notion_account"),
@@ -30,12 +42,11 @@ public record PassedApplyResponseDTO(
     }
 
     public PassedApply toEntity() {
-
         return PassedApply.builder()
                 .name(name)
                 .major(major)
                 .studentNumber(studentNumber)
-                .track(Track.valueOf(track.toUpperCase()))
+                .track(track)
                 .generation(generation)
                 .phoneNumber(phoneNumber)
                 .notionAccount(notionAccount)

@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.farmsystem.homepage.domain.apply.dto.response.PassedApplyResponseDTO;
+import org.farmsystem.homepage.domain.apply.dto.response.PassedApplyRegisterResponseDTO;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
+import org.farmsystem.homepage.domain.apply.dto.request.PassedApplyRegisterRequestDTO;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.IllegalArgumentException;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,16 @@ public class PassedApplyService {
 
     private final PassedApplyRepository passedApplyRepository;
 
+    // [관리자] 합격자(회원) 개별 등록
+    @Transactional
+    public PassedApplyRegisterResponseDTO registerUser(PassedApplyRegisterRequestDTO adminUserRegisterRequest) {
+        passedApplyRepository.findByStudentNumber(adminUserRegisterRequest.studentNumber())
+                .ifPresent(user -> {throw new BusinessException(PASSED_USER_ALREADY_EXISTS);});
+        PassedApply registeredUser = passedApplyRepository.save(adminUserRegisterRequest.toEntity());
+        return PassedApplyRegisterResponseDTO.from(registeredUser);
+    }
+
+    // [관리자] csv파일로 합격자(회원) 리스트 등록
     @Transactional
     public void savePassers(MultipartFile csvFile) {
         if (csvFile.isEmpty()) {
@@ -44,7 +55,7 @@ public class PassedApplyService {
 
             return csvParser.getRecords().stream()
                     .map(record -> {
-                        PassedApplyResponseDTO passedApplyResponse = PassedApplyResponseDTO.fromCsv(record);
+                        PassedApplyRegisterResponseDTO passedApplyResponse = PassedApplyRegisterResponseDTO.fromCsv(record);
 
                         // 학번 중복 체크(중복 등록 방지)
                         if (passedApplyRepository.existsByStudentNumber(passedApplyResponse.studentNumber())) {
@@ -58,4 +69,5 @@ public class PassedApplyService {
             throw new BusinessException(CSV_FILE_PARSING_FAILED);
         }
     }
+
 }
