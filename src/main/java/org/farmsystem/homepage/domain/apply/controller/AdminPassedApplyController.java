@@ -13,22 +13,22 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/admin/passed-apply")
-public class AdminPassedApplyController {
+public class AdminPassedApplyController implements AdminPassedApplyApi {
 
     private final PassedApplyService passedApplyService;
 
     //[관리자] csv파일로 합격자(회원) 리스트 등록 API
-    @PostMapping("/register-csv")
-    public ResponseEntity<SuccessResponse<?>> savePassers(@RequestBody MultipartFile csvFile) {
-        passedApplyService.savePassers(csvFile);
+    @PostMapping(value = "/register-csv", consumes = "multipart/form-data")
+    public ResponseEntity<SuccessResponse<?>> registerPassers(@RequestBody MultipartFile csvFile) {
+        passedApplyService.registerPassers(csvFile);
         return SuccessResponse.ok(null);
     }
 
 
     // [관리자] 합격자(회원) 개별 등록(회원인증 및 가입 가능하도록)
     @PostMapping("/register")
-    public ResponseEntity<SuccessResponse<?>> registerUser(@RequestBody PassedApplyRegisterRequestDTO adminUserRegisterRequest) {
-        PassedApplyRegisterResponseDTO registedUser= passedApplyService.registerUser(adminUserRegisterRequest);
-        return SuccessResponse.ok(registedUser);
+    public ResponseEntity<SuccessResponse<?>> registerPasser(@RequestBody PassedApplyRegisterRequestDTO passedApplyRegisterRequest) {
+        PassedApplyRegisterResponseDTO registedPasser= passedApplyService.registerPasser(passedApplyRegisterRequest);
+        return SuccessResponse.ok(registedPasser);
     }
 }

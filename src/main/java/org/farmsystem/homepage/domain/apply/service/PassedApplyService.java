@@ -32,16 +32,16 @@ public class PassedApplyService {
 
     // [관리자] 합격자(회원) 개별 등록
     @Transactional
-    public PassedApplyRegisterResponseDTO registerUser(PassedApplyRegisterRequestDTO adminUserRegisterRequest) {
-        passedApplyRepository.findByStudentNumber(adminUserRegisterRequest.studentNumber())
+    public PassedApplyRegisterResponseDTO registerPasser(PassedApplyRegisterRequestDTO passedApplyRegisterRequest) {
+        passedApplyRepository.findByStudentNumber(passedApplyRegisterRequest.studentNumber())
                 .ifPresent(user -> {throw new BusinessException(PASSED_USER_ALREADY_EXISTS);});
-        PassedApply registeredUser = passedApplyRepository.save(adminUserRegisterRequest.toEntity());
+        PassedApply registeredUser = passedApplyRepository.save(passedApplyRegisterRequest.toEntity());
         return PassedApplyRegisterResponseDTO.from(registeredUser);
     }
 
     // [관리자] csv파일로 합격자(회원) 리스트 등록
     @Transactional
-    public void savePassers(MultipartFile csvFile) {
+    public void registerPassers(MultipartFile csvFile) {
         if (csvFile.isEmpty()) {
             throw new IllegalArgumentException(CSV_FILE_IS_EMPTY);
         }

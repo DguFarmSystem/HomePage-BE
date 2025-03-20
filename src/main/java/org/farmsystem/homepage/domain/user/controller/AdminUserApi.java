@@ -40,7 +40,7 @@ public interface AdminUserApi {
     );
 
     @Operation(
-            summary = "사용자 삭제 API",
+            summary = "사용자 삭제",
             description = "관리자가 사용자를 삭제하는 API입니다.",
             security = @SecurityRequirement(name = "token")
     )
@@ -51,7 +51,7 @@ public interface AdminUserApi {
     ResponseEntity<SuccessResponse<?>> deleteUser(Long userId);
 
     @Operation(
-            summary = "사용자 정보 조회 API (전체)",
+            summary = "사용자 정보 조회 (전체)",
             description = "관리자가 전체 사용자 정보를 조회하는 API입니다.  \n" +
                     "페이징과 필터링 옵션 중 필요한 값을 requestParam으로 요청하면 됩니다.(없이 요청시 페이징 기본값 & 전체 데이터 제공)  \n" +
                     "- 페이징 옵션: page(페이지 번호), size(페이지 사이즈) + sort(정렬 기준)  \n" +
@@ -72,7 +72,7 @@ public interface AdminUserApi {
     );
 
     @Operation(
-            summary = "삭제된 사용자 조회 API",
+            summary = "삭제된 사용자 조회",
             description = "관리자가 삭제된 사용자 목록을 조회하는 API입니다.  \n" +
                     "페이징과 필터링 옵션 중 필요한 값을 requestParam으로 요청하면 됩니다.(없이 요청시 페이징 기본값 & 전체 데이터 제공)  \n" +
                     "- 페이징 옵션: page(페이지 번호), size(페이지 사이즈) + sort(정렬 기준)  \n" +
