@@ -5,7 +5,7 @@ import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
-import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO;
+import org.farmsystem.homepage.domain.notification.entity.Notification;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
@@ -75,6 +75,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
+
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
 
     @PrePersist
     public void initNameJamo() {
