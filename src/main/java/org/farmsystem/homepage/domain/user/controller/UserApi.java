@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.response.OtherUserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
@@ -67,4 +68,19 @@ public interface UserApi {
             Long userId,
             @RequestBody UserUpdateRequestDTO userInfoRequest
     );
+
+    @Operation(
+            summary = "다른 사용자 정보 조회",
+            description = "토큰 필요. 사용자가 다른 사용자의 정보를 조회하는 API입니다. ",
+            security = @SecurityRequirement(name = "token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "다른 사용자 정보 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = OtherUserInfoResponseDTO.class)
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    ResponseEntity<SuccessResponse<?>> getOtherUserInfo(Long userId);
 }
