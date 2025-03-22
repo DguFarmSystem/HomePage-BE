@@ -3,6 +3,7 @@ package org.farmsystem.homepage.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
+import org.farmsystem.homepage.domain.common.dto.response.PageResponseDTO;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
@@ -130,31 +131,25 @@ public class UserService {
 
     // [관리자] 사용자 정보 조회 (페이징)
     public PagingUserListResponseDTO getAllUsers(Pageable pageable, AdminUserSearchRequestDTO query) {
-        Page<User> userPage = userRepository.findAll(pageable);
+        Page<User> userPage = userRepository.findFilteredUsers(pageable, query.track(), query.generation(), query.role(), query.major());
+        PageResponseDTO page = PageResponseDTO.of(userPage);
 
-        List<UserInfoResponseDTO> filteredUser = userPage.getContent().stream()
-                .filter(user -> filterUser(user, query))
+        List<UserInfoResponseDTO> filteredUsers = userPage.getContent().stream()
                 .map(UserInfoResponseDTO::from)
-                .collect(Collectors.toList());
+                .toList();
 
-        return PagingUserListResponseDTO.of(userPage, pageable, filteredUser);
+        return PagingUserListResponseDTO.of(page, filteredUsers);
     }
 
-    private boolean filterUser(User user, AdminUserSearchRequestDTO query) {
-        return (query.track() == null || user.getTrack() == query.track()) &&
-                (query.generation() == null || user.getGeneration().equals(query.generation())) &&
-                (query.role() == null || user.getRole() == query.role()) &&
-                (query.major() == null || user.getMajor().equalsIgnoreCase(query.major()));
-    }
-
-    // [관리자] 삭제된 사용자 조회
+    // [관리자] 삭제된 사용자 조회 (페이징)
     public PagingUserListResponseDTO getDeletedUsers(Pageable pageable) {
         Page<User> userPage = userRepository.findDeletedUsers(pageable);
+        PageResponseDTO page = PageResponseDTO.of(userPage);
 
         List<UserInfoResponseDTO> deletedUsers = userPage.getContent().stream()
                 .map(UserInfoResponseDTO::from)
-                .collect(Collectors.toList());
+                .toList();
 
-        return PagingUserListResponseDTO.of(userPage, pageable, deletedUsers);
+        return PagingUserListResponseDTO.of(page, deletedUsers);
     }
 }
