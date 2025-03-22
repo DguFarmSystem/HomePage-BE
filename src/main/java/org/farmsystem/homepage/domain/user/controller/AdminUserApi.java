@@ -23,7 +23,7 @@ public interface AdminUserApi {
     @Operation(
             summary = "사용자 정보 수정 API",
             description = "관리자가 사용자의 정보를 수정하는 API입니다.  \n" +
-                    "사용자가 수정할 수 없는 정보인 role, name, studentNumber, notionAccount, githubAccount, track, generation 중 하나 이상 수정 요청 가능합니다.",
+                    "사용자가 수정할 수 없는 정보인 role, name, studentNumber, major, track, generation 중 하나 이상 수정 요청 가능합니다.",
             security = @SecurityRequirement(name = "token")
     )
     @ApiResponses({

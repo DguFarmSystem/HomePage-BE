@@ -92,8 +92,7 @@ public class User extends BaseTimeEntity {
     public void updateUserByAdmin(User user) {
         if (user.getRole() != null) this.role = user.getRole();
         if (user.getStudentNumber() != null) this.studentNumber = user.getStudentNumber();
-        if (user.getNotionAccount() != null) this.notionAccount = user.getNotionAccount();
-        if (user.getGithubAccount() != null) this.githubAccount = user.getGithubAccount();
+        if (user.getMajor() != null) this.major = user.getMajor();
         if (user.getTrack() != null) this.track = user.getTrack();
         if (user.getGeneration() != null) this.generation = user.getGeneration();
         if (user.getName() != null) {this.name = user.getName(); this.nameJamo = JamoUtil.convertToJamo(this.name);
