@@ -8,8 +8,7 @@ public record AdminUserUpdateRequestDTO(
         Role role,
         String name,
         String studentNumber,
-        String notionAccount,
-        String githubAccount,
+        String major,
         Track track,
         Integer generation
 ) {
@@ -19,8 +18,7 @@ public record AdminUserUpdateRequestDTO(
                 .role(role)
                 .name(name)
                 .studentNumber(studentNumber)
-                .notionAccount(notionAccount)
-                .githubAccount(githubAccount)
+                .major(major)
                 .track(track)
                 .generation(generation)
                 .build();

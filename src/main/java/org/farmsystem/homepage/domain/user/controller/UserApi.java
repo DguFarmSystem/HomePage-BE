@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.response.OtherUserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
@@ -19,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 public interface UserApi {
 
     @Operation(
-            summary = "사용자 회원 인증 API",
+            summary = "사용자 회원 인증",
             description = "주어진 학번을 통해 인증된 사용자(팜 회원)인지 확인하고 사용자 이름(확인용)을 반환하는 API입니다. "
     )
     @ApiResponses({
@@ -51,7 +52,7 @@ public interface UserApi {
     @Operation(
             summary = "마이페이지 사용자 정보 수정",
             description = "토큰 필요. 사용자의 정보를 수정하는 API입니다.  \n" +
-                    "phoneNumber, major, profileImage 중 하나 이상 수정 요청 가능합니다.  \n" +
+                    "profileImage, phoneNumber, not ionAccount,githubAccount 중 하나 이상 수정 요청 가능합니다.  \n" +
                     "profileImage(프로필 이미지)는 <프로필 사진 업로드용 Presigned URL 생성 API>를 통해 S3 업로드 가능하며 수정 요청시 해당 객체 URL(String)을 전달해야 합니다.",
             security = @SecurityRequirement(name = "token")
     )
@@ -67,4 +68,19 @@ public interface UserApi {
             Long userId,
             @RequestBody UserUpdateRequestDTO userInfoRequest
     );
+
+    @Operation(
+            summary = "다른 사용자 정보 조회",
+            description = "토큰 필요. 사용자가 다른 사용자의 정보를 조회하는 API입니다. ",
+            security = @SecurityRequirement(name = "token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "다른 사용자 정보 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = OtherUserInfoResponseDTO.class)
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    ResponseEntity<SuccessResponse<?>> getOtherUserInfo(Long userId);
 }

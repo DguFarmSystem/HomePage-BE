@@ -3,15 +3,17 @@ package org.farmsystem.homepage.domain.user.dto.request;
 import org.farmsystem.homepage.domain.user.entity.User;
 
 public record UserUpdateRequestDTO(
-        String phoneNumber,
         String profileImageUrl,
-        String major
+        String phoneNumber,
+        String notionAccount,
+        String githubAccount
 ) {
     public User toEntity() {
         return User.builder()
-                .phoneNumber(phoneNumber)
                 .profileImageUrl(profileImageUrl)
-                .major(major)
+                .phoneNumber(phoneNumber)
+                .notionAccount(notionAccount)
+                .githubAccount(githubAccount)
                 .build();
     }
 }

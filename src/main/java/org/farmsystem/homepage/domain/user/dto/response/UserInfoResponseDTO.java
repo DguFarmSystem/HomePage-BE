@@ -16,7 +16,6 @@ public record UserInfoResponseDTO(
         String githubAccount,
         Track track,
         Integer generation,
-        Integer currentSeed,
         Integer totalSeed
 ) {
     public static UserInfoResponseDTO from(User user) {
@@ -32,7 +31,6 @@ public record UserInfoResponseDTO(
                 user.getGithubAccount(),
                 user.getTrack(),
                 user.getGeneration(),
-                user.getCurrentSeed(),
                 user.getTotalSeed()
         );
     }

@@ -32,7 +32,7 @@ public class CheerService {
         List<CheerResponseDTO> cheerList = cheerPage.getContent().stream()
                 .map(CheerResponseDTO::from)
                 .collect(Collectors.toList());
-        return PagingCheerListResponseDTO.of(cheerPage, pageable, cheerList);
+        return PagingCheerListResponseDTO.of(cheerPage, cheerList);
     }
 
     // 응원 등록
