@@ -1,5 +1,7 @@
 package org.farmsystem.homepage.domain.project.dto.response;
 
+import org.farmsystem.homepage.domain.common.entity.Track;
+
 import java.util.List;
 
 public record ProjectResponseDTO(
@@ -13,5 +15,6 @@ public record ProjectResponseDTO(
         String deploymentLink,
         String resourceLink,
         List<String> participants,
-        String approvalStatus
+        String approvalStatus,
+        Track track
 ) {}
