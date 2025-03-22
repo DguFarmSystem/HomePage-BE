@@ -5,6 +5,7 @@ import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
 import org.farmsystem.homepage.domain.common.dto.response.PageResponseDTO;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
@@ -15,7 +16,9 @@ import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.request.*;
 import org.farmsystem.homepage.domain.user.dto.response.*;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
+import org.farmsystem.homepage.domain.user.entity.TrackHistory;
 import org.farmsystem.homepage.domain.user.entity.User;
+import org.farmsystem.homepage.domain.user.repository.TrackHistoryRepository;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
@@ -36,6 +39,7 @@ import static org.farmsystem.homepage.global.error.ErrorCode.*;
 public class UserService {
     private final UserRepository userRepository;
     private final PassedApplyRepository passedApplyRepository;
+    private final TrackHistoryRepository trackHistoryRepository;
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())
@@ -124,9 +128,29 @@ public class UserService {
     public UserInfoResponseDTO updateUserByAdmin(Long userId, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        // 트랙 및 기수 변경 이력 저장
+        saveTrackHistoryIfChanged(user, adminUserUpdateRequest);
+
         user.updateUserByAdmin(adminUserUpdateRequest.toEntity());
         userRepository.save(user);
         return UserInfoResponseDTO.from(user);
+    }
+
+    // 트랙 및 기수 변경 이력 저장
+    private void saveTrackHistoryIfChanged(User user, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
+        Track previousTrack = user.getTrack();
+        Integer previousGeneration = user.getGeneration();
+
+        Track newTrack = adminUserUpdateRequest.track();
+        Integer newGeneration = adminUserUpdateRequest.generation();
+
+        if ((newTrack != null && !newTrack.equals(previousTrack)) ||
+                (newGeneration != null && !newGeneration.equals(previousGeneration))) {
+
+            TrackHistory trackHistory = new TrackHistory(user, previousTrack, previousGeneration);
+            trackHistoryRepository.save(trackHistory);
+        }
     }
 
     // [관리자] 사용자 정보 조회 (페이징)
