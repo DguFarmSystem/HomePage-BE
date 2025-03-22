@@ -1,9 +1,9 @@
-package org.farmsystem.homepage.domain.user.dto.request;
+package org.farmsystem.homepage.domain.apply.dto.request;
 
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.common.entity.Track;
 
-public record AdminUserRegisterRequestDTO(
+public record PassedApplyRegisterRequestDTO(
         String name,
         String studentNumber,
         String major,

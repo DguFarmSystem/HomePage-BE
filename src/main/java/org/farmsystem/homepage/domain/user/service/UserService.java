@@ -109,14 +109,6 @@ public class UserService {
         return userRepository.save(UserSaveResponseDTO.fromPassedUser(passedUser, userLoginRequest.socialType(), socialId, imageUrl));
     }
 
-    // [관리자] 사용자 정보 등록
-    @Transactional
-    public UserRegisterResponseDTO registerUser(AdminUserRegisterRequestDTO adminUserRegisterRequest) {
-        passedApplyRepository.findByStudentNumber(adminUserRegisterRequest.studentNumber())
-                .ifPresent(user -> {throw new BusinessException(PASSED_USER_ALREADY_EXISTS);});
-        PassedApply registeredUser = passedApplyRepository.save(adminUserRegisterRequest.toEntity());
-        return UserRegisterResponseDTO.from(registeredUser);
-    }
 
     // [관리자] 사용자 정보 삭제
     @Transactional

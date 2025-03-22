@@ -21,7 +21,7 @@ public class PassedApply {
     @Column(nullable = false, length = 50)
     private String major;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String studentNumber;
 
     @Enumerated(EnumType.STRING)

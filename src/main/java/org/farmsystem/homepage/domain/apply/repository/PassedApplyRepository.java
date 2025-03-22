@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PassedApplyRepository extends JpaRepository<PassedApply, Long> {
     Optional<PassedApply> findByStudentNumber(String studentNumber);
+
+    boolean existsByStudentNumber(String studentNumber);
 }
