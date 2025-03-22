@@ -68,9 +68,6 @@ public class User extends BaseTimeEntity {
     private boolean isDeleted;
 
     @ColumnDefault("0")
-    private int currentSeed;
-
-    @ColumnDefault("0")
     private int totalSeed;
 
     @Column(nullable = false, length = 100)
