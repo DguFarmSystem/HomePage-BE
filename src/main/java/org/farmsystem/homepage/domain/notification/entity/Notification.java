@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.notification.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
@@ -36,4 +37,14 @@ public class Notification extends BaseTimeEntity {
     @ColumnDefault("false")
     @Column(nullable = false)
     private boolean isRead;
+
+    @Builder
+    public Notification(User user, NotificationType type, String title, String message, String targetUrl, boolean isRead) {
+        this.user = user;
+        this.type = type;
+        this.title = title;
+        this.message = message;
+        this.targetUrl = targetUrl;
+        this.isRead = isRead;
+    }
 }
