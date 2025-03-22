@@ -1,20 +1,24 @@
 package org.farmsystem.homepage.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
+import org.farmsystem.homepage.domain.notification.dto.NotificationResponseDto;
 import org.farmsystem.homepage.domain.notification.entity.Notification;
 import org.farmsystem.homepage.domain.notification.entity.NotificationType;
 import org.farmsystem.homepage.domain.notification.repository.NotificationRepository;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.ErrorCode;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,5 +76,24 @@ public class NotificationService {
                 .isRead(false)
                 .build();
         notificationRepository.save(notification);
+    }
+
+    public List<NotificationResponseDto> getNotifications(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
+        List<Notification> notifications = notificationRepository.findAllByUserOrderByCreatedAtDesc((user));
+        return notifications.stream()
+                .map(NotificationResponseDto::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void markNotificationAsRead(Long notificationId, Long userId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOTIFICATION_NOT_FOUND));
+        if (!notification.getUser().getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.NOTIFICATION_ACCESS_DENIED);
+        }
+        notification.markAsRead();
     }
 }

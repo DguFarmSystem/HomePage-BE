@@ -47,4 +47,10 @@ public class Notification extends BaseTimeEntity {
         this.targetUrl = targetUrl;
         this.isRead = isRead;
     }
+
+    public void markAsRead() {
+        if (!this.isRead) {
+            this.isRead = true;
+        }
+    }
 }
