@@ -1,11 +1,9 @@
 package org.farmsystem.homepage.domain.project.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
@@ -36,7 +34,6 @@ public class Project extends BaseTimeEntity {
 
     private String thumbnailImageUrl;
     private String bodyImageUrl;
-
     private String githubLink;
     private String deploymentLink;
     private String resourceLink;
@@ -44,6 +41,13 @@ public class Project extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(nullable = false)
+    private Integer generation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Track track;
 
     @ElementCollection
     @CollectionTable(name = "project_participants", joinColumns = @JoinColumn(name = "project_id"))
@@ -53,9 +57,6 @@ public class Project extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
-
-    @Column(nullable = false)
-    private Integer generation;
 
     /**
      * 관리자 관련 코드
