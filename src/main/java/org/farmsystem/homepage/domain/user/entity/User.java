@@ -103,7 +103,8 @@ public class User extends BaseTimeEntity {
     public void updateUser(User user){
         if (user.getProfileImageUrl() != null) this.profileImageUrl = user.getProfileImageUrl();
         if (user.getPhoneNumber() != null) this.phoneNumber = user.getPhoneNumber();
-        if (user.getMajor() != null) this.major = user.getMajor();
+        if (user.getNotionAccount() != null) this.notionAccount = user.getNotionAccount();
+        if (user.getGithubAccount() != null) this.githubAccount = user.getGithubAccount();
     }
 
 }
