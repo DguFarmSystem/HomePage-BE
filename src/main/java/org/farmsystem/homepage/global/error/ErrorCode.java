@@ -62,6 +62,13 @@ public enum ErrorCode {
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패하였습니다."),
 
     /**
+     * CSV Error
+     */
+    CSV_FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "업로드할 CSV 파일이 비어 있습니다."),
+    CSV_FIELD_MAPPING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CSV 필드 매핑에 실패하였습니다."),
+    CSV_FILE_PARSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CSV 파일 변환에 실패하였습니다."),
+
+    /**
      * News Error
      */
     NEWS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 뉴스를 찾을 수 없습니다."),
@@ -82,8 +89,6 @@ public enum ErrorCode {
      */
     PASSED_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 합격자 정보입니다."),
     PASSED_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "합격자 정보를 찾을 수 없습니다."),
-    CSV_FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "업로드할 CSV 파일이 비어 있습니다."),
-    CSV_FILE_PARSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CSV 파일 변환에 실패하였습니다."),
     DUPLICATE_STUDENT_NUMBER(HttpStatus.CONFLICT, "이미 등록된 학번입니다."),
 
     /**

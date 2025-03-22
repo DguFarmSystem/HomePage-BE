@@ -47,6 +47,7 @@ public interface AdminPassedApplyApi {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "요청된 CSV 파일이 없음"),
             @ApiResponse(responseCode = "409", description = "CSV파일에 중복된 학번 (이미 등록된 회원) 포함"),
+            @ApiResponse(responseCode = "500", description = "CSV 필드 매핑 실패"),
             @ApiResponse(responseCode = "500", description = "CSV 파일 파싱 실패")
     })
     ResponseEntity<SuccessResponse<?>> registerPassers(
