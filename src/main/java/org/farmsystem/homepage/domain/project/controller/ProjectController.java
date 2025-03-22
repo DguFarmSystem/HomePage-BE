@@ -1,14 +1,9 @@
 package org.farmsystem.homepage.domain.project.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.project.dto.request.ProjectRequestDTO;
-import org.farmsystem.homepage.domain.project.dto.response.ProjectPageResultDTO;
 import org.farmsystem.homepage.domain.project.dto.response.ProjectResponseDTO;
-import org.farmsystem.homepage.domain.project.dto.response.ProjectSimpleResponseDTO;
 import org.farmsystem.homepage.domain.project.service.ProjectService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
