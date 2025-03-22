@@ -103,7 +103,8 @@ public enum ErrorCode {
      */
     BLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "블로그를 찾을 수 없습니다."),
     BLOG_DUPLICATED(HttpStatus.CONFLICT, "이미 신청 처리된 블로그입니다."),
-    ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "이미 승인 처리된 블로그입니다.")
+    ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "이미 승인 처리된 블로그입니다."),
+    PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "프로젝트를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
