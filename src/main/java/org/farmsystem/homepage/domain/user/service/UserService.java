@@ -152,4 +152,11 @@ public class UserService {
 
         return PagingUserListResponseDTO.of(page, deletedUsers);
     }
+
+    //다른 사용자 정보 조회 API
+    public OtherUserInfoResponseDTO getOtherUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        return OtherUserInfoResponseDTO.from(user);
+    }
 }
