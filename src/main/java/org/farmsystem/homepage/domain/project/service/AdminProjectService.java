@@ -1,21 +1,21 @@
 package org.farmsystem.homepage.domain.project.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.project.dto.response.ProjectResponseDTO;
 import org.farmsystem.homepage.domain.project.dto.response.ProjectApprovalResponseDTO;
-import org.farmsystem.homepage.domain.project.entity.Project;
+import org.farmsystem.homepage.domain.project.dto.response.ProjectResponseDTO;
 import org.farmsystem.homepage.domain.project.entity.ApprovalStatus;
+import org.farmsystem.homepage.domain.project.entity.Project;
 import org.farmsystem.homepage.domain.project.repository.ProjectRepository;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
-import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.farmsystem.homepage.global.error.ErrorCode.*;
+import static org.farmsystem.homepage.global.error.ErrorCode.PROJECT_NOT_FOUND;
+import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
 
 @Service
 @Transactional
@@ -67,18 +67,24 @@ public class AdminProjectService {
     @Transactional(readOnly = true)
     public List<ProjectResponseDTO> getPendingProjects() {
         return projectRepository.findByApprovalStatus(ApprovalStatus.PENDING).stream()
-                .map(project -> new ProjectResponseDTO(
-                        project.getProjectId(),
-                        project.getTitle(),
-                        project.getIntroduction(),
-                        project.getContent(),
-                        project.getThumbnailImageUrl(),
-                        project.getBodyImageUrl(),
-                        project.getGithubLink(),
-                        project.getDeploymentLink(),
-                        project.getResourceLink(),
-                        project.getParticipants(),
-                        project.getApprovalStatus().name()
-                )).toList();
+                .map(this::toDTO)
+                .toList();
+    }
+
+    private ProjectResponseDTO toDTO(Project project) {
+        return new ProjectResponseDTO(
+                project.getProjectId(),
+                project.getTitle(),
+                project.getIntroduction(),
+                project.getContent(),
+                project.getThumbnailImageUrl(),
+                project.getBodyImageUrl(),
+                project.getGithubLink(),
+                project.getDeploymentLink(),
+                project.getResourceLink(),
+                project.getParticipants(),
+                project.getApprovalStatus().name(),
+                project.getTrack()
+        );
     }
 }
