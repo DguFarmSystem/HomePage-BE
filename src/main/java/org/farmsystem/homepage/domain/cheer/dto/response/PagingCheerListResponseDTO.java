@@ -1,7 +1,7 @@
 package org.farmsystem.homepage.domain.cheer.dto.response;
 
 import org.farmsystem.homepage.domain.cheer.entity.Cheer;
-import org.farmsystem.homepage.domain.common.dto.PageResponseDTO;
+import org.farmsystem.homepage.domain.common.dto.response.PageResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
