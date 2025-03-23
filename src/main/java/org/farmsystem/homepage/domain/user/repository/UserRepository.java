@@ -1,11 +1,12 @@
 package org.farmsystem.homepage.domain.user.repository;
 
+import org.farmsystem.homepage.domain.common.entity.Track;
+import org.farmsystem.homepage.domain.user.entity.Role;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -24,4 +25,12 @@ public interface UserRepository extends JpaRepository<User,Long>{
 
     @Query(value = "SELECT * FROM user WHERE is_deleted = true", nativeQuery = true)
     Page<User> findDeletedUsers(Pageable pageable);
+
+    @Query("SELECT u FROM User u WHERE " +
+            "(:track IS NULL OR u.track = :track) AND " +
+            "(:generation IS NULL OR u.generation = :generation) AND " +
+            "(:role IS NULL OR u.role = :role) AND " +
+            "(:major IS NULL OR u.major LIKE CONCAT('%', :major, '%'))")
+    Page<User> findFilteredUsers(Pageable pageable, Track track, Integer generation, Role role, String major);
+
 }

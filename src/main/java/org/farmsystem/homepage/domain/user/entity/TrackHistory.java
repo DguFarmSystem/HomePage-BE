@@ -2,12 +2,13 @@ package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
 
 @NoArgsConstructor
 @Table(name = "track_history")
 @Entity
-public class TrackHistory {
+public class TrackHistory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long trackHistoryId;
@@ -23,6 +24,10 @@ public class TrackHistory {
     @Column
     private Integer generation;
 
-
+    public TrackHistory(User user, Track track, Integer generation) {
+        this.user = user;
+        this.track = track;
+        this.generation = generation;
+    }
 
 }

@@ -78,11 +78,18 @@ public enum ErrorCode {
     APPLY_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 지원서입니다."),
 
     /**
+     * Passed Apply Error
+     */
+    PASSED_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 합격자 정보입니다."),
+    PASSED_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "합격자 정보를 찾을 수 없습니다."),
+    CSV_FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "업로드할 CSV 파일이 비어 있습니다."),
+    CSV_FILE_PARSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CSV 파일 변환에 실패하였습니다."),
+    DUPLICATE_STUDENT_NUMBER(HttpStatus.CONFLICT, "이미 등록된 학번입니다."),
+
+    /**
      * User Error
      */
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),
-    PASSED_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 합격자 정보입니다."),
-    PASSED_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "합격자 정보를 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "다른 소셜 계정으로 이미 가입된 사용자입니다."),
 
