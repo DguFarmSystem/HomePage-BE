@@ -109,4 +109,8 @@ public class User extends BaseTimeEntity {
         if (user.getGithubAccount() != null) this.githubAccount = user.getGithubAccount();
     }
 
+    public void addTotalSeed(int seedAmount) {
+        this.totalSeed += seedAmount;
+    }
+
 }
