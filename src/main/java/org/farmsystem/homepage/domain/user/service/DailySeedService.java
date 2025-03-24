@@ -26,6 +26,7 @@ public class DailySeedService {
     private final UserRepository userRepository;
 
     //TODO : 적립 필요한 이벤트에 earnSeed 함수 호출 추가하기
+    // 예 : dailySeedService.earnSeed(userId, SeedEventType.ATTENDANCE);
     @Transactional
     public void earnSeed(Long userId, SeedEventType eventType) {
         User user = userRepository.findById(userId)
