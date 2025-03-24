@@ -12,9 +12,13 @@ import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.OtherUserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.UserRankListResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Tag(name = "사용자 API", description = "사용자 관련 API")
 public interface UserApi {
@@ -83,4 +87,35 @@ public interface UserApi {
             @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
     })
     ResponseEntity<SuccessResponse<?>> getOtherUserInfo(Long userId);
+
+    @Operation(
+            summary = "출석하기",
+            description = "사용자가 출석을 하는 API입니다.  \n" +
+                    " 출석 후 1개의 씨앗이 적립됩니다. 출석 씨앗 적립은 하루에 한 번만 가능합니다. ",
+            security = @SecurityRequirement(name = "token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "출석 성공", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    @PostMapping("/attendance")
+    ResponseEntity<SuccessResponse<?>> attend(Long userId);
+
+    @Operation(
+            summary = "사용자 랭킹 조회",
+            description = "사용자의 랭킹을 조회하는 API입니다. 사용자 자신과 전체 랭킹을 반환합니다.  \n" +
+                    "랭킹은 0시 기준으로 갱신됩니다. ",
+            security = @SecurityRequirement(name = "token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "랭킹 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserRankListResponseDTO.class)
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    @GetMapping("/ranking")
+    ResponseEntity<SuccessResponse<?>> getUserRanking(Long userId);
 }
+

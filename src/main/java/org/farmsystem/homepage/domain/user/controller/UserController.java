@@ -61,14 +61,14 @@ public class UserController implements UserApi {
         return SuccessResponse.ok(userService.searchUserSuggest(query));
     }
 
-    // 출석
+    // 출석 API
     @PostMapping("/attendance")
     public ResponseEntity<SuccessResponse<?>> attend(@AuthenticationPrincipal Long userId) {
         userService.attend(userId);
         return SuccessResponse.ok(null);
     }
 
-    // 사용자 랭킹
+    // 사용자 랭킹 조회 API
     @GetMapping("/ranking")
     public ResponseEntity<SuccessResponse<?>> getUserRanking(@AuthenticationPrincipal Long userId) {
         UserRankListResponseDTO userRankList = rankingService.getDailyRanking(userId);
