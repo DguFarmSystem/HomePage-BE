@@ -6,8 +6,10 @@ import org.farmsystem.homepage.domain.farmingLog.dto.FarmingLogResponseDTO;
 import org.farmsystem.homepage.domain.farmingLog.entity.FarmingLog;
 import org.farmsystem.homepage.domain.farmingLog.repository.FarmingLogLikeRepository;
 import org.farmsystem.homepage.domain.farmingLog.repository.FarmingLogRepository;
+import org.farmsystem.homepage.domain.user.entity.SeedEventType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
+import org.farmsystem.homepage.domain.user.service.DailySeedService;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ public class FarmingLogService {
     private final FarmingLogRepository farmingLogRepository;
     private final FarmingLogLikeRepository farmingLogLikeRepository;
     private final UserRepository userRepository;
+    private final DailySeedService dailySeedService;
 
     private FarmingLogResponseDTO mapToFarmingLogResponse(FarmingLog farmingLog, User currentUser) {
         boolean isLiked = farmingLogLikeRepository.existsByUserAndFarmingLog(currentUser, farmingLog);
@@ -61,6 +64,8 @@ public class FarmingLogService {
                 .build();
 
         farmingLogRepository.save(farmingLog);
+
+        dailySeedService.earnSeed(userId, SeedEventType.FARMING_LOG);
         return FarmingLogResponseDTO.from(farmingLog, userId, false, 0);
     }
 
