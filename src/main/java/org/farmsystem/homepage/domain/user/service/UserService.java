@@ -4,17 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
 import org.farmsystem.homepage.domain.common.dto.response.PageResponseDTO;
-import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.farmsystem.homepage.domain.common.entity.Track;
-import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.farmsystem.homepage.domain.user.dto.request.*;
 import org.farmsystem.homepage.domain.user.dto.response.*;
+import org.farmsystem.homepage.domain.user.entity.SeedEventType;
 import org.farmsystem.homepage.domain.user.entity.SocialType;
 import org.farmsystem.homepage.domain.user.entity.TrackHistory;
 import org.farmsystem.homepage.domain.user.entity.User;
@@ -40,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PassedApplyRepository passedApplyRepository;
     private final TrackHistoryRepository trackHistoryRepository;
+    private final DailySeedService dailySeedService;
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())
@@ -182,5 +177,13 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         return OtherUserInfoResponseDTO.from(user);
+    }
+
+    //출석하기
+    @Transactional
+    public void attend(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        dailySeedService.earnSeed(userId, SeedEventType.ATTENDANCE);
     }
 }
