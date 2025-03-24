@@ -56,6 +56,9 @@ dependencies {
 
     //csv
     implementation 'org.apache.commons:commons-csv:1.10.0'
+
+    //spring cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 }
 
 tasks.named('test') {
