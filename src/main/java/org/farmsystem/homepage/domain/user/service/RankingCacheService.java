@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RankingCacheService {
 
     private final UserRepository userRepository;
@@ -43,17 +45,15 @@ public class RankingCacheService {
         return rankList;
     }
 
-
     // 자정마다 랭킹 업데이트
+    @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     @CachePut(value = "dailySeedRanking", key = "'all'")
     public List<UserRankResponseDTO> updateDailyRanking() {
 
-        LocalDate now = LocalDate.now();
-        log.info("씨앗 랭킹 갱신 : " + now);
+        log.info("씨앗 랭킹 업데이트 스케줄링 : {}", LocalDate.now());
 
         cacheManager.getCache("dailySeedRanking").evict("all");
-
         return getRankingList();
     }
 

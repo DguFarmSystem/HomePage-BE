@@ -1,26 +1,25 @@
 package org.farmsystem.homepage.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.farmsystem.homepage.domain.user.dto.response.UserRankListResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserRankResponseDTO;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserRankingService {
+@Transactional(readOnly = true)
+public class RankingService {
 
     private final UserRepository userRepository;
     private final RankingCacheService rankingCacheService;
-
 
     // 랭킹 조회
     public UserRankListResponseDTO getDailyRanking(Long userId) {
