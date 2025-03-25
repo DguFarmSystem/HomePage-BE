@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.project.dto.response;
 
 import org.farmsystem.homepage.domain.common.entity.Track;
+import org.farmsystem.homepage.domain.project.entity.Project;
 
 public record ProjectSimpleResponseDTO(
         Long projectId,
@@ -8,5 +9,16 @@ public record ProjectSimpleResponseDTO(
         String introduction,
         String thumbnailImageUrl,
         Track track,
-        Integer generation
-) {}
+        int generation
+) {
+    public static ProjectSimpleResponseDTO fromEntity(Project project) {
+        return new ProjectSimpleResponseDTO(
+                project.getProjectId(),
+                project.getTitle(),
+                project.getIntroduction(),
+                project.getThumbnailImageUrl(),
+                project.getTrack(),
+                project.getGeneration()
+        );
+    }
+}

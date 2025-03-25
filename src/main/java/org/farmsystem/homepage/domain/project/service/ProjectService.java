@@ -57,10 +57,17 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<ProjectResponseDTO> getMyProjects(Long userId) {
         return projectRepository.findByUser_UserId(userId).stream()
-                .map(this::toDTO)
+                .map(ProjectResponseDTO::fromEntity)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ProjectResponseDTO getProjectDetail(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND));
+
+        return ProjectResponseDTO.fromEntity(project);
+    }
 
     public Page<ProjectSimpleResponseDTO> getFilteredProjects(Integer generation, Track track, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -76,46 +83,7 @@ public class ProjectService {
             projects = projectRepository.findByApprovalStatus(ApprovalStatus.APPROVED, pageable);
         }
 
-        return projects.map(this::toSimpleDTO);
-    }
-
-    @Transactional(readOnly = true)
-    public ProjectResponseDTO getProjectDetail(Long projectId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException(PROJECT_NOT_FOUND));
-
-        return toDTO(project);
-    }
-
-
-
-
-    private ProjectResponseDTO toDTO(Project project) {
-        return new ProjectResponseDTO(
-                project.getProjectId(),
-                project.getTitle(),
-                project.getIntroduction(),
-                project.getContent(),
-                project.getThumbnailImageUrl(),
-                project.getBodyImageUrl(),
-                project.getGithubLink(),
-                project.getDeploymentLink(),
-                project.getResourceLink(),
-                project.getParticipants(),
-                project.getApprovalStatus().name(),
-                project.getTrack()
-        );
-    }
-
-    private ProjectSimpleResponseDTO toSimpleDTO(Project project) {
-        return new ProjectSimpleResponseDTO(
-                project.getProjectId(),
-                project.getTitle(),
-                project.getIntroduction(),
-                project.getThumbnailImageUrl(),
-                project.getTrack(),
-                project.getGeneration()
-        );
+        return projects.map(ProjectSimpleResponseDTO::fromEntity);
     }
 
 }
