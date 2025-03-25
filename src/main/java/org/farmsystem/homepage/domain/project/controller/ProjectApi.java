@@ -32,6 +32,7 @@ public interface ProjectApi {
     })
     @PostMapping
     ResponseEntity<SuccessResponse<?>> applyForProject(
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) Long userId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "신청할 프로젝트 정보",
                     required = true,
@@ -39,6 +40,7 @@ public interface ProjectApi {
             )
             @Valid @RequestBody ProjectRequestDTO request
     );
+
 
     @Operation(
             summary = "내가 신청한 프로젝트 목록",
@@ -56,5 +58,7 @@ public interface ProjectApi {
             )
     })
     @GetMapping("/my")
-    ResponseEntity<SuccessResponse<?>> getMyProjects();
+    ResponseEntity<SuccessResponse<?>> getMyProjects(
+            @io.swagger.v3.oas.annotations.Parameter(hidden = true) Long userId
+    );
 }

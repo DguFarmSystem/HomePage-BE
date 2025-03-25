@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.project.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +39,10 @@ public interface AdminProjectApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 프로젝트 ID")
     })
     @PatchMapping("/{projectId}/approve")
-    ResponseEntity<SuccessResponse<?>> approveProject(@PathVariable Long projectId);
+    ResponseEntity<SuccessResponse<?>> approveProject(
+            @Parameter(hidden = true) Long adminUserId,
+            @PathVariable Long projectId
+    );
 
     @Operation(
             summary = "프로젝트 거절",
@@ -57,7 +61,10 @@ public interface AdminProjectApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 프로젝트 ID")
     })
     @PatchMapping("/{projectId}/reject")
-    ResponseEntity<SuccessResponse<?>> rejectProject(@PathVariable Long projectId);
+    ResponseEntity<SuccessResponse<?>> rejectProject(
+            @Parameter(hidden = true) Long adminUserId,
+            @PathVariable Long projectId
+    );
 
     @Operation(
             summary = "승인 대기 중인 프로젝트 목록",
