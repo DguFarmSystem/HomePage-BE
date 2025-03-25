@@ -2,42 +2,33 @@ package org.farmsystem.homepage.domain.project.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.project.dto.request.ProjectRequestDTO;
-import org.farmsystem.homepage.domain.project.dto.response.ProjectResponseDTO;
 import org.farmsystem.homepage.domain.project.service.ProjectService;
+import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
-public class ProjectController {
+public class ProjectController implements ProjectApi{
 
     private final ProjectService projectService;
 
-    /**
-     * 파밍로그 - 프로젝트 등록 신청
-     */
     @PostMapping
-    public ResponseEntity<Void> applyForProject(
+    public ResponseEntity<SuccessResponse<?>> applyForProject(
             @AuthenticationPrincipal Long userId,
             @RequestBody ProjectRequestDTO request
     ) {
         projectService.applyForProject(userId, request);
-        return ResponseEntity.ok().build();
+        return SuccessResponse.noContent();
     }
 
-
-    /**
-     * 파밍로그 - 사용자가 신청한 프로젝트 목록 조회
-     */
     @GetMapping("/my")
-    public ResponseEntity<List<ProjectResponseDTO>> getMyProjects(@AuthenticationPrincipal Long userId) {
-        return ResponseEntity.ok(projectService.getMyProjects(userId));
+    public ResponseEntity<SuccessResponse<?>> getMyProjects(@AuthenticationPrincipal Long userId) {
+        return SuccessResponse.ok(projectService.getMyProjects(userId));
     }
-
-
 }
+
 

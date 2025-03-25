@@ -6,6 +6,7 @@ import org.farmsystem.homepage.domain.project.dto.response.ProjectPageResultDTO;
 import org.farmsystem.homepage.domain.project.dto.response.ProjectResponseDTO;
 import org.farmsystem.homepage.domain.project.dto.response.ProjectSimpleResponseDTO;
 import org.farmsystem.homepage.domain.project.service.ProjectService;
+import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/home/projects")
 @RequiredArgsConstructor
-public class HomeProjectController {
+public class HomeProjectController implements HomeProjectApi{
 
     private final ProjectService projectService;
 
-    /**
-     * 기수/트랙 필터링 조회 (페이징)
-     */
     @GetMapping("/filter")
-    public ResponseEntity<ProjectPageResultDTO<ProjectSimpleResponseDTO>> getFilteredProjects(
+    public ResponseEntity<SuccessResponse<?>> getFilteredProjects(
             @RequestParam(required = false) Integer generation,
             @RequestParam(required = false) String track,
             @RequestParam(defaultValue = "0") int page,
@@ -30,15 +28,11 @@ public class HomeProjectController {
     ) {
         Track trackEnum = (track != null) ? Track.from(track) : null;
         Page<ProjectSimpleResponseDTO> projectPage = projectService.getFilteredProjects(generation, trackEnum, page, size);
-        return ResponseEntity.ok(ProjectPageResultDTO.of(projectPage, PageRequest.of(page, size)));
+        return SuccessResponse.ok(ProjectPageResultDTO.of(projectPage, PageRequest.of(page, size)));
     }
 
-
-    /*
-    프로젝트 단일 조회
-     */
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectResponseDTO> getProjectDetail(@PathVariable Long projectId) {
-        return ResponseEntity.ok(projectService.getProjectDetail(projectId));
+    public ResponseEntity<SuccessResponse<?>> getProjectDetail(@PathVariable Long projectId) {
+        return SuccessResponse.ok(projectService.getProjectDetail(projectId));
     }
 }
