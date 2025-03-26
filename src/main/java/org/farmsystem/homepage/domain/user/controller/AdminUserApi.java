@@ -55,7 +55,7 @@ public interface AdminUserApi {
             summary = "사용자 정보 조회 (전체)",
             description = "관리자가 전체 사용자 정보를 조회하는 API입니다.  \n" +
                     "페이징과 필터링 옵션 중 필요한 값을 requestParam으로 요청하면 됩니다.(없이 요청시 페이징 기본값 & 전체 데이터 제공)  \n" +
-                    "- 페이징 요청 옵션: page(페이지 번호-0부터 시작함), size(페이지 사이즈) + sort(정렬 기준)  \n" +
+                    "- 페이징 요청 옵션: page(페이지 번호-0부터 시작함), size(페이지 사이즈), sort(정렬 기준)  \n" +
                     "- 필터링 요청 옵션: name(이름), track(트랙), generation(세대), role(역할)  \n" +
                     "- 페이징 응답 값(pageResponseDTO 스키마 참고하기): pageSize(페이지당 데이터 개수), totalElements(총 데이터 개수), currentPageElements(현재 페이지 데이터 개수), totalPages(총 페이지 개수), currentPage(현재 페이지), sortBy(정렬 기준), hasNextPage(다음 페이지 존재 여부), hasPreviousPage(이전 페이지 존재 여부)  \n" ,
             security = @SecurityRequirement(name = "token")

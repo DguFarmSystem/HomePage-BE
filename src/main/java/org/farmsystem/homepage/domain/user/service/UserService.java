@@ -8,10 +8,8 @@ import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
 import org.farmsystem.homepage.domain.user.dto.request.*;
 import org.farmsystem.homepage.domain.user.dto.response.*;
-import org.farmsystem.homepage.domain.user.entity.SeedEventType;
-import org.farmsystem.homepage.domain.user.entity.SocialType;
-import org.farmsystem.homepage.domain.user.entity.TrackHistory;
-import org.farmsystem.homepage.domain.user.entity.User;
+import org.farmsystem.homepage.domain.user.entity.*;
+import org.farmsystem.homepage.domain.user.repository.DailySeedRepository;
 import org.farmsystem.homepage.domain.user.repository.TrackHistoryRepository;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
@@ -35,6 +33,7 @@ public class UserService {
     private final PassedApplyRepository passedApplyRepository;
     private final TrackHistoryRepository trackHistoryRepository;
     private final DailySeedService dailySeedService;
+    private final DailySeedRepository dailySeedRepository;
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())

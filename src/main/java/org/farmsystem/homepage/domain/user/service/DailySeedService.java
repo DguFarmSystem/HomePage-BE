@@ -7,6 +7,7 @@ import org.farmsystem.homepage.domain.user.entity.SeedEventType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.DailySeedRepository;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static org.farmsystem.homepage.global.error.ErrorCode.ALREADY_ATTENDANCE;
 import static org.farmsystem.homepage.global.error.ErrorCode.USER_NOT_FOUND;
 
 @Slf4j
@@ -41,14 +43,18 @@ public class DailySeedService {
         userRepository.save(user);
     }
 
-    // 중복 등록 방지
+    // 중복 적립 방지
     private void handleSeedEvent(DailySeed dailySeed, SeedEventType eventType, User user) {
         switch (eventType) {
             case ATTENDANCE:
-                if (dailySeed.isAttendance()) return;
+                // 중복 출석 방지
+                if (dailySeed.isAttendance()) {
+                    throw new BusinessException(ALREADY_ATTENDANCE);
+                }
                 dailySeed.updateAttendance();
                 user.addTotalSeed(eventType.getSeedAmount());
                 break;
+
             case CHEER:
                 if (dailySeed.isCheer()) return;
                 dailySeed.updateCheer();
