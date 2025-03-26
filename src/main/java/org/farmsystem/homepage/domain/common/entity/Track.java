@@ -30,5 +30,3 @@ public enum Track {
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 트랙: " + koreanName));
     }
 }
-
-

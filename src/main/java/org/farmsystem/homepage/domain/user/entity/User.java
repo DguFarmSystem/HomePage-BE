@@ -2,13 +2,16 @@ package org.farmsystem.homepage.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.apply.entity.Apply;
+import org.farmsystem.homepage.domain.cheer.entity.Cheer;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
-import org.farmsystem.homepage.domain.user.dto.request.AdminUserUpdateRequestDTO;
+import org.farmsystem.homepage.domain.notification.entity.Notification;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.List;
 @AllArgsConstructor
 @Builder
@@ -65,9 +68,6 @@ public class User extends BaseTimeEntity {
     private boolean isDeleted;
 
     @ColumnDefault("0")
-    private int currentSeed;
-
-    @ColumnDefault("0")
     private int totalSeed;
 
     @Column(nullable = false, length = 100)
@@ -75,6 +75,15 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<TrackHistory> trackHistories;
+
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
+  
+    @OneToMany(mappedBy = "cheerer")
+    private List<Cheer> sentCheers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cheered")
+    private List<Cheer> receivedCheers = new ArrayList<>();
 
     @PrePersist
     public void initNameJamo() {
@@ -86,8 +95,7 @@ public class User extends BaseTimeEntity {
     public void updateUserByAdmin(User user) {
         if (user.getRole() != null) this.role = user.getRole();
         if (user.getStudentNumber() != null) this.studentNumber = user.getStudentNumber();
-        if (user.getNotionAccount() != null) this.notionAccount = user.getNotionAccount();
-        if (user.getGithubAccount() != null) this.githubAccount = user.getGithubAccount();
+        if (user.getMajor() != null) this.major = user.getMajor();
         if (user.getTrack() != null) this.track = user.getTrack();
         if (user.getGeneration() != null) this.generation = user.getGeneration();
         if (user.getName() != null) {this.name = user.getName(); this.nameJamo = JamoUtil.convertToJamo(this.name);
@@ -97,7 +105,8 @@ public class User extends BaseTimeEntity {
     public void updateUser(User user){
         if (user.getProfileImageUrl() != null) this.profileImageUrl = user.getProfileImageUrl();
         if (user.getPhoneNumber() != null) this.phoneNumber = user.getPhoneNumber();
-        if (user.getMajor() != null) this.major = user.getMajor();
+        if (user.getNotionAccount() != null) this.notionAccount = user.getNotionAccount();
+        if (user.getGithubAccount() != null) this.githubAccount = user.getGithubAccount();
     }
 
 }
