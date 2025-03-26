@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
+import org.farmsystem.homepage.domain.user.dto.response.OtherUserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.service.UserService;
@@ -39,6 +40,13 @@ public class UserController implements UserApi {
                                                              @RequestBody UserUpdateRequestDTO userInfoRequest) {
         UserInfoResponseDTO updatedUserInfo = userService.updateUserInfo(userId, userInfoRequest);
         return SuccessResponse.ok(updatedUserInfo);
+    }
+
+    //다른 사용자 정보 조회 API
+    @GetMapping("/{userId}")
+    public ResponseEntity<SuccessResponse<?>> getOtherUserInfo(@PathVariable Long userId) {
+        OtherUserInfoResponseDTO userInfo = userService.getOtherUserInfo(userId);
+        return SuccessResponse.ok(userInfo);
     }
 
     // 사용자 검색 API
