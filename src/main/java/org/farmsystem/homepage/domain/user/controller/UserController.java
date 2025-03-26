@@ -5,9 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.OtherUserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.*;
+import org.farmsystem.homepage.domain.user.service.RankingService;
 import org.farmsystem.homepage.domain.user.service.UserService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController implements UserApi {
     private final UserService userService;
+    private final RankingService rankingService;
 
     // 사용자 회원 인증 API
     @PostMapping("/verify")
@@ -59,5 +59,19 @@ public class UserController implements UserApi {
     @GetMapping("/suggest")
     public ResponseEntity<SuccessResponse<?>> searchUserSuggest(@RequestParam String query) {
         return SuccessResponse.ok(userService.searchUserSuggest(query));
+    }
+
+    // 출석 API
+    @PostMapping("/attendance")
+    public ResponseEntity<SuccessResponse<?>> attend(@AuthenticationPrincipal Long userId) {
+        userService.attend(userId);
+        return SuccessResponse.ok(null);
+    }
+
+    // 사용자 랭킹 조회 API
+    @GetMapping("/ranking")
+    public ResponseEntity<SuccessResponse<?>> getUserRanking(@AuthenticationPrincipal Long userId) {
+        UserRankListResponseDTO userRankList = rankingService.getDailyRanking(userId);
+        return SuccessResponse.ok(userRankList);
     }
 }

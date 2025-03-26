@@ -97,6 +97,7 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패하였습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "다른 소셜 계정으로 이미 가입된 사용자입니다."),
+    ALREADY_ATTENDANCE(HttpStatus.BAD_REQUEST, "이미 출석이 완료되었습니다."),
 
     /**
      * Oauth Error

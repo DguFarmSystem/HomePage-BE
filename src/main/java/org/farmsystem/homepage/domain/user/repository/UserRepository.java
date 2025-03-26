@@ -23,6 +23,8 @@ public interface UserRepository extends JpaRepository<User,Long>{
 
     Page<User> findAll(Pageable pageable);
 
+    List<User> findAllByOrderByTotalSeedDesc();
+
     @Query(value = "SELECT * FROM user WHERE is_deleted = true", nativeQuery = true)
     Page<User> findDeletedUsers(Pageable pageable);
 
