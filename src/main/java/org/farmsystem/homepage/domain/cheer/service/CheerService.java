@@ -41,6 +41,9 @@ public class CheerService {
     // 응원 등록
     @Transactional
     public CheerResponseDTO createCheer(CheerRequestDTO request) {
+        if (request.cheererId().equals(request.cheeredId())) {
+            throw new BusinessException(ErrorCode.SAME_CHEERER_CHEERED);
+        }
         User cheerer = userRepository.findById(request.cheererId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         User cheered = userRepository.findById(request.cheeredId())
