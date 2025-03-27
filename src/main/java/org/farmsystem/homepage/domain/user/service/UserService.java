@@ -3,18 +3,14 @@ package org.farmsystem.homepage.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.apply.entity.PassedApply;
 import org.farmsystem.homepage.domain.apply.repository.PassedApplyRepository;
+import org.farmsystem.homepage.domain.common.dto.response.PageResponseDTO;
+import org.farmsystem.homepage.domain.common.entity.Track;
 import org.farmsystem.homepage.domain.common.util.JamoUtil;
-import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSaveResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserSearchResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
 import org.farmsystem.homepage.domain.user.dto.request.*;
 import org.farmsystem.homepage.domain.user.dto.response.*;
-import org.farmsystem.homepage.domain.user.entity.SocialType;
-import org.farmsystem.homepage.domain.user.entity.User;
+import org.farmsystem.homepage.domain.user.entity.*;
+import org.farmsystem.homepage.domain.user.repository.DailySeedRepository;
+import org.farmsystem.homepage.domain.user.repository.TrackHistoryRepository;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
@@ -35,6 +31,9 @@ import static org.farmsystem.homepage.global.error.ErrorCode.*;
 public class UserService {
     private final UserRepository userRepository;
     private final PassedApplyRepository passedApplyRepository;
+    private final TrackHistoryRepository trackHistoryRepository;
+    private final DailySeedService dailySeedService;
+    private final DailySeedRepository dailySeedRepository;
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())
@@ -109,14 +108,6 @@ public class UserService {
         return userRepository.save(UserSaveResponseDTO.fromPassedUser(passedUser, userLoginRequest.socialType(), socialId, imageUrl));
     }
 
-    // [관리자] 사용자 정보 등록
-    @Transactional
-    public UserRegisterResponseDTO registerUser(AdminUserRegisterRequestDTO adminUserRegisterRequest) {
-        passedApplyRepository.findByStudentNumber(adminUserRegisterRequest.studentNumber())
-                .ifPresent(user -> {throw new BusinessException(PASSED_USER_ALREADY_EXISTS);});
-        PassedApply registeredUser = passedApplyRepository.save(adminUserRegisterRequest.toEntity());
-        return UserRegisterResponseDTO.from(registeredUser);
-    }
 
     // [관리자] 사용자 정보 삭제
     @Transactional
@@ -131,38 +122,67 @@ public class UserService {
     public UserInfoResponseDTO updateUserByAdmin(Long userId, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        // 트랙 및 기수 변경 이력 저장
+        saveTrackHistoryIfChanged(user, adminUserUpdateRequest);
+
         user.updateUserByAdmin(adminUserUpdateRequest.toEntity());
         userRepository.save(user);
         return UserInfoResponseDTO.from(user);
     }
 
+    // 트랙 및 기수 변경 이력 저장
+    private void saveTrackHistoryIfChanged(User user, AdminUserUpdateRequestDTO adminUserUpdateRequest) {
+        Track previousTrack = user.getTrack();
+        Integer previousGeneration = user.getGeneration();
+
+        Track newTrack = adminUserUpdateRequest.track();
+        Integer newGeneration = adminUserUpdateRequest.generation();
+
+        if ((newTrack != null && !newTrack.equals(previousTrack)) ||
+                (newGeneration != null && !newGeneration.equals(previousGeneration))) {
+
+            TrackHistory trackHistory = new TrackHistory(user, previousTrack, previousGeneration);
+            trackHistoryRepository.save(trackHistory);
+        }
+    }
+
     // [관리자] 사용자 정보 조회 (페이징)
     public PagingUserListResponseDTO getAllUsers(Pageable pageable, AdminUserSearchRequestDTO query) {
-        Page<User> userPage = userRepository.findAll(pageable);
+        Page<User> userPage = userRepository.findFilteredUsers(pageable, query.track(), query.generation(), query.role(), query.major());
+        PageResponseDTO page = PageResponseDTO.of(userPage);
 
-        List<UserInfoResponseDTO> filteredUser = userPage.getContent().stream()
-                .filter(user -> filterUser(user, query))
+        List<UserInfoResponseDTO> filteredUsers = userPage.getContent().stream()
                 .map(UserInfoResponseDTO::from)
-                .collect(Collectors.toList());
+                .toList();
 
-        return PagingUserListResponseDTO.of(userPage, pageable, filteredUser);
+        return PagingUserListResponseDTO.of(page, filteredUsers);
     }
 
-    private boolean filterUser(User user, AdminUserSearchRequestDTO query) {
-        return (query.track() == null || user.getTrack() == query.track()) &&
-                (query.generation() == null || user.getGeneration().equals(query.generation())) &&
-                (query.role() == null || user.getRole() == query.role()) &&
-                (query.major() == null || user.getMajor().equalsIgnoreCase(query.major()));
-    }
-
-    // [관리자] 삭제된 사용자 조회
+    // [관리자] 삭제된 사용자 조회 (페이징)
     public PagingUserListResponseDTO getDeletedUsers(Pageable pageable) {
         Page<User> userPage = userRepository.findDeletedUsers(pageable);
+        PageResponseDTO page = PageResponseDTO.of(userPage);
 
         List<UserInfoResponseDTO> deletedUsers = userPage.getContent().stream()
                 .map(UserInfoResponseDTO::from)
-                .collect(Collectors.toList());
+                .toList();
 
-        return PagingUserListResponseDTO.of(userPage, pageable, deletedUsers);
+        return PagingUserListResponseDTO.of(page, deletedUsers);
+    }
+
+    //다른 사용자 정보 조회 API
+    public OtherUserInfoResponseDTO getOtherUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        return OtherUserInfoResponseDTO.from(user);
+    }
+
+    //출석하기
+    @Transactional
+    public void attend(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        dailySeedService.earnSeed(userId, SeedEventType.ATTENDANCE);
     }
 }
