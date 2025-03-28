@@ -15,7 +15,7 @@ public class HealthCheckController implements HealthCheckApi {
     // 서버 상태 확인 API
     @GetMapping("/")
     public ResponseEntity<SuccessResponse<?>> FarmSysytemServer() {
-        return SuccessResponse.ok("Hello! FarmSysytem Server!");
+        return SuccessResponse.ok("Hello! FarmSysytem Server!, Blue -> Green");
     }
 
 }
