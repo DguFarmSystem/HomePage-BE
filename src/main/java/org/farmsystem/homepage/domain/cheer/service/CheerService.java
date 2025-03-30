@@ -64,4 +64,11 @@ public class CheerService {
         dailySeedService.earnSeed(cheerer.getUserId(), SeedEventType.CHEER);
         return CheerResponseDTO.from(savedCheer);
     }
+
+    // 특정 응원 조회
+    public CheerResponseDTO getCheer(Long cheerId) {
+        Cheer cheer = cheerRepository.findById(cheerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHEER_NOT_FOUND));
+        return CheerResponseDTO.from(cheer);
+    }
 }
