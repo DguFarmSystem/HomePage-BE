@@ -21,4 +21,12 @@ public class NotificationEventListener {
         // SSE를 통해 해당 사용자에게 알림 전송
         notificationService.sendNotification(event.cheeredId(), title, message, NotificationType.CHEER, targetUrl);
     }
+
+    @EventListener
+    public void handleFarmingLogLikedEvent(FarmingLogLikedEvent event) {
+        String title = "파밍로그 좋아요 알림";
+        String message = event.likerGeneration().toString() + " " + event.likerTrack().toString() + " " + event.likerName() + "님이 '" + event.farmingLogTitle() + "'에 공감하셨습니다.";
+        String targetUrl = "/farming-logs/" + event.farmingLogId();
+        notificationService.sendNotification(event.receiverId(), title, message, NotificationType.LIKE, targetUrl);
+    }
 }
