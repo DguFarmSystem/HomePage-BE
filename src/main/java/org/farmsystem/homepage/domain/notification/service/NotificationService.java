@@ -1,7 +1,7 @@
 package org.farmsystem.homepage.domain.notification.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.notification.dto.NotificationResponseDto;
+import org.farmsystem.homepage.domain.notification.dto.NotificationResponseDTO;
 import org.farmsystem.homepage.domain.notification.entity.Notification;
 import org.farmsystem.homepage.domain.notification.entity.NotificationType;
 import org.farmsystem.homepage.domain.notification.repository.NotificationRepository;
@@ -78,12 +78,12 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    public List<NotificationResponseDto> getNotifications(Long userId) {
+    public List<NotificationResponseDTO> getNotifications(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND));
         List<Notification> notifications = notificationRepository.findAllByUserOrderByCreatedAtDesc((user));
         return notifications.stream()
-                .map(NotificationResponseDto::from)
+                .map(NotificationResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
