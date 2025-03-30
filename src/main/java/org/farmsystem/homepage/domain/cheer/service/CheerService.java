@@ -6,12 +6,14 @@ import org.farmsystem.homepage.domain.cheer.dto.response.CheerResponseDTO;
 import org.farmsystem.homepage.domain.cheer.dto.response.PagingCheerListResponseDTO;
 import org.farmsystem.homepage.domain.cheer.entity.Cheer;
 import org.farmsystem.homepage.domain.cheer.repository.CheerRepository;
+import org.farmsystem.homepage.domain.notification.event.CheerReceiveEvent;
 import org.farmsystem.homepage.domain.user.entity.SeedEventType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.domain.user.service.DailySeedService;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class CheerService {
     private final CheerRepository cheerRepository;
     private final UserRepository userRepository;
     private final DailySeedService dailySeedService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     // 응원 리스트 조회 (페이징)
     public PagingCheerListResponseDTO getAllCheer(Pageable pageable) {
@@ -55,7 +58,9 @@ public class CheerService {
                 .tag(request.tag())
                 .build();
         Cheer savedCheer = cheerRepository.save(cheer);
-
+        // 알림 전송, 씨앗 획득
+        CheerReceiveEvent event = new CheerReceiveEvent(cheered.getUserId(), cheerer.getGeneration(), cheerer.getTrack(), cheerer.getName(), cheer.getCheerId());
+        applicationEventPublisher.publishEvent(event);
         dailySeedService.earnSeed(cheerer.getUserId(), SeedEventType.CHEER);
         return CheerResponseDTO.from(savedCheer);
     }
