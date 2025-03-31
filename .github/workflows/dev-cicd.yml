@@ -51,6 +51,20 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/farm-dev:${{ steps.vars.outputs.version }}
         docker logout
 
+    # TAG를 .env에 담아서 EC2에 전송
+    - name: Create .env file with version tag
+      run: echo "TAG=${{ steps.vars.outputs.version }}" > env.dev
+
+    - name: Upload .env to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.DEV_EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+        source: "env.dev"
+        target: "~/"
+
+
     # EC2에 배포
     - name: Docker image pull & deploy to EC2
       uses: appleboy/ssh-action@master
@@ -59,34 +73,20 @@ jobs:
         username: ubuntu
         key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
         script: |
-          set -e  # 에러 발생 시 즉시 스크립트 종료
-
-          echo "🚀 최신 Docker 이미지 Pull 중..."
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/farm-dev:${{ steps.vars.outputs.version }}
-
-          echo "🛑 기존 컨테이너 중지 및 삭제"
-          if [ "$(sudo docker inspect --format="{{.State.Running}}" farm-dev 2>/dev/null)" = "true" ]; then
-            sudo docker stop farm-dev
-            sudo docker rm farm-dev
-          fi
-
+          set -e
+  
           echo "📂 yml 파일을 저장할 디렉토리 생성"
           sudo mkdir -p /home/ubuntu/app/src/main/resources
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/app  # ubuntu 사용자가 접근 가능하도록 변경
-          sudo chmod -R 755 /home/ubuntu/app            # 디렉토리에 읽기, 쓰기, 실행 권한 부여
-
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/app
+          sudo chmod -R 755 /home/ubuntu/app
+    
           echo "📄 yml 파일 생성 및 GitHub Secrets 값 적용"
           echo "${{ secrets.DEVELOPMENT_APPLICATION }}" | sudo tee /home/ubuntu/app/src/main/resources/application.yml > /dev/null
-          sudo chmod 644 /home/ubuntu/app/src/main/resources/application.yml  # 모든 사용자 읽기 가능, 소유자만 쓰기 가능
-
-          echo "🚀 새 컨테이너 실행 중..."
-          sudo docker run -d --log-driver=syslog --name farm-dev -p 8080:8080 \
-            -v /home/ubuntu/app/src/main/resources:/app/src/main/resources \
-            --restart always \
-            ${{ secrets.DOCKER_USERNAME }}/farm-dev:${{ steps.vars.outputs.version }}
-
-          echo "✅ 실행 중인 컨테이너 확인"
-          sudo docker ps -a | grep "farm-dev"
-
+          sudo chmod 644 /home/ubuntu/app/src/main/resources/application.yml
+    
+          echo "🚀 배포 스크립트 실행"
+          chmod +x ~/deploy.sh
+          ~/deploy.sh
+    
           echo "🧹 사용하지 않는 Docker 이미지 정리"
-          sudo docker system prune -af
+          docker image prune -f

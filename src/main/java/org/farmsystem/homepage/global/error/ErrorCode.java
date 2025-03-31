@@ -123,7 +123,13 @@ public enum ErrorCode {
      * Notification Error
      */
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
-    NOTIFICATION_ACCESS_DENIED(HttpStatus.FORBIDDEN, "알림에 대한 권한이 없습니다.")
+    NOTIFICATION_ACCESS_DENIED(HttpStatus.FORBIDDEN, "알림에 대한 권한이 없습니다."),
+
+    /**
+     * Cheer Error
+     */
+    SAME_CHEERER_CHEERED(HttpStatus.BAD_REQUEST, "자기 자신을 응원할 수 없습니다."),
+    CHEER_NOT_FOUND(HttpStatus.NOT_FOUND, "응원을 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

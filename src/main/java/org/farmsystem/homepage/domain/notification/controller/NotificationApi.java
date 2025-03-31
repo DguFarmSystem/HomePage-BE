@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.farmsystem.homepage.domain.notification.dto.NotificationResponseDto;
+import org.farmsystem.homepage.domain.notification.dto.NotificationResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +40,7 @@ public interface NotificationApi {
             @ApiResponse(responseCode = "200", description = "알림 읽음 처리 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = NotificationResponseDto.class))
+                            array = @ArraySchema(schema = @Schema(implementation = NotificationResponseDTO.class))
                     )
             ),
             @ApiResponse(responseCode = "403", description = "알림에 대한 권한 없음", content = @Content),
