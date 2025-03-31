@@ -7,7 +7,7 @@ import org.farmsystem.homepage.domain.notification.entity.NotificationType;
 import java.time.LocalDateTime;
 
 @Builder
-public record NotificationResponseDto(
+public record NotificationResponseDTO(
         Long notificationId,
         NotificationType type,
         String title,
@@ -16,8 +16,8 @@ public record NotificationResponseDto(
         boolean isRead,
         LocalDateTime createdAt
 ) {
-    public static NotificationResponseDto from(Notification notification) {
-        return NotificationResponseDto.builder()
+    public static NotificationResponseDTO from(Notification notification) {
+        return NotificationResponseDTO.builder()
                 .notificationId(notification.getNotificationId())
                 .type(notification.getType())
                 .title(notification.getTitle())

@@ -27,4 +27,10 @@ public class CheerController implements CheerApi {
     public ResponseEntity<SuccessResponse<?>> createCheer(@RequestBody @Valid CheerRequestDTO request) {
         return SuccessResponse.created(cheerService.createCheer(request));
     }
+
+    // 특정 응원 조회
+    @GetMapping("/{cheerId}")
+    public ResponseEntity<SuccessResponse<?>> getCheerById(@PathVariable Long cheerId) {
+        return SuccessResponse.ok(cheerService.getCheer(cheerId));
+    }
 }
