@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.farmsystem.homepage.domain.user.dto.response.TodaySeedResponseDTO;
 import org.farmsystem.homepage.domain.user.entity.DailySeed;
 import org.farmsystem.homepage.domain.user.entity.SeedEventType;
 import org.farmsystem.homepage.domain.user.entity.User;
@@ -66,6 +67,16 @@ public class DailySeedService {
                 user.addTotalSeed(eventType.getSeedAmount());
                 break;
         }
+    }
+
+    public TodaySeedResponseDTO getTodaySeed(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        DailySeed dailySeed = dailySeedRepository.findByUser(user)
+                .orElseGet(() -> new DailySeed(user));
+
+        return TodaySeedResponseDTO.from(dailySeed);
     }
 
     @Transactional
