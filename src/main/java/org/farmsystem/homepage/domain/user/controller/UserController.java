@@ -77,9 +77,9 @@ public class UserController implements UserApi {
         return SuccessResponse.ok(userRankList);
     }
 
-    //오늘의 씨앗 적립 현황;
+    //오늘의 씨앗 적립 현황
     @GetMapping("/today-seed")
-    public ResponseEntity<SuccessResponse<?>> getSeed(@AuthenticationPrincipal Long userId) {
+    public ResponseEntity<SuccessResponse<?>> getTodaySeed(@AuthenticationPrincipal Long userId) {
         TodaySeedResponseDTO todaySeed = dailySeedService.getTodaySeed(userId);
         return SuccessResponse.ok(todaySeed);
     }
