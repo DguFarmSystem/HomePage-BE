@@ -88,11 +88,8 @@ public class TokenService {
         jwtProvider.equalsRefreshToken(refreshToken, storedRefreshToken);
 
         String newAccessToken = issueNewAccessToken(userId);
-        String newRefreshToken = issueNewRefreshToken(userId);
 
-        redisTemplate.opsForValue().set(redisKey, newRefreshToken, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
-
-        return UserTokenResponseDTO.of(newAccessToken, newRefreshToken);
+        return UserTokenResponseDTO.of(newAccessToken, refreshToken);
     }
 
     public void logout(Long userId) {
