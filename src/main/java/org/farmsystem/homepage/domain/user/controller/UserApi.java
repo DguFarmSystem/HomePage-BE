@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
-import org.farmsystem.homepage.domain.user.dto.response.OtherUserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserInfoResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserRankListResponseDTO;
-import org.farmsystem.homepage.domain.user.dto.response.UserVerifyResponseDTO;
+import org.farmsystem.homepage.domain.user.dto.response.*;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -118,5 +115,22 @@ public interface UserApi {
     })
     @GetMapping("/ranking")
     ResponseEntity<SuccessResponse<?>> getUserRanking(Long userId);
+
+    @Operation(
+            summary = "오늘의 씨앗 적립 현황",
+            description = "사용자의 오늘 씨앗 적립 현황(출석, 응원, 파밍로그)을 조회하는 API입니다.  \n" +
+                    "오늘 씨앗 적립 현황은 0시 기준으로 갱신됩니다. ",
+            security = @SecurityRequirement(name = "token")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "오늘의 씨앗 적립 현황 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TodaySeedResponseDTO.class)
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    @GetMapping("/{userId}/daily-seed")
+    ResponseEntity<SuccessResponse<?>> getTodaySeed(Long userId);
 }
 
