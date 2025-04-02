@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.user.dto.request.UserUpdateRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserVerifyRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.*;
+import org.farmsystem.homepage.domain.user.service.DailySeedService;
 import org.farmsystem.homepage.domain.user.service.RankingService;
 import org.farmsystem.homepage.domain.user.service.UserService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController implements UserApi {
     private final UserService userService;
     private final RankingService rankingService;
+    private final DailySeedService dailySeedService;
 
     // 사용자 회원 인증 API
     @PostMapping("/verify")
@@ -73,5 +75,12 @@ public class UserController implements UserApi {
     public ResponseEntity<SuccessResponse<?>> getUserRanking(@AuthenticationPrincipal Long userId) {
         UserRankListResponseDTO userRankList = rankingService.getDailyRanking(userId);
         return SuccessResponse.ok(userRankList);
+    }
+
+    //오늘의 씨앗 적립 현황;
+    @GetMapping("/today-seed")
+    public ResponseEntity<SuccessResponse<?>> getSeed(@AuthenticationPrincipal Long userId) {
+        TodaySeedResponseDTO todaySeed = dailySeedService.getTodaySeed(userId);
+        return SuccessResponse.ok(todaySeed);
     }
 }
