@@ -15,6 +15,7 @@ import org.farmsystem.homepage.domain.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class UserService {
     private final PassedApplyRepository passedApplyRepository;
     private final TrackHistoryRepository trackHistoryRepository;
     private final DailySeedService dailySeedService;
-    private final DailySeedRepository dailySeedRepository;
+    private final CacheManager cacheManager;
 
     public UserVerifyResponseDTO verifyUser(UserVerifyRequestDTO userVerifyRequest) {
         PassedApply verifiedUser = passedApplyRepository.findByStudentNumber(userVerifyRequest.studentNumber())
@@ -73,6 +74,8 @@ public class UserService {
             // 소셜로그인 다른 계정으로 이미 가입한 경우 예외 처리
             checkIfUserAlreadyRegistered(studentNumber);
 
+            // 랭킹 캐시 삭제
+            cacheManager.getCache("dailySeedRanking").evict("all");
             return createUserFromPassedUser(studentNumber, userLoginRequest, socialId, imageUrl);
         }
         return existedUser;
