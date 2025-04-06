@@ -10,7 +10,9 @@ public record UserRankResponseDTO(
         String name,
         Integer generation,
         Track track,
-        Integer totalSeed
+        Integer totalSeed,
+        String githubAccount,
+        String major
 ) {
     public static UserRankResponseDTO from(Integer rank, User user) {
         return new UserRankResponseDTO(
@@ -20,7 +22,9 @@ public record UserRankResponseDTO(
                 user.getName(),
                 user.getGeneration(),
                 user.getTrack(),
-                user.getTotalSeed()
+                user.getTotalSeed(),
+                user.getGithubAccount(),
+                user.getMajor()
         );
     }
 }
