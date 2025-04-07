@@ -33,28 +33,28 @@ public class FarmingLogLikeService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUND));
         Optional<FarmingLogLike> existingLike = farmingLogLikeRepository.findByUserAndFarmingLogAndIsDeletedFalse(user, farmingLog);
         if (existingLike.isPresent()) {
-            isLikeAdded = false;
             existingLike.get().updateDelete();
         } else {
+            boolean isSelfLike = farmingLog.getUser().equals(user);
+            boolean isFirstLike = !farmingLogLikeRepository.existsByUserAndFarmingLog(user, farmingLog);
             farmingLogLikeRepository.save(
                     FarmingLogLike.builder()
                             .user(user)
                             .farmingLog(farmingLog)
                             .build()
             );
-            isLikeAdded = true;
-        }
-        // 좋아요가 추가된 경우에만 이벤트 전송
-        if (isLikeAdded) {
-            FarmingLogLikedEvent event = new FarmingLogLikedEvent(
-                    farmingLog.getUser().getUserId(),   // 알림을 받을 사용자(파밍로그 작성자) 번호
-                    user.getGeneration(),               // 좋아요를 한 사용자 기수
-                    user.getTrack(),                    // 좋아요를 한 사용자 트랙
-                    user.getName(),                     // 좋아요를 한 사용자 이름
-                    farmingLog.getTitle(),              // 관련된 파밍로그 제목
-                    farmingLog.getFarmingLogId()        // 관련된 파밍로그 번호
-            );
-            applicationEventPublisher.publishEvent(event);
+            // 좋아요가 추가된 경우에만 이벤트 전송
+            if (!isSelfLike && isFirstLike) {
+                FarmingLogLikedEvent event = new FarmingLogLikedEvent(
+                        farmingLog.getUser().getUserId(),   // 알림을 받을 사용자(파밍로그 작성자) 번호
+                        user.getGeneration(),               // 좋아요를 한 사용자 기수
+                        user.getTrack(),                    // 좋아요를 한 사용자 트랙
+                        user.getName(),                     // 좋아요를 한 사용자 이름
+                        farmingLog.getTitle(),              // 관련된 파밍로그 제목
+                        farmingLog.getFarmingLogId()        // 관련된 파밍로그 번호
+                );
+                applicationEventPublisher.publishEvent(event);
+            }
         }
     }
 }
