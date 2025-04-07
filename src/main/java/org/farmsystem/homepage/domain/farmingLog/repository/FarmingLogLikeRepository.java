@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface FarmingLogLikeRepository extends JpaRepository<FarmingLogLike, Long> {
 
-    Optional<FarmingLogLike> findByUserAndFarmingLog(User user, FarmingLog farmingLog);
-    long countByFarmingLog(FarmingLog farmingLog);
+    Optional<FarmingLogLike> findByUserAndFarmingLogAndIsDeletedFalse(User user, FarmingLog farmingLog);
+    long countByFarmingLogAndIsDeletedFalse(FarmingLog farmingLog);
     boolean existsByUserAndFarmingLog(User user, FarmingLog farmingLog);
+    boolean existsByUserAndFarmingLogAndIsDeletedFalse(User user, FarmingLog farmingLog);
 }

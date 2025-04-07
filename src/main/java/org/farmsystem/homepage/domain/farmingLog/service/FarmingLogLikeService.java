@@ -31,12 +31,10 @@ public class FarmingLogLikeService {
 
         FarmingLog farmingLog = farmingLogRepository.findById(farmingLogId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMING_LOG_NOT_FOUND));
-
-        boolean isLikeAdded;
-        Optional<FarmingLogLike> existingLike = farmingLogLikeRepository.findByUserAndFarmingLog(user, farmingLog);
+        Optional<FarmingLogLike> existingLike = farmingLogLikeRepository.findByUserAndFarmingLogAndIsDeletedFalse(user, farmingLog);
         if (existingLike.isPresent()) {
-            farmingLogLikeRepository.delete(existingLike.get());
             isLikeAdded = false;
+            existingLike.get().updateDelete();
         } else {
             farmingLogLikeRepository.save(
                     FarmingLogLike.builder()
