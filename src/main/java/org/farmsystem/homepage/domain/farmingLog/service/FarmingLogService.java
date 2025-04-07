@@ -27,8 +27,8 @@ public class FarmingLogService {
     private final DailySeedService dailySeedService;
 
     private FarmingLogResponseDTO mapToFarmingLogResponse(FarmingLog farmingLog, User currentUser) {
-        boolean isLiked = farmingLogLikeRepository.existsByUserAndFarmingLog(currentUser, farmingLog);
-        long likeCount = farmingLogLikeRepository.countByFarmingLog(farmingLog);
+        boolean isLiked = farmingLogLikeRepository.existsByUserAndFarmingLogAndIsDeletedFalse(currentUser, farmingLog);
+        long likeCount = farmingLogLikeRepository.countByFarmingLogAndIsDeletedFalse(farmingLog);
 
         return FarmingLogResponseDTO.from(farmingLog, currentUser.getUserId(), isLiked, likeCount);
     }
