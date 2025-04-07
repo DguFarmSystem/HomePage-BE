@@ -25,7 +25,7 @@ public class Notification extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private NotificationType type;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 20)
     private String title;
 
     @Column(nullable = false, length = 50)

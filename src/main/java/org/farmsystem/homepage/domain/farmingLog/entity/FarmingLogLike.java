@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.user.entity.User;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Entity
@@ -25,4 +26,11 @@ public class FarmingLogLike extends BaseTimeEntity {
     @JoinColumn(name = "farming_log_id", nullable = false)
     private FarmingLog farmingLog;
 
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private boolean isDeleted;
+
+    public void updateDelete() {
+        this.isDeleted = true;
+    }
 }
