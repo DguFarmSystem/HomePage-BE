@@ -57,9 +57,6 @@ dependencies {
     //csv
     implementation 'org.apache.commons:commons-csv:1.10.0'
 
-    //spring cache
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
