@@ -32,18 +32,26 @@ public class News extends BaseTimeEntity {
     @Column(name = "image_url")
     private List<String> imageUrls;
 
+    @ElementCollection
+    @CollectionTable(name = "news_tags", joinColumns = @JoinColumn(name = "news_id"))
+    @Column(name = "tag")
+    private List<String> tags;
+
     @Builder
-    public News(String title, String content, String thumbnailUrl, List<String> imageUrls) {
+    public News(String title, String content, String thumbnailUrl, List<String> imageUrls, List<String> tags) {
         this.title = title;
         this.content = content;
         this.thumbnailUrl = thumbnailUrl;
         this.imageUrls = imageUrls;
+        this.tags = tags;
     }
 
-    public void updateNews(String title, String content, String thumbnailUrl, List<String> imageUrls) {
+    public void updateNews(String title, String content, String thumbnailUrl, List<String> imageUrls, List<String> tags) {
         this.title = title;
         this.content = content;
         this.thumbnailUrl = thumbnailUrl;
         this.imageUrls = imageUrls;
+        this.tags = tags;
     }
+
 }

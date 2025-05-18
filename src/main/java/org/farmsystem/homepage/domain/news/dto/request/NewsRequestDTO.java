@@ -16,5 +16,9 @@ public record NewsRequestDTO(
         String thumbnailUrl,
 
         @Schema(description = "본문에 첨부될 이미지 URL 목록", example = "[\"https://s3-bucket/image1.jpg\", \"https://s3-bucket/image2.jpg\"]")
-        List<String> imageUrls
+        List<String> imageUrls,
+
+        @Schema(description = "태그 목록", example = "[\"#활동\", \"#이벤트\"]")
+        List<String> tags
 ) {}
+
