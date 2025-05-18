@@ -12,6 +12,7 @@ import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserTokenRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ public interface AuthApi {
                     )),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
+    @Profile("!prod") // 운영 환경에서는 사용하지 않도록 설정
     ResponseEntity<SuccessResponse<?>> getTempToken(
             @Parameter(description = "토큰을 발급 받을 사용자의 ID") @PathVariable Long userId
     );
