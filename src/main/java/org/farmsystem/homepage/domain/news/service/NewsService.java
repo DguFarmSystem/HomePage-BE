@@ -22,26 +22,26 @@ public class NewsService {
 
     public List<NewsListResponseDTO> getAllNews() {
         return newsRepository.findAll().stream()
-                .map(news -> new NewsListResponseDTO(news.getNewsId(), news.getTitle(), news.getThumbnailUrl()))
+                .map(NewsListResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public NewsDetailResponseDTO getNewsById(Long newsId) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NEWS_NOT_FOUND));
-        return new NewsDetailResponseDTO(news.getNewsId(), news.getTitle(), news.getThumbnailUrl(), news.getContent(), news.getImageUrls());
+        return NewsDetailResponseDTO.fromEntity(news);
     }
 
     @Transactional
     public NewsDetailResponseDTO createNews(NewsRequestDTO request) {
-        News news = News.builder()
-                .title(request.title())
-                .content(request.content())
-                .thumbnailUrl(request.thumbnailUrl())
-                .imageUrls(request.imageUrls())
-                .build();
+        News news = new News(
+                request.title(),
+                request.content(),
+                request.thumbnailUrl(),
+                request.imageUrls()
+        );
         newsRepository.save(news);
-        return new NewsDetailResponseDTO(news.getNewsId(), news.getTitle(), news.getThumbnailUrl(), news.getContent(), news.getImageUrls());
+        return NewsDetailResponseDTO.fromEntity(news);
     }
 
     @Transactional
@@ -49,7 +49,7 @@ public class NewsService {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NEWS_NOT_FOUND));
         news.updateNews(request.title(), request.content(), request.thumbnailUrl(), request.imageUrls());
-        return new NewsDetailResponseDTO(news.getNewsId(), news.getTitle(), news.getThumbnailUrl(), news.getContent(), news.getImageUrls());
+        return NewsDetailResponseDTO.fromEntity(news);
     }
 
     @Transactional
