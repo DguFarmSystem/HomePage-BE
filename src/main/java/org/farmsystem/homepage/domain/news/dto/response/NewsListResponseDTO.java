@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.farmsystem.homepage.domain.news.entity.News;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "소식 목록 응답 DTO")
 public record NewsListResponseDTO(
@@ -19,6 +20,9 @@ public record NewsListResponseDTO(
         @Schema(description = "본문 미리보기", example = "이번 달 파밍시스템 활동은... (최대 50자)")
         String contentPreview,
 
+        @Schema(description = "태그 목록", example = "[\"#공지\", \"#이벤트\"]")
+        List<String> tags,
+
         @Schema(description = "작성일", example = "2025-05-18T12:34:56")
         LocalDateTime createdAt,
 
@@ -31,6 +35,7 @@ public record NewsListResponseDTO(
                 news.getTitle(),
                 news.getThumbnailUrl(),
                 extractPreview(news.getContent()),
+                news.getTags(),
                 news.getCreatedAt(),
                 news.getUpdatedAt()
         );
