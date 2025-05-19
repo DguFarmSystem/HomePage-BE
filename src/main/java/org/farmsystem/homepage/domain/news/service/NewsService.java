@@ -32,25 +32,31 @@ public class NewsService {
         return NewsDetailResponseDTO.fromEntity(news);
     }
 
-    @Transactional
     public NewsDetailResponseDTO createNews(NewsRequestDTO request) {
         News news = new News(
                 request.title(),
                 request.content(),
                 request.thumbnailUrl(),
-                request.imageUrls()
+                request.imageUrls(),
+                request.tags()
         );
         newsRepository.save(news);
         return NewsDetailResponseDTO.fromEntity(news);
     }
 
-    @Transactional
     public NewsDetailResponseDTO updateNews(Long newsId, NewsRequestDTO request) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NEWS_NOT_FOUND));
-        news.updateNews(request.title(), request.content(), request.thumbnailUrl(), request.imageUrls());
+        news.updateNews(
+                request.title(),
+                request.content(),
+                request.thumbnailUrl(),
+                request.imageUrls(),
+                request.tags()
+        );
         return NewsDetailResponseDTO.fromEntity(news);
     }
+
 
     @Transactional
     public void deleteNews(Long newsId) {
