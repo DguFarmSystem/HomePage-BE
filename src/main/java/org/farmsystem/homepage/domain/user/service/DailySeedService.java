@@ -78,6 +78,7 @@ public class DailySeedService {
         }
     }
 
+    @Transactional
     public TodaySeedResponseDTO getTodaySeed(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
