@@ -8,10 +8,12 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 
 @Configuration
+@Profile({"local", "dev"})
 public class SwaggerConfig {
 
     @Value("${api.base-url}")
