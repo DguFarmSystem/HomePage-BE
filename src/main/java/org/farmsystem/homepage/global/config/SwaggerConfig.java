@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 
@@ -42,5 +43,12 @@ public class SwaggerConfig {
                 .info(info)
                 .components(components)
                 .addServersItem(server);
+    }
+
+    //운영환경 임시토큰 발급 API Swagger 문서에서 제거
+    @Bean
+    @Profile("prod")
+    public GlobalOpenApiCustomizer hidePaths() {
+        return openApi -> openApi.getPaths().remove("/api/auth/token/{userId}");
     }
 }

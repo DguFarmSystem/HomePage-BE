@@ -31,7 +31,6 @@ public interface AuthApi {
                     )),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
-    @Profile("!prod") // 운영 환경에서는 사용하지 않도록 설정
     ResponseEntity<SuccessResponse<?>> getTempToken(
             @Parameter(description = "토큰을 발급 받을 사용자의 ID") @PathVariable Long userId
     );
