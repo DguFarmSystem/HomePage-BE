@@ -14,6 +14,7 @@ import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
 import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
 
 @Configuration
+@Profile({"local", "dev"})
 public class SwaggerConfig {
 
     @Value("${api.base-url}")
