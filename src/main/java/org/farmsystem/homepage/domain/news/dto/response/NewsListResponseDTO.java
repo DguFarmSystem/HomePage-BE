@@ -17,7 +17,7 @@ public record NewsListResponseDTO(
         @Schema(description = "썸네일 이미지 URL", example = "https://s3-bucket/thumbnail.jpg")
         String thumbnailUrl,
 
-        @Schema(description = "본문 미리보기", example = "이번 달 파밍시스템 활동은... (최대 50자)")
+        @Schema(description = "본문 미리보기", example = "이번 달 팜시스템 활동은... (최대 50자)")
         String contentPreview,
 
         @Schema(description = "태그 목록", example = "[\"#공지\", \"#이벤트\"]")
