@@ -27,6 +27,7 @@ public class DailySeedService {
 
     private final DailySeedRepository dailySeedRepository;
     private final UserRepository userRepository;
+    private final SeedEventProducer seedEventProducer;
 
     //TODO : 적립 필요한 이벤트에 earnSeed 함수 호출 추가하기
     // 예 : dailySeedService.earnSeed(userId, SeedEventType.ATTENDANCE);
@@ -38,37 +39,46 @@ public class DailySeedService {
         DailySeed dailySeed = dailySeedRepository.findByUser(user)
                 .orElseGet(() -> new DailySeed(user));
 
-        handleSeedEvent(dailySeed, eventType, user);
+        boolean success = handleSeedEvent(dailySeed, eventType, user);
 
         dailySeedRepository.save(dailySeed);
         userRepository.save(user);
+
+        // Kafka에 이벤트 전송 (중복 요청 시 메세지 전송 방지)
+        if (success) {
+            seedEventProducer.sendSeedEvent(userId, eventType);
+        }
     }
 
     // 중복 적립 방지
-    private void handleSeedEvent(DailySeed dailySeed, SeedEventType eventType, User user) {
+    private boolean handleSeedEvent(DailySeed dailySeed, SeedEventType eventType, User user) {
         switch (eventType) {
-            case ATTENDANCE:
-                // 중복 출석 방지
+            case ATTENDANCE: //중복 적립, 요청 불가
                 if (dailySeed.isAttendance()) {
                     throw new BusinessException(ALREADY_ATTENDANCE);
                 }
                 dailySeed.updateAttendance();
                 user.addTotalSeed(eventType.getSeedAmount());
-                break;
+                return true;
 
-            case CHEER:
-                if (dailySeed.isCheer()) return;
+            case CHEER: //중복 적립 불가, 요청은 가능
+                if (dailySeed.isCheer()) return false;
                 dailySeed.updateCheer();
                 user.addTotalSeed(eventType.getSeedAmount());
-                break;
+                return true;
+
             case FARMING_LOG:
-                if (dailySeed.isFarminglog()) return;
+                if (dailySeed.isFarminglog()) return false;
                 dailySeed.updateFarminglog();
                 user.addTotalSeed(eventType.getSeedAmount());
-                break;
+                return true;
+
+            default:
+                return false;
         }
     }
 
+    @Transactional
     public TodaySeedResponseDTO getTodaySeed(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));

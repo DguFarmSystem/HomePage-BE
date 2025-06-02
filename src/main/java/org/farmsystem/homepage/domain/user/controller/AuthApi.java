@@ -12,6 +12,7 @@ import org.farmsystem.homepage.domain.user.dto.request.UserLoginRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.request.UserTokenRequestDTO;
 import org.farmsystem.homepage.domain.user.dto.response.UserTokenResponseDTO;
 import org.farmsystem.homepage.global.common.SuccessResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
