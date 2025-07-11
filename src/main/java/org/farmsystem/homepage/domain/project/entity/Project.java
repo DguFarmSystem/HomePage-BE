@@ -26,16 +26,26 @@ public class Project extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String introduction;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+
+    @Column(columnDefinition = "TEXT")
     private String thumbnailImageUrl;
+
+    @Column(columnDefinition = "TEXT")
     private String bodyImageUrl;
+
+    @Column(columnDefinition = "TEXT")
     private String githubLink;
+
+    @Column(columnDefinition = "TEXT")
     private String deploymentLink;
+
+    @Column(columnDefinition = "TEXT")
     private String resourceLink;
 
     @ManyToOne(fetch = FetchType.LAZY)

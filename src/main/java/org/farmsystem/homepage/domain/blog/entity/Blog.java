@@ -22,7 +22,7 @@ public class Blog extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long blogId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String link;
 
     @ManyToOne(fetch = FetchType.LAZY)
