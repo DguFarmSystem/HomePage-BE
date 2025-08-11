@@ -1,7 +1,9 @@
-package org.farmsystem.homepage.domain.minigame.entity;
+package org.farmsystem.homepage.domain.minigame.inventory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.minigame.farm.entity.PlantType;
+import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
 @Table(name = "plant_inventory")

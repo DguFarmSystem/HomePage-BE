@@ -1,7 +1,8 @@
-package org.farmsystem.homepage.domain.minigame.entity;
+package org.farmsystem.homepage.domain.minigame.garden.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
 
 @Entity
 @Table(name = "placed_object")

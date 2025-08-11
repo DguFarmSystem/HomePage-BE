@@ -1,7 +1,8 @@
-package org.farmsystem.homepage.domain.minigame.entity;
+package org.farmsystem.homepage.domain.minigame.farm.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
 @Table(name = "dex")

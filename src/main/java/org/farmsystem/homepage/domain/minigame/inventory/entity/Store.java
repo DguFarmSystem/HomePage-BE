@@ -1,4 +1,4 @@
-package org.farmsystem.homepage.domain.minigame.entity;
+package org.farmsystem.homepage.domain.minigame.inventory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
