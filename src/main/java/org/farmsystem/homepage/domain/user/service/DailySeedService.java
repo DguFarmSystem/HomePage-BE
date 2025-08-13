@@ -2,12 +2,15 @@ package org.farmsystem.homepage.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.farmsystem.homepage.domain.minigame.player.entity.Player;
+import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepository;
 import org.farmsystem.homepage.domain.user.dto.response.TodaySeedResponseDTO;
 import org.farmsystem.homepage.domain.user.entity.DailySeed;
 import org.farmsystem.homepage.domain.user.entity.SeedEventType;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.user.repository.DailySeedRepository;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
+import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,6 +31,8 @@ public class DailySeedService {
     private final DailySeedRepository dailySeedRepository;
     private final UserRepository userRepository;
     private final SeedEventProducer seedEventProducer;
+    private final PlayerRepository playerRepository;
+
 
     //TODO : 적립 필요한 이벤트에 earnSeed 함수 호출 추가하기
     // 예 : dailySeedService.earnSeed(userId, SeedEventType.ATTENDANCE);
@@ -39,7 +44,10 @@ public class DailySeedService {
         DailySeed dailySeed = dailySeedRepository.findByUser(user)
                 .orElseGet(() -> new DailySeed(user));
 
-        boolean success = handleSeedEvent(dailySeed, eventType, user);
+        Player player = playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+
+        boolean success = handleSeedEvent(dailySeed, eventType, user, player);
 
         dailySeedRepository.save(dailySeed);
         userRepository.save(user);
@@ -51,7 +59,7 @@ public class DailySeedService {
     }
 
     // 중복 적립 방지
-    private boolean handleSeedEvent(DailySeed dailySeed, SeedEventType eventType, User user) {
+    private boolean handleSeedEvent(DailySeed dailySeed, SeedEventType eventType, User user, Player player) {
         switch (eventType) {
             case ATTENDANCE: //중복 적립, 요청 불가
                 if (dailySeed.isAttendance()) {
@@ -59,18 +67,21 @@ public class DailySeedService {
                 }
                 dailySeed.updateAttendance();
                 user.addTotalSeed(eventType.getSeedAmount());
+                player.addTotalSeedTicket(eventType.getSeedAmount());
                 return true;
 
             case CHEER: //중복 적립 불가, 요청은 가능
                 if (dailySeed.isCheer()) return false;
                 dailySeed.updateCheer();
                 user.addTotalSeed(eventType.getSeedAmount());
+                player.addTotalSeedTicket(eventType.getSeedAmount());
                 return true;
 
             case FARMING_LOG:
                 if (dailySeed.isFarminglog()) return false;
                 dailySeed.updateFarminglog();
                 user.addTotalSeed(eventType.getSeedAmount());
+                player.addTotalSeedTicket(eventType.getSeedAmount());
                 return true;
 
             default:

@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class Store {  //enum 대신 오브젝트/식물 넘버와 이름으로 존재하는 전체 오브젝트/식물 관리
     @Id
-    @Column(name = "store_id", nullable = false)
+    @Column(name = "store_id", nullable = false)  //???여기도 오토인크리먼트??
     private Long storeId;
 
     @Column(name = "object_name")

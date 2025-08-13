@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 public class DailyGame {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "game_id", nullable = false)
     private Long gameId;
 
@@ -24,7 +25,7 @@ public class DailyGame {
     private Integer sunlightGame;
 
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false) //변경함
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 }

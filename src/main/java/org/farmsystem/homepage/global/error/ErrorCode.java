@@ -99,6 +99,8 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "다른 소셜 계정으로 이미 가입된 사용자입니다."),
     ALREADY_ATTENDANCE(HttpStatus.BAD_REQUEST, "이미 출석이 완료되었습니다."),
 
+    PLAYER_NOT_FOUND(HttpStatus.NOT_FOUND, "플레이어를 찾을 수 없습니다."),
+
     /**
      * Oauth Error
      */
