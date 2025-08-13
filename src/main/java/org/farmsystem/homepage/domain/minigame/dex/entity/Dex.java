@@ -1,7 +1,8 @@
-package org.farmsystem.homepage.domain.minigame.farm.entity;
+package org.farmsystem.homepage.domain.minigame.dex.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.minigame.farm.entity.PlantType;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
@@ -16,7 +17,6 @@ public class Dex {
     @Column(name = "dex_id", nullable = false)
     private Long dexId;
 
-    // 스키마상 uid. 기존 맥락상 Player로 해석
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;

@@ -1,4 +1,4 @@
-package org.farmsystem.homepage.domain.minigame.solatstation.entity;
+package org.farmsystem.homepage.domain.minigame.solarstation.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,6 +6,7 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 import java.time.LocalDateTime;
 
+@Setter
 @Entity
 @Table(name = "solar_power_station")
 @Getter
@@ -24,8 +25,8 @@ public class SolarPowerStation {
     @Column(name = "charge_started_at")
     private LocalDateTime chargeStartedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "player_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "player_id", nullable = false, unique = true)
     private Player player;
 }
 

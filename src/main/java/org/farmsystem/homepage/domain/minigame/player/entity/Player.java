@@ -9,11 +9,16 @@ import org.farmsystem.homepage.domain.user.entity.User;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Builder
 public class Player {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "player_id", nullable = false)
     private Long playerId;
+
+    @Column(name = "seed_ticket", nullable = false)
+    private int seedTicket = 0;
 
     @Column(nullable = false)
     private int gold = 0;
@@ -21,10 +26,20 @@ public class Player {
     @Column(nullable = false)
     private int sunlight = 0;
 
-    @Column(name = "seed_ticket", nullable = false)
-    private int seedTicket = 0;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void update(int seedTicket, int gold, int sunlight) {
+        this.seedTicket = seedTicket;
+        this.gold = gold;
+        this.sunlight = sunlight;
+    }
+
+    public void addTotalSeedTicket(int seedAmount) {
+        this.seedTicket += seedAmount;
+    }
+
+
 }
