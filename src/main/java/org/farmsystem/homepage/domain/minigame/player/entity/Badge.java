@@ -15,7 +15,7 @@ public class Badge {  //칭호
     @Column(name = "badge_id", nullable = false)
     private Long badgeId;
 
-    @Column(name = "badge_type")
+    @Column(name = "badge_type", nullable = false)
     private Integer badgeType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
