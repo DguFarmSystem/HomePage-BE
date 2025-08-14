@@ -1,10 +1,7 @@
 package org.farmsystem.homepage.domain.minigame.farm.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
@@ -14,12 +11,16 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @AllArgsConstructor
 @Builder
 public class FarmplotTile {
+
     @Id
-    @Column(name = "tile_num", nullable = false) //1~9까지 타일 번호 부여
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tile_id", nullable = false)
+    private Long tileId; // PK
+
+    @Column(name = "tile_num", nullable = false) // 1~9 타일 번호
     private Integer tileNum;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 }
-

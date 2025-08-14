@@ -8,11 +8,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "planted_plant")
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PlantedPlant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plant_id", nullable = false)
@@ -29,7 +31,7 @@ public class PlantedPlant {
     private Integer sunlightCount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tile_num", nullable = false)
+    @JoinColumn(name = "tile_id", nullable = false)
     private FarmplotTile farmplotTile;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
