@@ -135,7 +135,9 @@ public enum ErrorCode {
      * Minigame Error
      */
     PLAYER_NOT_FOUND(HttpStatus.NOT_FOUND, "플레이어를 찾을 수 없습니다."),
-    TILE_NOT_FOUND(HttpStatus.NOT_FOUND, "타일를 찾을 수 없습니다.");
+    TILE_NOT_FOUND(HttpStatus.NOT_FOUND, "텃밭 타일을 찾을 수 없습니다."),
+    DEX_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 도감에 등록된 식물입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -2,7 +2,6 @@ package org.farmsystem.homepage.domain.minigame.dex.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.farmsystem.homepage.domain.minigame.farm.entity.PlantType;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
@@ -22,6 +21,6 @@ public class Dex {
     private Player player;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "owned_plant")
+    @Column(name = "owned_plant", length = 50, nullable = false)
     private PlantType ownedPlant;
 }
