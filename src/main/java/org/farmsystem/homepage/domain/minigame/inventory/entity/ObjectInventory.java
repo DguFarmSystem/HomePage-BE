@@ -22,6 +22,9 @@ public class ObjectInventory { //획득한 오브젝트들을 관리하는 인�
 
     // 획득 오브젝트 종류(FK)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "object_kind", nullable = false)
+    @JoinColumn(
+            name = "object_kind", nullable = false,
+            referencedColumnName = "store_goods_number" // Store 테이블에서 참조할 컬럼명(DB 컬럼명)
+    )
     private Store objectKind;
 }

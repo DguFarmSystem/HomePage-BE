@@ -1,4 +1,3 @@
-
 package org.farmsystem.homepage.domain.minigame.player.repository;
 
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;

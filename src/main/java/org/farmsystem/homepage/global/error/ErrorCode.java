@@ -131,11 +131,18 @@ public enum ErrorCode {
     SAME_CHEERER_CHEERED(HttpStatus.BAD_REQUEST, "자기 자신을 응원할 수 없습니다."),
     CHEER_NOT_FOUND(HttpStatus.NOT_FOUND, "응원을 찾을 수 없습니다."),
 
+
     /**
-     * Minigame Error
+     * minigame Error
      */
+    GARDEN_TILE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 타일 좌표입니다."),
+    GARDENTILE_NOT_FOUND(HttpStatus.NOT_FOUND, "배치 원하는 위치의 타일을 찾을 수 없습니다."),
+    OBJECT_ALREADY_PLACED(HttpStatus.CONFLICT, "해당 타일에 이미 다른 오브젝트가 존재합니다."),
+    OBJECT_NOT_OWNED(HttpStatus.NOT_FOUND, "배치 가능 오브젝트 수량이 부족합니다."),
+    OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 타일 위치에 오브젝트가 없습니다."),
+    OBJECT_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "기존 타일 좌표 위의 오브젝트와 다른 오브젝트가 요청으로 들어왔습니다."),
     PLAYER_NOT_FOUND(HttpStatus.NOT_FOUND, "플레이어를 찾을 수 없습니다."),
-    TILE_NOT_FOUND(HttpStatus.NOT_FOUND, "텃밭 타일을 찾을 수 없습니다."),
+    FARMTILE_NOT_FOUND(HttpStatus.NOT_FOUND, "텃밭 타일을 찾을 수 없습니다."),
     BADGE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 칭호를 찾을 수 없습니다."),
     DEX_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 도감에 등록된 식물입니다.");
 

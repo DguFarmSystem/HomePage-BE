@@ -26,6 +26,14 @@ public class PlacedObject {  //인벤토리에서 보유한 오브젝트 하나�
 
     // 오브젝트 종류
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "object_kind", nullable = false)
+    @JoinColumn(
+            name = "object_kind", nullable = false,
+            referencedColumnName = "store_goods_number" // Store 테이블에서 참조할 컬럼명(DB 컬럼명)
+    )
     private Store objectKind;
+
+    //업데이트
+    public void updatePlacedLocation(GardenTile newTile){
+        this.tile = newTile;
+    }
 }

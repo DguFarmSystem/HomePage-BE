@@ -9,7 +9,6 @@ import org.farmsystem.homepage.domain.user.entity.User;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Builder
 public class Player {
     @Id
@@ -27,7 +26,6 @@ public class Player {
     private int sunlight = 0;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

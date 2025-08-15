@@ -24,7 +24,8 @@ public class DailyGame {
     @Column(name = "sunlight_game")
     private Integer sunlightGame;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false) //변경함
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 }
