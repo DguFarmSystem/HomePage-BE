@@ -36,4 +36,5 @@ public class PlacedObject {  //인벤토리에서 보유한 오브젝트 하나�
     public void updatePlacedLocation(GardenTile newTile){
         this.tile = newTile;
     }
+    public void updateRotation(Rotation newRotation){this.rotation = newRotation;}
 }

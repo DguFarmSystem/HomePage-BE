@@ -2,10 +2,10 @@ package org.farmsystem.homepage.domain.minigame.garden.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.minigame.garden.dto.AddTileDTO;
-import org.farmsystem.homepage.domain.minigame.garden.dto.request.MoveObjectRequestDTO;
+import org.farmsystem.homepage.domain.minigame.garden.dto.request.ChangePlacedObjectRequestDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.request.PlaceObjectRequestDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.GardenResponseDTO;
-import org.farmsystem.homepage.domain.minigame.garden.dto.response.MoveObjectResponseDTO;
+import org.farmsystem.homepage.domain.minigame.garden.dto.response.ChangePlacedObjectResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.PlaceObjectResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.service.GardenService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
@@ -48,22 +48,35 @@ public class GardenController {
 
     }
 
-
     //정원 오브젝트 위치 이동
     @PatchMapping("/move")
     public ResponseEntity<SuccessResponse<?>> moveGardenObject(
             @AuthenticationPrincipal Long userId,
-            @RequestBody MoveObjectRequestDTO request
+            @RequestBody ChangePlacedObjectRequestDTO request
     ) {
-        MoveObjectResponseDTO response = gardenService.moveGardenObject(userId, request);
+        ChangePlacedObjectResponseDTO response = gardenService.moveGardenObject(userId, request);
         return SuccessResponse.ok(response);
     }
 
     //정원 오브젝트 회전각도 업데이트
-
+    @PatchMapping("/rotate")
+    public ResponseEntity<SuccessResponse<?>> rotateGardenObject(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody PlaceObjectRequestDTO requestDTO
+    ){
+        ChangePlacedObjectResponseDTO response = gardenService.rotateGardenObject(userId, requestDTO);
+        return SuccessResponse.ok(response);
+    }
 
     //오브젝트 배치 철회 (다시 인벤토리로)
-
+    @PostMapping("/remove")
+    public ResponseEntity<SuccessResponse<?>> removeGardenObject(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody PlaceObjectRequestDTO requestDTO
+    ){
+        PlaceObjectResponseDTO response = gardenService.removeGardenObject(userId, requestDTO);
+        return SuccessResponse.ok(response);
+    }
 
     //친구 유저 id에 따른 친구 정원 조회
     @GetMapping("/{userId}")

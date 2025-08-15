@@ -2,14 +2,15 @@ package org.farmsystem.homepage.domain.minigame.garden.service;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.minigame.garden.dto.AddTileDTO;
-import org.farmsystem.homepage.domain.minigame.garden.dto.request.MoveObjectRequestDTO;
+import org.farmsystem.homepage.domain.minigame.garden.dto.request.ChangePlacedObjectRequestDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.request.PlaceObjectRequestDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.GardenResponseDTO;
-import org.farmsystem.homepage.domain.minigame.garden.dto.response.MoveObjectResponseDTO;
+import org.farmsystem.homepage.domain.minigame.garden.dto.response.ChangePlacedObjectResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.PlaceObjectResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.PlacedObjectResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.entity.GardenTile;
 import org.farmsystem.homepage.domain.minigame.garden.entity.PlacedObject;
+import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 import org.farmsystem.homepage.domain.minigame.garden.repository.GardenTileRepository;
 import org.farmsystem.homepage.domain.minigame.garden.repository.PlacedObjectRepository;
 import org.farmsystem.homepage.domain.minigame.inventory.entity.ObjectInventory;
@@ -34,7 +35,17 @@ public class GardenService {
     private final PlacedObjectRepository placedObjectRepository;
     private final PlayerRepository playerRepository;
     private final ObjectInventoryRepository objectInventoryRepository;
-    private final StoreRepository storeRepository;
+
+    private GardenTile getGardenTile(Player player, Long x, Long y) {
+        return gardenTileRepository.findByPlayerAndXAndY(player, x, y)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
+    }
+
+    private PlacedObject getPlacedObject(GardenTile tile) {
+        return placedObjectRepository.findByTile(tile)
+                .orElseThrow(() -> new BusinessException(ErrorCode.OBJECT_NOT_FOUND));
+    }
+
 
     @Transactional(readOnly = true)
     public List<GardenResponseDTO> getGardenInfo(Long userId) {
@@ -54,7 +65,7 @@ public class GardenService {
         return gardenList;
     }
 
-
+    //타일 추가
     public AddTileDTO addGardenTile(Long userId, AddTileDTO addTileDTO) {
         //유저 확인
         Player player = playerRepository.findByUser_UserId(userId)
@@ -75,7 +86,6 @@ public class GardenService {
                 .build();
 
         gardenTileRepository.save(gardenTile);
-
         return AddTileDTO.from(gardenTile);
     }
 
@@ -84,28 +94,25 @@ public class GardenService {
         Player player = playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
 
-        //타일이 깔린 곳에 배치하려고 하는 게 맞는지 검증
-        GardenTile tile = gardenTileRepository
-                .findByPlayerAndXAndY(player, requestDTO.x(), requestDTO.y())
-                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
+
+        //플레이어 정원에 타일이 깔린 곳에 배치하려고 하는 게 맞는지 검증
+        GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y());
 
         //해당 타일에 이미 오브젝트 있는지 확인
         if (placedObjectRepository.existsByTile(tile)) {
             throw new BusinessException(ErrorCode.OBJECT_ALREADY_PLACED);
         }
+        //보유 오브젝트 조회
+        ObjectInventory owned = objectInventoryRepository
+                .findFirstByPlayerAndObjectKind_StoreGoodsNumberOrderByOwnedIdAsc(player, requestDTO.objectType())
+                .orElseThrow(() -> new BusinessException(ErrorCode.OBJECT_NOT_OWNED));
 
-        //보유 수량 확인 (store_goods_number 기반)
-        List<ObjectInventory> ownedList = objectInventoryRepository
-                .findByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());  //objectType은 숫자임
-
-        if (ownedList.isEmpty()) {
-            throw new BusinessException(ErrorCode.OBJECT_NOT_OWNED);
-        }
-
-        //배치 (1. 첫번째 행 하나 삭제, 2. PlacedObject에 데이터 추가)
-        ObjectInventory owned = ownedList.get(0);
         Store store = owned.getObjectKind();
+
+        //보유 오브젝트 개수 확인
+        int objCount = objectInventoryRepository.countByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());
         objectInventoryRepository.delete(owned);
+        objCount = objCount - 1;
 
         PlacedObject object = PlacedObject.builder()
                 .tile(tile)
@@ -114,32 +121,23 @@ public class GardenService {
                 .build();
 
         placedObjectRepository.save(object);
-
-        return new PlaceObjectResponseDTO(requestDTO.x(), requestDTO.y(), store.getStoreGoodsNumber(), requestDTO.rotation());
+        return PlaceObjectResponseDTO.from(object, objCount);
     }
 
-    public MoveObjectResponseDTO moveGardenObject(Long userId, MoveObjectRequestDTO requestDTO) {
+    //배치된 오브젝트 위치 변경
+    public ChangePlacedObjectResponseDTO moveGardenObject(Long userId, ChangePlacedObjectRequestDTO requestDTO) {
         Player player = playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
 
-        //현재 타일 확인
-        GardenTile fromTile = gardenTileRepository
-                .findByPlayerAndXAndY(player, requestDTO.fromX(), requestDTO.fromY())
-                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
-
-        //현재 위치에 배치된 오브젝트 조회
-        PlacedObject placedObject = placedObjectRepository.findByTile(fromTile)
-                .orElseThrow(() -> new BusinessException(ErrorCode.OBJECT_NOT_FOUND));
+        GardenTile fromTile = getGardenTile(player, requestDTO.fromX(), requestDTO.fromY()); //현재 타일 확인
+        PlacedObject placedObject = getPlacedObject(fromTile); //타일 위 배치된 오브젝트 조회
 
         //타일에 위치한 오브젝트와 요청 데이터의 오브젝트 종류 일치 여부 확인
         if (!placedObject.getObjectKind().getStoreGoodsNumber().equals(requestDTO.objectType())) {
             throw new BusinessException(ErrorCode.OBJECT_TYPE_MISMATCH);
         }
 
-        //이동할 타일
-        GardenTile toTile = gardenTileRepository
-                .findByPlayerAndXAndY(player, requestDTO.toX(), requestDTO.toY())
-                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
+        GardenTile toTile = getGardenTile(player, requestDTO.toX(), requestDTO.toY());  //이동할 타일
 
         //이동할 타일에 이미 오브젝트 있는지 확인
         if (placedObjectRepository.existsByTile(toTile)) {
@@ -150,14 +148,54 @@ public class GardenService {
         placedObject.updatePlacedLocation(toTile);
         placedObjectRepository.save(placedObject);
 
-        return new MoveObjectResponseDTO(
-                requestDTO.toX(),
-                requestDTO.toY(),
-                requestDTO.objectType()
-        );
+        return ChangePlacedObjectResponseDTO.from(placedObject);
     }
 
+    //배치된 오브젝트 회전 각도 변경
+    public ChangePlacedObjectResponseDTO rotateGardenObject(Long userId, PlaceObjectRequestDTO requestDTO) {
+        Player player = playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
 
+        GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y()); //현재 타일 확인
+        PlacedObject placedObject = getPlacedObject(tile);  //타일 위 오브젝트 확인
 
+        if (!placedObject.getObjectKind().getStoreGoodsNumber().equals(requestDTO.objectType())) {
+            throw new BusinessException(ErrorCode.OBJECT_TYPE_MISMATCH);
+        }
 
+        //회전 각도 변경
+        Rotation newRotation = requestDTO.rotation();
+        placedObject.updateRotation(newRotation);
+        placedObjectRepository.save(placedObject);
+
+        return ChangePlacedObjectResponseDTO.from(placedObject);
+    }
+
+    //배치 철회
+    public PlaceObjectResponseDTO removeGardenObject(Long userId, PlaceObjectRequestDTO requestDTO) {
+        Player player = playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+
+        GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y());  //현재 타일 확인
+        PlacedObject placedObject = getPlacedObject(tile);  //타일 위 오브젝트 확인
+
+        if (!placedObject.getObjectKind().getStoreGoodsNumber().equals(requestDTO.objectType())) {
+            throw new BusinessException(ErrorCode.OBJECT_TYPE_MISMATCH);
+        }
+
+        int objCount = objectInventoryRepository.countByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());
+
+        // placed_object 테이블에서 삭제
+        placedObjectRepository.delete(placedObject);
+
+        //인벤토리에 1개 추가
+        ObjectInventory inventory = ObjectInventory.builder()
+                .player(player)
+                .objectKind(placedObject.getObjectKind()) // (objectKind는 Store 타입임)
+                .build();
+        objectInventoryRepository.save(inventory);
+        objCount = objCount + 1;
+
+        return PlaceObjectResponseDTO.from(placedObject, objCount);
+    }
 }

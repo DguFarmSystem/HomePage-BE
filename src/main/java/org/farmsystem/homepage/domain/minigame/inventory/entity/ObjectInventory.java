@@ -14,7 +14,7 @@ public class ObjectInventory { //획득한 오브젝트들을 관리하는 인�
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "owned_id", nullable = false)
-    private Long owned_id;
+    private Long ownedId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "player_id", nullable = false)

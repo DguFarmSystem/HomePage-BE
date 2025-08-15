@@ -141,6 +141,7 @@ public enum ErrorCode {
     OBJECT_NOT_OWNED(HttpStatus.NOT_FOUND, "배치 가능 오브젝트 수량이 부족합니다."),
     OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 타일 위치에 오브젝트가 없습니다."),
     OBJECT_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "기존 타일 좌표 위의 오브젝트와 다른 오브젝트가 요청으로 들어왔습니다."),
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "상점에 없는 오브젝트입니다."),
     PLAYER_NOT_FOUND(HttpStatus.NOT_FOUND, "플레이어를 찾을 수 없습니다."),
     FARMTILE_NOT_FOUND(HttpStatus.NOT_FOUND, "텃밭 타일을 찾을 수 없습니다."),
     BADGE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 칭호를 찾을 수 없습니다."),

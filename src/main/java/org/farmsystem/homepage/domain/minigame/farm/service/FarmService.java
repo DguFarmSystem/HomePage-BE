@@ -70,6 +70,7 @@ public class FarmService {
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMTILE_NOT_FOUND));
 
+
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
         return TileResponse.from(tile, plant);
     }

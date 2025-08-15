@@ -4,20 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.farmsystem.homepage.domain.minigame.garden.entity.PlacedObject;
 import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 
-public record PlaceObjectResponseDTO(
+public record ChangePlacedObjectResponseDTO(
         Long x,
         Long y,
         @JsonProperty("object_type") Long objectType,
-        Rotation rotation,
-        int objectCount
+        Rotation rotation
 ) {
-    public static PlaceObjectResponseDTO from(PlacedObject placedObject, int objectCount) {
-        return new PlaceObjectResponseDTO(
+    public static ChangePlacedObjectResponseDTO from(PlacedObject placedObject) {
+        return new ChangePlacedObjectResponseDTO(
                 placedObject.getTile().getX(),
                 placedObject.getTile().getY(),
                 placedObject.getObjectKind().getStoreGoodsNumber(),
-                placedObject.getRotation(),
-                objectCount
+                placedObject.getRotation()
         );
     }
 }

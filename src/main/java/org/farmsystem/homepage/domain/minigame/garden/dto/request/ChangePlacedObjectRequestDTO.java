@@ -2,7 +2,7 @@ package org.farmsystem.homepage.domain.minigame.garden.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record MoveObjectRequestDTO(
+public record ChangePlacedObjectRequestDTO(
         @JsonProperty("from_x") Long fromX,
         @JsonProperty("from_y") Long fromY,
         @JsonProperty("object_type") Long objectType,
