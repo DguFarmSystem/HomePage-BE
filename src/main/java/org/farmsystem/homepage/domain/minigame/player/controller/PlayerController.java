@@ -15,7 +15,7 @@ public class PlayerController {
 
     private final PlayerService playerService;
 
-        //플레이어의 재화 조회
+    //플레이어의 재화 조회
     @GetMapping("/get")
     public ResponseEntity<SuccessResponse<?>> getPlayerCurrency(
             @AuthenticationPrincipal Long userId
