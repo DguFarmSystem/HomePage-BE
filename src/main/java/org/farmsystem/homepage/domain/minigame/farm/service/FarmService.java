@@ -76,7 +76,7 @@ public class FarmService {
 
         int tileNum = toTileNum(x, y);
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
-                .orElseThrow(() -> new BusinessException(ErrorCode.TILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
 
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
 
@@ -96,7 +96,7 @@ public class FarmService {
 
         int tileNum = toTileNum(request.getX(), request.getY());
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
-                .orElseThrow(() -> new BusinessException(ErrorCode.TILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
 
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
 

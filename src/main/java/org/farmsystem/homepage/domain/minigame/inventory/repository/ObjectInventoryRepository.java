@@ -9,5 +9,7 @@ import java.util.Optional;
 
 public interface ObjectInventoryRepository extends JpaRepository<ObjectInventory, Long> {
     List<ObjectInventory> findByPlayerAndObjectKind_StoreGoodsNumber(Player player, Long storeGoodsNumber);
+    Optional<ObjectInventory> findFirstByPlayerAndObjectKind_StoreGoodsNumberOrderByOwnedIdAsc(
+            Player player, Long storeGoodsNumber);
     int countByPlayerAndObjectKind_StoreGoodsNumber(Player player, Long storeGoodsNumber);
 }
