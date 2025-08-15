@@ -18,54 +18,35 @@ public class SolarService {
     private final SolarRepository solarRepository;
     private final PlayerRepository playerRepository;
 
+    private Player findPlayerOrThrow(Long userId) {
+        return playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private SolarPowerStation getOrCreateStation(Player player) {
+        return solarRepository.findByPlayer(player)
+                .orElseGet(() -> solarRepository.save(SolarPowerStation.createNew(player)));
+    }
+
     @Transactional
     public SolarDTO getSolarStation(Long userId) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        // 없으면 생성
-        SolarPowerStation station = solarRepository.findByPlayer(player)
-                .orElseGet(() -> solarRepository.save(
-                        SolarPowerStation.builder()
-                                .player(player)
-                                .level(0)
-                                .chargeStartedAt(null)
-                                .build()
-                ));
-
-        return SolarDTO.builder()
-                .chargeStartTime(station.getChargeStartedAt())
-                .level(station.getLevel())
-                .build();
+        Player player = findPlayerOrThrow(userId);
+        SolarPowerStation station = getOrCreateStation(player);
+        return SolarDTO.from(station);
     }
 
     @Transactional
     public SolarDTO updateChargeTime(Long userId, SolarDTO request) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        Player player = findPlayerOrThrow(userId);
+        SolarPowerStation station = getOrCreateStation(player);
 
-        // 없으면 생성
-        SolarPowerStation station = solarRepository.findByPlayer(player)
-                .orElseGet(() -> solarRepository.save(
-                        SolarPowerStation.builder()
-                                .player(player)
-                                .level(0)
-                                .chargeStartedAt(null)
-                                .build()
-                ));
-
-        if (request.getChargeStartTime() != null) {
-            station.setChargeStartedAt(request.getChargeStartTime());
+        if (request.chargeStartTime() != null) {
+            station.startChargeAt(request.chargeStartTime());
         }
-        if (request.getLevel() != null) {
-            // 0~100 범위 제한 가능
-            int newLevel = Math.max(0, Math.min(100, request.getLevel()));
-            station.setLevel(newLevel);
+        if (request.level() != null) {
+            station.changeLevel(request.level());
         }
 
-        return SolarDTO.builder()
-                .chargeStartTime(station.getChargeStartedAt())
-                .level(station.getLevel())
-                .build();
+        return SolarDTO.from(station);
     }
 }
