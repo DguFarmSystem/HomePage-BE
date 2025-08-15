@@ -1,4 +1,7 @@
 package org.farmsystem.homepage.domain.minigame.player.dto.response;
 
-public class GameCountResponse {
+public record GameCountResponse(
+        String gameType,
+        int count
+) {
 }
