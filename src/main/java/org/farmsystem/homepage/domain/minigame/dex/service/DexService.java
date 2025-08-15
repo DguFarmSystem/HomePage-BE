@@ -27,18 +27,17 @@ public class DexService {
         Player player = playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
 
-        // 이미 등록된 식물인지 체크
-        dexRepository.findByPlayerAndOwnedPlant(player, request.ownedPlant())
-                .ifPresent(existing -> {
-                    throw new BusinessException(ErrorCode.DEX_ALREADY_REGISTERED);
-                });
+        // 이미 등록된 식물인지 체크 (existsBy 사용)
+        if (dexRepository.existsByPlayerAndOwnedPlant(player, request.ownedPlant())) {
+            throw new BusinessException(ErrorCode.DEX_ALREADY_REGISTERED);
+        }
 
         Dex savedDex = dexRepository.save(Dex.builder()
                 .player(player)
                 .ownedPlant(request.ownedPlant())
                 .build());
 
-        return new DexResponse(savedDex.getDexId(), savedDex.getOwnedPlant());
+        return DexResponse.from(savedDex);
     }
 
     @Transactional
@@ -48,7 +47,7 @@ public class DexService {
 
         List<DexResponse> list = dexRepository.findByPlayer(player)
                 .stream()
-                .map(dex -> new DexResponse(dex.getDexId(), dex.getOwnedPlant()))
+                .map(DexResponse::from)
                 .toList();
 
         return new DexListResponse(list);

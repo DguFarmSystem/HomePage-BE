@@ -17,7 +17,7 @@ public class Dex {
     private Long dexId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "player_id", nullable = false)
+    @JoinColumn(name = "player_id")
     private Player player;
 
     @Enumerated(EnumType.STRING)
