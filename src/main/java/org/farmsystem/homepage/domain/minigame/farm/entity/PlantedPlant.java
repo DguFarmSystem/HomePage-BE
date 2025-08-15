@@ -31,10 +31,10 @@ public class PlantedPlant {
     private Integer sunlightCount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tile_id", nullable = false)
+    @JoinColumn(name = "tile_id")
     private FarmplotTile farmplotTile;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "player_id", nullable = false)
+    @JoinColumn(name = "player_id")
     private Player player;
 }

@@ -94,6 +94,7 @@ public class GardenService {
         Player player = playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
 
+
         //플레이어 정원에 타일이 깔린 곳에 배치하려고 하는 게 맞는지 검증
         GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y());
 

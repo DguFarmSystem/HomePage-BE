@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface BadgeRepository extends JpaRepository<Badge, Long> {
     List<Badge> findByPlayer(Player player);
+
+    boolean existsByPlayerAndBadgeType(Player player, Integer badgeType);
 }

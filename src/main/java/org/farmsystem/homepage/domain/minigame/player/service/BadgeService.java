@@ -1,8 +1,8 @@
 package org.farmsystem.homepage.domain.minigame.player.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.player.dto.BadgeDTO;
-import org.farmsystem.homepage.domain.minigame.player.dto.BadgeDTO.BadgeUpdateRequest;
+import org.farmsystem.homepage.domain.minigame.player.dto.request.BadgeUpdateRequest;
+import org.farmsystem.homepage.domain.minigame.player.dto.response.BadgeResponse;
 import org.farmsystem.homepage.domain.minigame.player.entity.Badge;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.BadgeRepository;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,35 +21,30 @@ public class BadgeService {
     private final BadgeRepository badgeRepository;
     private final PlayerRepository playerRepository;
 
-    @Transactional(readOnly = true)
-    public List<BadgeDTO.BadgeResponse> getBadges(Long userId) {
-        Player player = playerRepository.findByUser_UserId(userId)
+    private Player findPlayerOrThrow(Long userId) {
+        return playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<BadgeResponse> getBadges(Long userId) {
+        Player player = findPlayerOrThrow(userId);
 
         return badgeRepository.findByPlayer(player)
                 .stream()
-                .map(badge -> BadgeDTO.BadgeResponse.builder()
-                        .badgeId(badge.getBadgeId())
-                        .badgeType(badge.getBadgeType())
-                        .build())
-                .collect(Collectors.toList());
+                .map(BadgeResponse::from)
+                .toList();
     }
 
     @Transactional
-    public BadgeDTO.BadgeResponse addBadge(Long userId, BadgeUpdateRequest request) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    public BadgeResponse addBadge(Long userId, BadgeUpdateRequest request) {
+        Player player = findPlayerOrThrow(userId);
 
-        Badge badge = Badge.builder()
-                .badgeType(request.getBadgeType())
-                .player(player)
-                .build();
+        if (badgeRepository.existsByPlayerAndBadgeType(player, request.badgeType())) {
+            throw new BusinessException(ErrorCode.BADGE_ALREADY_EXISTS);
+        }
 
-        badgeRepository.save(badge);
-
-        return BadgeDTO.BadgeResponse.builder()
-                .badgeId(badge.getBadgeId())
-                .badgeType(badge.getBadgeType())
-                .build();
+        Badge badge = badgeRepository.save(Badge.create(player, request.badgeType()));
+        return BadgeResponse.from(badge);
     }
 }

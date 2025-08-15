@@ -19,6 +19,13 @@ public class Badge {  //칭호
     private Integer badgeType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "player_id", nullable = false)
+    @JoinColumn(name = "player_id")
     private Player player;
+
+    public static Badge create(Player player, Integer badgeType) {
+        return Badge.builder()
+                .badgeType(badgeType)
+                .player(player)
+                .build();
+    }
 }

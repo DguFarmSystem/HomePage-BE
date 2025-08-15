@@ -21,6 +21,6 @@ public class FarmplotTile {
     private Integer tileNum;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "player_id", nullable = false)
+    @JoinColumn(name = "player_id")
     private Player player;
 }
