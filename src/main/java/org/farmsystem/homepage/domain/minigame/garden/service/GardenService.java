@@ -87,7 +87,7 @@ public class GardenService {
         //타일이 깔린 곳에 배치하려고 하는 게 맞는지 검증
         GardenTile tile = gardenTileRepository
                 .findByPlayerAndXAndY(player, requestDTO.x(), requestDTO.y())
-                .orElseThrow(() -> new BusinessException(ErrorCode.TILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
 
         //해당 타일에 이미 오브젝트 있는지 확인
         if (placedObjectRepository.existsByTile(tile)) {
@@ -125,7 +125,7 @@ public class GardenService {
         //현재 타일 확인
         GardenTile fromTile = gardenTileRepository
                 .findByPlayerAndXAndY(player, requestDTO.fromX(), requestDTO.fromY())
-                .orElseThrow(() -> new BusinessException(ErrorCode.TILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
 
         //현재 위치에 배치된 오브젝트 조회
         PlacedObject placedObject = placedObjectRepository.findByTile(fromTile)
@@ -139,7 +139,7 @@ public class GardenService {
         //이동할 타일
         GardenTile toTile = gardenTileRepository
                 .findByPlayerAndXAndY(player, requestDTO.toX(), requestDTO.toY())
-                .orElseThrow(() -> new BusinessException(ErrorCode.TILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
 
         //이동할 타일에 이미 오브젝트 있는지 확인
         if (placedObjectRepository.existsByTile(toTile)) {
