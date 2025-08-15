@@ -12,7 +12,7 @@ import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,51 +21,37 @@ public class DailyGameService {
     private final PlayerRepository playerRepository;
     private final DailyGameRepository dailyGameRepository;
 
+    private Player findPlayerOrThrow(Long userId) {
+        return playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    }
+
+    private DailyGame getOrCreateDailyGame(Player player) {
+        Optional<DailyGame> optional = dailyGameRepository.findByPlayer(player);
+        return optional.orElseGet(() -> dailyGameRepository.save(DailyGame.createNew(player)));
+    }
+
     @Transactional
     public GameCountResponse getGameCount(Long userId, String gameType) {
-        // 없으면 생성
-        DailyGame dailyGame = getOrCreateDailyGame(userId);
+        Player player = findPlayerOrThrow(userId);
+        DailyGame dailyGame = getOrCreateDailyGame(player);
 
-        resetIfNeeded(dailyGame);
-
-        return new GameCountResponse(gameType, dailyGame.getGameCount(gameType));
+        dailyGame.resetIfNeeded();
+        return GameCountResponse.from(dailyGame, gameType);
     }
 
     @Transactional
     public GameCountResponse incrementGameCount(Long userId, GameTypeRequest request) {
-        DailyGame dailyGame = getOrCreateDailyGame(userId);
+        Player player = findPlayerOrThrow(userId);
+        DailyGame dailyGame = getOrCreateDailyGame(player);
 
-        resetIfNeeded(dailyGame);
+        dailyGame.resetIfNeeded();
 
-        int currentCount = dailyGame.getGameCount(request.gameType());
-        if (currentCount >= 3) {
+        if (dailyGame.getGameCount(request.gameType()) >= 3) {
             throw new BusinessException(ErrorCode.DAILY_GAME_LIMIT_EXCEEDED);
         }
 
         dailyGame.incrementGame(request.gameType());
-
-        return new GameCountResponse(request.gameType(), dailyGame.getGameCount(request.gameType()));
-    }
-
-    private DailyGame getOrCreateDailyGame(Long userId) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
-
-        return dailyGameRepository.findByPlayer(player)
-                .orElseGet(() -> dailyGameRepository.save(
-                        DailyGame.builder()
-                                .player(player)
-                                .rockScissors(0)
-                                .carrotGame(0)
-                                .sunlightGame(0)
-                                .lastResetDate(LocalDate.now())
-                                .build()
-                ));
-    }
-
-    private void resetIfNeeded(DailyGame dailyGame) {
-        if (dailyGame.getLastResetDate() == null || !dailyGame.getLastResetDate().equals(LocalDate.now())) {
-            dailyGame.resetCounts();
-        }
+        return GameCountResponse.from(dailyGame, request.gameType());
     }
 }

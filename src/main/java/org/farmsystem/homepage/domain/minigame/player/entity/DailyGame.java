@@ -18,21 +18,37 @@ public class DailyGame {
     @Column(name = "game_id", nullable = false)
     private Long gameId;
 
-    @Column(name = "rock_scissors_game")
+    @Column(name = "rock_scissors_game", nullable = false)
     private Integer rockScissors;
 
-    @Column(name = "carrot_game")
+    @Column(name = "carrot_game", nullable = false)
     private Integer carrotGame;
 
-    @Column(name = "sunlight_game")
+    @Column(name = "sunlight_game", nullable = false)
     private Integer sunlightGame;
 
-    @Column(name = "last_reset_date")
+    @Column(name = "last_reset_date", nullable = false)
     private LocalDate lastResetDate;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
+
+    public static DailyGame createNew(Player player) {
+        return DailyGame.builder()
+                .player(player)
+                .rockScissors(0)
+                .carrotGame(0)
+                .sunlightGame(0)
+                .lastResetDate(LocalDate.now())
+                .build();
+    }
+
+    public void resetIfNeeded() {
+        if (!LocalDate.now().equals(this.lastResetDate)) {
+            resetCounts();
+        }
+    }
 
     public void resetCounts() {
         this.rockScissors = 0;
