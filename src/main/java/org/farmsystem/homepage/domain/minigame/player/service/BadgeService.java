@@ -21,32 +21,26 @@ public class BadgeService {
     private final BadgeRepository badgeRepository;
     private final PlayerRepository playerRepository;
 
+    private Player findPlayerOrThrow(Long userId) {
+        return playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    }
+
     @Transactional(readOnly = true)
     public List<BadgeResponse> getBadges(Long userId) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+        Player player = findPlayerOrThrow(userId);
 
         return badgeRepository.findByPlayer(player)
                 .stream()
-                .map(badge -> new BadgeResponse(
-                        badge.getBadgeId(),
-                        badge.getBadgeType()
-                ))
+                .map(BadgeResponse::from)
                 .toList();
     }
 
     @Transactional
     public BadgeResponse addBadge(Long userId, BadgeUpdateRequest request) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+        Player player = findPlayerOrThrow(userId);
 
-        Badge badge = Badge.builder()
-                .badgeType(request.badgeType())
-                .player(player)
-                .build();
-
-        badgeRepository.save(badge);
-
-        return new BadgeResponse(badge.getBadgeId(), badge.getBadgeType());
+        Badge badge = badgeRepository.save(Badge.create(player, request.badgeType()));
+        return BadgeResponse.from(badge);
     }
 }
