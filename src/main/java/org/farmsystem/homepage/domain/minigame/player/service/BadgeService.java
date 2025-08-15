@@ -40,6 +40,10 @@ public class BadgeService {
     public BadgeResponse addBadge(Long userId, BadgeUpdateRequest request) {
         Player player = findPlayerOrThrow(userId);
 
+        if (badgeRepository.existsByPlayerAndBadgeType(player, request.badgeType())) {
+            throw new BusinessException(ErrorCode.BADGE_ALREADY_EXISTS);
+        }
+
         Badge badge = badgeRepository.save(Badge.create(player, request.badgeType()));
         return BadgeResponse.from(badge);
     }
