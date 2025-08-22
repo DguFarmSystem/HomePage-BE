@@ -1,6 +1,5 @@
 package org.farmsystem.homepage.domain.minigame.farm.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequest;
 import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponse;
@@ -15,6 +14,7 @@ import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepositor
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FarmService {
 
     private final PlayerRepository playerRepository;
@@ -37,7 +38,7 @@ public class FarmService {
         return y * 3 + (x + 1);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public FarmResponse getFarm(Long userId) {
         Player player = findPlayerOrThrow(userId);
 
@@ -62,7 +63,7 @@ public class FarmService {
         return new FarmResponse(tileResponses);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TileResponse getTile(Long userId, int x, int y) {
         Player player = findPlayerOrThrow(userId);
 
@@ -75,7 +76,6 @@ public class FarmService {
         return TileResponse.from(tile, plant);
     }
 
-    @Transactional
     public TileResponse updateTile(Long userId, TileUpdateRequest request) {
         Player player = findPlayerOrThrow(userId);
 
@@ -84,16 +84,14 @@ public class FarmService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMTILE_NOT_FOUND));
 
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
-        String newStatusStr = request.status().toLowerCase();
+        PlantStatus newStatus = PlantStatus.fromString(request.status());
 
-        if ("empty".equals(newStatusStr)) {
+        if (newStatus == PlantStatus.EMPTY) {
             if (plant != null) {
                 plantRepository.delete(plant);
             }
             return TileResponse.from(tile, null);
         }
-
-        PlantStatus newStatus = PlantStatus.fromString(request.status());
 
         if (newStatus == PlantStatus.PLANTED || newStatus == PlantStatus.READY) {
             if (request.plantedAt() == null || request.sunlightCount() == null) {
@@ -102,18 +100,10 @@ public class FarmService {
         }
 
         if (plant == null) {
-            plant = PlantedPlant.builder()
-                    .farmplotTile(tile)
-                    .player(player)
-                    .plantedAt(request.plantedAt())
-                    .status(newStatus)
-                    .sunlightCount(request.sunlightCount())
-                    .build();
+            plant = PlantedPlant.createNewPlant(tile, player, request);
             plantRepository.save(plant);
         } else {
-            plant.setStatus(newStatus);
-            plant.setSunlightCount(request.sunlightCount());
-            plant.setPlantedAt(request.plantedAt());
+            plant.updatePlantState(newStatus, request.sunlightCount(), request.plantedAt());
         }
 
         return TileResponse.from(tile, plant);
