@@ -5,6 +5,8 @@ import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateReques
 import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponse;
 import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponse;
 import org.farmsystem.homepage.domain.minigame.farm.service.FarmService;
+import org.farmsystem.homepage.global.common.SuccessResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,25 +17,31 @@ public class FarmController {
 
     private final FarmService farmService;
 
+    // 농장 전체 조회
     @GetMapping
-    public FarmResponse getFarm(@AuthenticationPrincipal Long userId) {
-        return farmService.getFarm(userId);
+    public ResponseEntity<SuccessResponse<?>> getFarm(@AuthenticationPrincipal Long userId) {
+        FarmResponse response = farmService.getFarm(userId);
+        return SuccessResponse.ok(response);
     }
 
+    // 특정 타일 조회
     @GetMapping("/tile")
-    public TileResponse getTile(
+    public ResponseEntity<SuccessResponse<?>> getTile(
             @AuthenticationPrincipal Long userId,
             @RequestParam int x,
             @RequestParam int y
     ) {
-        return farmService.getTile(userId, x, y);
+        TileResponse response = farmService.getTile(userId, x, y);
+        return SuccessResponse.ok(response);
     }
 
+    // 특정 타일 업데이트
     @PatchMapping("/tile")
-    public TileResponse updateTile(
+    public ResponseEntity<SuccessResponse<?>> updateTile(
             @AuthenticationPrincipal Long userId,
             @RequestBody TileUpdateRequest request
     ) {
-        return farmService.updateTile(userId, request);
+        TileResponse response = farmService.updateTile(userId, request);
+        return SuccessResponse.ok(response);
     }
 }
