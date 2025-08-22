@@ -2,7 +2,7 @@ package org.farmsystem.homepage.domain.minigame.farm.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequest;
+import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequestDTO;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class PlantedPlant {
     private Player player;
 
     // 정적 팩토리 메서드
-    public static PlantedPlant createNewPlant(FarmplotTile tile, Player player, TileUpdateRequest request) {
+    public static PlantedPlant createNewPlant(FarmplotTile tile, Player player, TileUpdateRequestDTO request) {
         return new PlantedPlant(
                 tile,
                 player,
