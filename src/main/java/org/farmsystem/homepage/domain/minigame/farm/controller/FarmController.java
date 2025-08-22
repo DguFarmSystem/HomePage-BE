@@ -1,9 +1,9 @@
 package org.farmsystem.homepage.domain.minigame.farm.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequest;
-import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponse;
-import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponse;
+import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequestDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponseDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponseDTO;
 import org.farmsystem.homepage.domain.minigame.farm.service.FarmService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class FarmController {
     // 농장 전체 조회
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getFarm(@AuthenticationPrincipal Long userId) {
-        FarmResponse response = farmService.getFarm(userId);
+        FarmResponseDTO response = farmService.getFarm(userId);
         return SuccessResponse.ok(response);
     }
 
@@ -31,7 +31,7 @@ public class FarmController {
             @RequestParam int x,
             @RequestParam int y
     ) {
-        TileResponse response = farmService.getTile(userId, x, y);
+        TileResponseDTO response = farmService.getTile(userId, x, y);
         return SuccessResponse.ok(response);
     }
 
@@ -39,9 +39,9 @@ public class FarmController {
     @PatchMapping("/tile")
     public ResponseEntity<SuccessResponse<?>> updateTile(
             @AuthenticationPrincipal Long userId,
-            @RequestBody TileUpdateRequest request
+            @RequestBody TileUpdateRequestDTO request
     ) {
-        TileResponse response = farmService.updateTile(userId, request);
+        TileResponseDTO response = farmService.updateTile(userId, request);
         return SuccessResponse.ok(response);
     }
 }

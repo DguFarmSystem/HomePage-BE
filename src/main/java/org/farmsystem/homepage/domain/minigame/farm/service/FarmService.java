@@ -1,9 +1,9 @@
 package org.farmsystem.homepage.domain.minigame.farm.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequest;
-import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponse;
-import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponse;
+import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequestDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponseDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponseDTO;
 import org.farmsystem.homepage.domain.minigame.farm.entity.FarmplotTile;
 import org.farmsystem.homepage.domain.minigame.farm.entity.PlantedPlant;
 import org.farmsystem.homepage.domain.minigame.farm.entity.PlantStatus;
@@ -33,15 +33,18 @@ public class FarmService {
         return playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
     }
-
+    // (x,y) 좌표 → DB에 저장된 tileNum(1~9) 변환
     private int toTileNum(int x, int y) {
         return y * 3 + (x + 1);
     }
 
+    // 전체 텃밭(9칸) 조회 API
     @Transactional(readOnly = true)
-    public FarmResponse getFarm(Long userId) {
+    public FarmResponseDTO getFarm(Long userId) {
+
         Player player = findPlayerOrThrow(userId);
 
+        // 최초 접속 시 타일이 없으면 9칸 자동 생성
         List<FarmplotTile> tiles = tileRepository.findByPlayer(player);
         if (tiles.isEmpty()) {
             List<FarmplotTile> newTiles = IntStream.rangeClosed(1, 9)
@@ -54,51 +57,59 @@ public class FarmService {
             tiles = newTiles;
         }
 
-        List<TileResponse> tileResponses = new ArrayList<>();
+        // 각 타일마다 심어진 식물 조회 후 DTO 변환
+        List<TileResponseDTO> tileResponses = new ArrayList<>();
         for (FarmplotTile tile : tiles) {
             PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
-            tileResponses.add(TileResponse.from(tile, plant));
+            tileResponses.add(TileResponseDTO.from(tile, plant));
         }
 
-        return new FarmResponse(tileResponses);
+        return new FarmResponseDTO(tileResponses);
     }
 
+    // 단일 타일 조회 API
     @Transactional(readOnly = true)
-    public TileResponse getTile(Long userId, int x, int y) {
+    public TileResponseDTO getTile(Long userId, int x, int y) {
         Player player = findPlayerOrThrow(userId);
 
         int tileNum = toTileNum(x, y);
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMTILE_NOT_FOUND));
 
-
+        // 해당 타일에 연결된 식물 조회 후 DTO 반환
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
-        return TileResponse.from(tile, plant);
+        return TileResponseDTO.from(tile, plant);
     }
 
-    public TileResponse updateTile(Long userId, TileUpdateRequest request) {
+    // 타일 상태 변경 API
+    public TileResponseDTO updateTile(Long userId, TileUpdateRequestDTO request) {
         Player player = findPlayerOrThrow(userId);
 
         int tileNum = toTileNum(request.x(), request.y());
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
                 .orElseThrow(() -> new BusinessException(ErrorCode.FARMTILE_NOT_FOUND));
 
+        // 해당 타일에 이미 식물이 심어져 있는지 확인
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
+
         PlantStatus newStatus = PlantStatus.fromString(request.status());
 
+        // 상태를 EMPTY로 변경 → 심어진 식물 삭제
         if (newStatus == PlantStatus.EMPTY) {
             if (plant != null) {
                 plantRepository.delete(plant);
             }
-            return TileResponse.from(tile, null);
+            return TileResponseDTO.from(tile, null);
         }
 
+        // PLANTED 또는 READY로 변경 → 필수 필드 검증
         if (newStatus == PlantStatus.PLANTED || newStatus == PlantStatus.READY) {
             if (request.plantedAt() == null || request.sunlightCount() == null) {
                 throw new BusinessException(ErrorCode.MISSING_REQUIRED_FIELD);
             }
         }
 
+        // 식물이 없으면 새로 생성, 있으면 상태만 업데이트
         if (plant == null) {
             plant = PlantedPlant.createNewPlant(tile, player, request);
             plantRepository.save(plant);
@@ -106,6 +117,6 @@ public class FarmService {
             plant.updatePlantState(newStatus, request.sunlightCount(), request.plantedAt());
         }
 
-        return TileResponse.from(tile, plant);
+        return TileResponseDTO.from(tile, plant);
     }
 }
