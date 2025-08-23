@@ -1,7 +1,7 @@
 package org.farmsystem.homepage.domain.minigame.dex.entity;
 
 public enum PlantType {
-    // 노말 (일반)
+    // 일반
     Roseangela,
     Wildrose,
     Dandelion,

@@ -1,8 +1,9 @@
 package org.farmsystem.homepage.domain.minigame.farm.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.farm.dto.FarmDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequestDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponseDTO;
+import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponseDTO;
 import org.farmsystem.homepage.domain.minigame.farm.entity.FarmplotTile;
 import org.farmsystem.homepage.domain.minigame.farm.entity.PlantedPlant;
 import org.farmsystem.homepage.domain.minigame.farm.entity.PlantStatus;
@@ -13,138 +14,109 @@ import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepositor
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FarmService {
 
     private final PlayerRepository playerRepository;
     private final FarmplotTileRepository tileRepository;
     private final PlantedPlantRepository plantRepository;
 
-    private int toTileNum(int x, int y) {
-        return y * 3 + (x + 1); // 3x3, 좌하단 (0,0) 시작
-    }
-
-    private int[] toXY(int tileNum) {
-        int y = (tileNum - 1) / 3;
-        int x = (tileNum - 1) % 3;
-        return new int[]{x, y};
-    }
-
-    @Transactional
-    public FarmDTO.FarmResponse getFarm(Long userId) {
-        Player player = playerRepository.findByUser_UserId(userId)
+    private Player findPlayerOrThrow(Long userId) {
+        return playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    }
+    // (x,y) 좌표 → DB에 저장된 tileNum(1~9) 변환
+    private int toTileNum(int x, int y) {
+        return y * 3 + (x + 1);
+    }
 
+    // 전체 텃밭(9칸) 조회 API
+    @Transactional(readOnly = true)
+    public FarmResponseDTO getFarm(Long userId) {
+
+        Player player = findPlayerOrThrow(userId);
+
+        // 최초 접속 시 타일이 없으면 9칸 자동 생성
         List<FarmplotTile> tiles = tileRepository.findByPlayer(player);
         if (tiles.isEmpty()) {
-            for (int i = 1; i <= 9; i++) {
-                tileRepository.save(FarmplotTile.builder()
-                        .tileNum(i)
-                        .player(player)
-                        .build());
-            }
-            tiles = tileRepository.findByPlayer(player);
+            List<FarmplotTile> newTiles = IntStream.rangeClosed(1, 9)
+                    .mapToObj(i -> FarmplotTile.builder()
+                            .tileNum(i)
+                            .player(player)
+                            .build())
+                    .toList();
+            tileRepository.saveAll(newTiles);
+            tiles = newTiles;
         }
 
-        List<FarmDTO.TileResponse> tileResponses = new ArrayList<>();
+        // 각 타일마다 심어진 식물 조회 후 DTO 변환
+        List<TileResponseDTO> tileResponses = new ArrayList<>();
         for (FarmplotTile tile : tiles) {
             PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
-            int[] xy = toXY(tile.getTileNum());
-            tileResponses.add(FarmDTO.TileResponse.builder()
-                    .x(xy[0])
-                    .y(xy[1])
-                    .status(plant == null ? "empty" : plant.getStatus().name().toLowerCase())
-                    .plantedAt(plant == null ? null : plant.getPlantedAt())
-                    .sunlightCount(plant == null ? 0 : plant.getSunlightCount())
-                    .build());
+            tileResponses.add(TileResponseDTO.from(tile, plant));
         }
 
-        return FarmDTO.FarmResponse.builder()
-                .tiles(tileResponses)
-                .build();
+        return new FarmResponseDTO(tileResponses);
     }
 
-    @Transactional
-    public FarmDTO.TileResponse getTile(Long userId, int x, int y) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    // 단일 타일 조회 API
+    @Transactional(readOnly = true)
+    public TileResponseDTO getTile(Long userId, int x, int y) {
+        Player player = findPlayerOrThrow(userId);
 
         int tileNum = toTileNum(x, y);
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
-                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FARMTILE_NOT_FOUND));
 
+        // 해당 타일에 연결된 식물 조회 후 DTO 반환
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
-
-        return FarmDTO.TileResponse.builder()
-                .x(x)
-                .y(y)
-                .status(plant == null ? "empty" : plant.getStatus().name().toLowerCase())
-                .plantedAt(plant == null ? null : plant.getPlantedAt())
-                .sunlightCount(plant == null ? 0 : plant.getSunlightCount())
-                .build();
+        return TileResponseDTO.from(tile, plant);
     }
 
-    @Transactional
-    public FarmDTO.TileResponse updateTile(Long userId, FarmDTO.TileUpdateRequest request) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    // 타일 상태 변경 API
+    public TileResponseDTO updateTile(Long userId, TileUpdateRequestDTO request) {
+        Player player = findPlayerOrThrow(userId);
 
-        int tileNum = toTileNum(request.getX(), request.getY());
+        int tileNum = toTileNum(request.x(), request.y());
         FarmplotTile tile = tileRepository.findByPlayerAndTileNum(player, tileNum)
-                .orElseThrow(() -> new BusinessException(ErrorCode.GARDENTILE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.FARMTILE_NOT_FOUND));
 
+        // 해당 타일에 이미 식물이 심어져 있는지 확인
         PlantedPlant plant = plantRepository.findByFarmplotTile(tile).orElse(null);
 
-        String newStatusStr = request.getStatus().toLowerCase();
+        PlantStatus newStatus = PlantStatus.fromString(request.status());
 
-        // empty로 변경 요청 → 초기화
-        if ("empty".equals(newStatusStr)) {
+        // 상태를 EMPTY로 변경 → 심어진 식물 삭제
+        if (newStatus == PlantStatus.EMPTY) {
             if (plant != null) {
                 plantRepository.delete(plant);
             }
-            return FarmDTO.TileResponse.builder()
-                    .x(request.getX())
-                    .y(request.getY())
-                    .status("empty")
-                    .plantedAt(null)
-                    .sunlightCount(0)
-                    .build();
+            return TileResponseDTO.from(tile, null);
         }
 
-        // 그 외 모든 상태 → 생성 or 업데이트
-        PlantStatus newStatus;
-        try {
-            newStatus = PlantStatus.valueOf(request.getStatus().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+        // PLANTED 또는 READY로 변경 → 필수 필드 검증
+        if (newStatus == PlantStatus.PLANTED || newStatus == PlantStatus.READY) {
+            if (request.plantedAt() == null || request.sunlightCount() == null) {
+                throw new BusinessException(ErrorCode.MISSING_REQUIRED_FIELD);
+            }
         }
 
+        // 식물이 없으면 새로 생성, 있으면 상태만 업데이트
         if (plant == null) {
-            plant = PlantedPlant.builder()
-                    .farmplotTile(tile)
-                    .player(player)
-                    .plantedAt(request.getPlantedAt()) // 유니티에서 받은 시간
-                    .status(newStatus)
-                    .sunlightCount(request.getSunlightCount())
-                    .build();
+            plant = PlantedPlant.createNewPlant(tile, player, request);
             plantRepository.save(plant);
         } else {
-            plant.setStatus(newStatus);
-            plant.setSunlightCount(request.getSunlightCount());
-            plant.setPlantedAt(request.getPlantedAt());
+            plant.updatePlantState(newStatus, request.sunlightCount(), request.plantedAt());
         }
 
-        return FarmDTO.TileResponse.builder()
-                .x(request.getX())
-                .y(request.getY())
-                .status(plant.getStatus().name().toLowerCase())
-                .plantedAt(plant.getPlantedAt())
-                .sunlightCount(plant.getSunlightCount())
-                .build();
+        return TileResponseDTO.from(tile, plant);
     }
 }

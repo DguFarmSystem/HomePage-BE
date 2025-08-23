@@ -1,17 +1,17 @@
 package org.farmsystem.homepage.domain.minigame.solarstation.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.farmsystem.homepage.domain.minigame.solarstation.entity.SolarPowerStation;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class SolarDTO {
-    private LocalDateTime chargeStartTime;
-    private Integer level; // null이면 수정 안 함
+public record SolarDTO(
+        LocalDateTime chargeStartTime,
+        Integer level
+) {
+    public static SolarDTO from(SolarPowerStation station) {
+        return new SolarDTO(
+                station.getChargeStartedAt(),
+                station.getLevel()
+        );
+    }
 }
