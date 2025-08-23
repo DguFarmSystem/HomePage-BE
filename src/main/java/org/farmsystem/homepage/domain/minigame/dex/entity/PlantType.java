@@ -1,5 +1,6 @@
 package org.farmsystem.homepage.domain.minigame.dex.entity;
 
+// PlantType은 인벤토리 코드 수정후 삭제 예정 -> enum 대신 store 마스터 테이블에서 번호(Long)로 관리 예정
 public enum PlantType {
     // 일반
     Roseangela,
