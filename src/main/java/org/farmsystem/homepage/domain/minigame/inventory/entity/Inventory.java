@@ -5,12 +5,12 @@ import lombok.*;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
-@Table(name = "object_inventory")
+@Table(name = "inventory")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ObjectInventory { //획득한 오브젝트들을 관리하는 인벤토리
+public class Inventory { //획득한 오브젝트들을 관리하는 인벤토리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "owned_id", nullable = false)
