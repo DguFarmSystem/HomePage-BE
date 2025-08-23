@@ -37,7 +37,7 @@ public class PlantedPlant {
     @JoinColumn(name = "player_id")
     private Player player;
 
-    // 정적 팩토리 메서드
+    // 지정된 타일에 새 식물을 심는 정적 팩토리 메서드
     public static PlantedPlant createNewPlant(FarmplotTile tile, Player player, TileUpdateRequestDTO request) {
         return new PlantedPlant(
                 tile,
@@ -48,7 +48,7 @@ public class PlantedPlant {
         );
     }
 
-    // 상태 업데이트 비즈니스 메서드
+    // 식물 상태 업데이트 비즈니스 메서드
     public void updatePlantState(PlantStatus status, Integer sunlightCount, LocalDateTime plantedAt) {
         this.status = status;
         this.sunlightCount = sunlightCount;
