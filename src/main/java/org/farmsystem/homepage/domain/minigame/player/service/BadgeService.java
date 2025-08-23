@@ -1,8 +1,8 @@
 package org.farmsystem.homepage.domain.minigame.player.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.player.dto.request.BadgeUpdateRequest;
-import org.farmsystem.homepage.domain.minigame.player.dto.response.BadgeResponse;
+import org.farmsystem.homepage.domain.minigame.player.dto.request.BadgeUpdateRequestDTO;
+import org.farmsystem.homepage.domain.minigame.player.dto.response.BadgeResponseDTO;
 import org.farmsystem.homepage.domain.minigame.player.entity.Badge;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.BadgeRepository;
@@ -27,17 +27,17 @@ public class BadgeService {
     }
 
     @Transactional(readOnly = true)
-    public List<BadgeResponse> getBadges(Long userId) {
+    public List<BadgeResponseDTO> getBadges(Long userId) {
         Player player = findPlayerOrThrow(userId);
 
         return badgeRepository.findByPlayer(player)
                 .stream()
-                .map(BadgeResponse::from)
+                .map(BadgeResponseDTO::from)
                 .toList();
     }
 
     @Transactional
-    public BadgeResponse addBadge(Long userId, BadgeUpdateRequest request) {
+    public BadgeResponseDTO addBadge(Long userId, BadgeUpdateRequestDTO request) {
         Player player = findPlayerOrThrow(userId);
 
         if (badgeRepository.existsByPlayerAndBadgeType(player, request.badgeType())) {
@@ -45,6 +45,6 @@ public class BadgeService {
         }
 
         Badge badge = badgeRepository.save(Badge.create(player, request.badgeType()));
-        return BadgeResponse.from(badge);
+        return BadgeResponseDTO.from(badge);
     }
 }

@@ -1,6 +1,6 @@
 package org.farmsystem.homepage.domain.minigame.player.dto.request;
 
-public record BadgeUpdateRequest(
+public record BadgeUpdateRequestDTO(
         Integer badgeType
 ) {
 }

@@ -2,7 +2,6 @@ package org.farmsystem.homepage.domain.minigame.farm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequestDTO;
-import org.farmsystem.homepage.domain.minigame.farm.dto.response.FarmResponseDTO;
 import org.farmsystem.homepage.domain.minigame.farm.dto.response.TileResponseDTO;
 import org.farmsystem.homepage.domain.minigame.farm.entity.FarmplotTile;
 import org.farmsystem.homepage.domain.minigame.farm.entity.PlantedPlant;
@@ -40,7 +39,7 @@ public class FarmService {
 
     // 전체 텃밭(9칸) 조회 API
     @Transactional(readOnly = true)
-    public FarmResponseDTO getFarm(Long userId) {
+    public List<TileResponseDTO> getFarm(Long userId) {
 
         Player player = findPlayerOrThrow(userId);
 
@@ -64,7 +63,7 @@ public class FarmService {
             tileResponses.add(TileResponseDTO.from(tile, plant));
         }
 
-        return new FarmResponseDTO(tileResponses);
+        return tileResponses;
     }
 
     // 단일 타일 조회 API
