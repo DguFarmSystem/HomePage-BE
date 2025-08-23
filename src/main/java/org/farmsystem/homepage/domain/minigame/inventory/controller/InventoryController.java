@@ -25,7 +25,7 @@ public class InventoryController {
         return SuccessResponse.ok(inventoryList);
     }
 
-    @PostMapping("/update/object")
+    @PutMapping("/update")
     public ResponseEntity<SuccessResponse<?>> updateInventoryObject(
             @AuthenticationPrincipal Long userId,
             @RequestBody InventoryUpdateRequestDTO requestDTO
