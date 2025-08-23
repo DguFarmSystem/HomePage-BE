@@ -1,8 +1,8 @@
 package org.farmsystem.homepage.domain.minigame.player.service;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.player.dto.request.GameTypeRequest;
-import org.farmsystem.homepage.domain.minigame.player.dto.response.GameCountResponse;
+import org.farmsystem.homepage.domain.minigame.player.dto.request.GameTypeRequestDTO;
+import org.farmsystem.homepage.domain.minigame.player.dto.response.GameCountResponseDTO;
 import org.farmsystem.homepage.domain.minigame.player.entity.DailyGame;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.DailyGameRepository;
@@ -32,16 +32,16 @@ public class DailyGameService {
     }
 
     @Transactional
-    public GameCountResponse getGameCount(Long userId, String gameType) {
+    public GameCountResponseDTO getGameCount(Long userId, String gameType) {
         Player player = findPlayerOrThrow(userId);
         DailyGame dailyGame = getOrCreateDailyGame(player);
 
         dailyGame.resetIfNeeded();
-        return GameCountResponse.from(dailyGame, gameType);
+        return GameCountResponseDTO.from(dailyGame, gameType);
     }
 
     @Transactional
-    public GameCountResponse incrementGameCount(Long userId, GameTypeRequest request) {
+    public GameCountResponseDTO incrementGameCount(Long userId, GameTypeRequestDTO request) {
         Player player = findPlayerOrThrow(userId);
         DailyGame dailyGame = getOrCreateDailyGame(player);
 
@@ -52,6 +52,6 @@ public class DailyGameService {
         }
 
         dailyGame.incrementGame(request.gameType());
-        return GameCountResponse.from(dailyGame, request.gameType());
+        return GameCountResponseDTO.from(dailyGame, request.gameType());
     }
 }

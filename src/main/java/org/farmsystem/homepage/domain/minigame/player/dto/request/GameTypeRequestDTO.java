@@ -1,6 +1,6 @@
 package org.farmsystem.homepage.domain.minigame.player.dto.request;
 
-public record GameTypeRequest(
+public record GameTypeRequestDTO(
         String gameType
 ) {
 }
