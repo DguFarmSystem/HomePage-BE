@@ -8,7 +8,6 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Badge {  //칭호
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +21,13 @@ public class Badge {  //칭호
     @JoinColumn(name = "player_id")
     private Player player;
 
-    public static Badge create(Player player, Integer badgeType) {
-        return Badge.builder()
-                .badgeType(badgeType)
-                .player(player)
-                .build();
+    // 플레이어가 새로운 칭호를 획득할 때 사용하는 생성 메서드
+    public static Badge createBadge(Player player, Integer badgeType) {
+        return new Badge(player, badgeType);
+    }
+    // 생성은 createBadge만 사용
+    private Badge(Player player, Integer badgeType) {
+        this.player = player;
+        this.badgeType = badgeType;
     }
 }
