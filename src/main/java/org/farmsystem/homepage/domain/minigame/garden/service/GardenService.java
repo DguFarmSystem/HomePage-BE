@@ -13,10 +13,9 @@ import org.farmsystem.homepage.domain.minigame.garden.entity.PlacedObject;
 import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 import org.farmsystem.homepage.domain.minigame.garden.repository.GardenTileRepository;
 import org.farmsystem.homepage.domain.minigame.garden.repository.PlacedObjectRepository;
-import org.farmsystem.homepage.domain.minigame.inventory.entity.ObjectInventory;
+import org.farmsystem.homepage.domain.minigame.inventory.entity.Inventory;
 import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
-import org.farmsystem.homepage.domain.minigame.inventory.repository.ObjectInventoryRepository;
-import org.farmsystem.homepage.domain.minigame.inventory.repository.StoreRepository;
+import org.farmsystem.homepage.domain.minigame.inventory.repository.InventoryRepository;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepository;
 import org.farmsystem.homepage.global.error.ErrorCode;
@@ -34,7 +33,7 @@ public class GardenService {
     private final GardenTileRepository gardenTileRepository;
     private final PlacedObjectRepository placedObjectRepository;
     private final PlayerRepository playerRepository;
-    private final ObjectInventoryRepository objectInventoryRepository;
+    private final InventoryRepository inventoryRepository;
 
     private GardenTile getGardenTile(Player player, Long x, Long y) {
         return gardenTileRepository.findByPlayerAndXAndY(player, x, y)
@@ -103,15 +102,15 @@ public class GardenService {
             throw new BusinessException(ErrorCode.OBJECT_ALREADY_PLACED);
         }
         //보유 오브젝트 조회
-        ObjectInventory owned = objectInventoryRepository
+        Inventory owned = inventoryRepository
                 .findFirstByPlayerAndObjectKind_StoreGoodsNumberOrderByOwnedIdAsc(player, requestDTO.objectType())
                 .orElseThrow(() -> new BusinessException(ErrorCode.OBJECT_NOT_OWNED));
 
         Store store = owned.getObjectKind();
 
         //보유 오브젝트 개수 확인
-        int objCount = objectInventoryRepository.countByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());
-        objectInventoryRepository.delete(owned);
+        int objCount = inventoryRepository.countByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());
+        inventoryRepository.delete(owned);
         objCount = objCount - 1;
 
         PlacedObject object = PlacedObject.builder()
@@ -183,17 +182,17 @@ public class GardenService {
             throw new BusinessException(ErrorCode.OBJECT_TYPE_MISMATCH);
         }
 
-        int objCount = objectInventoryRepository.countByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());
+        int objCount = inventoryRepository.countByPlayerAndObjectKind_StoreGoodsNumber(player, requestDTO.objectType());
 
         // placed_object 테이블에서 삭제
         placedObjectRepository.delete(placedObject);
 
         //인벤토리에 1개 추가
-        ObjectInventory inventory = ObjectInventory.builder()
+        Inventory inventory = Inventory.builder()
                 .player(player)
                 .objectKind(placedObject.getObjectKind()) // (objectKind는 Store 타입임)
                 .build();
-        objectInventoryRepository.save(inventory);
+        inventoryRepository.save(inventory);
         objCount = objCount + 1;
 
         return PlaceObjectResponseDTO.from(placedObject, objCount);
