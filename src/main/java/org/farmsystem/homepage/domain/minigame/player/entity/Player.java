@@ -26,6 +26,9 @@ public class Player extends BaseTimeEntity {
     @Column(nullable = false)
     private int sunlight = 0;
 
+    @Column(nullable = false)
+    private int level = 1;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
