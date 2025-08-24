@@ -1,7 +1,7 @@
 package org.farmsystem.homepage.domain.minigame.inventory.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.inventory.dto.request.InventoryObjectUpdateRequestDTO;
+import org.farmsystem.homepage.domain.minigame.inventory.dto.request.InventoryUpdateRequestDTO;
 import org.farmsystem.homepage.domain.minigame.inventory.dto.request.InventoryPlantUpdateRequestDTO;
 import org.farmsystem.homepage.domain.minigame.inventory.dto.response.InventoryResponseDTO;
 import org.farmsystem.homepage.domain.minigame.inventory.service.InventoryService;
@@ -25,23 +25,15 @@ public class InventoryController {
         return SuccessResponse.ok(inventoryList);
     }
 
-    @PostMapping("/update/object")
+    @PutMapping("/update")
     public ResponseEntity<SuccessResponse<?>> updateInventoryObject(
             @AuthenticationPrincipal Long userId,
-            @RequestBody InventoryObjectUpdateRequestDTO requestDTO
+            @RequestBody InventoryUpdateRequestDTO requestDTO
     ){
         List<InventoryResponseDTO> inventoryList = inventoryService.updateInventoryObject(userId, requestDTO);
         return SuccessResponse.ok(inventoryList);
     }
 
-    @PostMapping("/update/plant")
-    public ResponseEntity<SuccessResponse<?>> updateInventoryPlant(
-            @AuthenticationPrincipal Long userId,
-            @RequestBody InventoryPlantUpdateRequestDTO requestDTO
-    ){
-        List<InventoryResponseDTO> inventoryList = inventoryService.updateInventoryPlant(userId, requestDTO);
-        return SuccessResponse.ok(inventoryList);
-    }
 
 
 

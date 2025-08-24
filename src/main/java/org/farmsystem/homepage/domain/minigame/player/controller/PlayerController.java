@@ -16,7 +16,7 @@ public class PlayerController {
     private final PlayerService playerService;
 
     //플레이어의 재화 조회
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<SuccessResponse<?>> getPlayerCurrency(
             @AuthenticationPrincipal Long userId
     ) {
@@ -25,7 +25,7 @@ public class PlayerController {
     }
 
     //재화 업데이트
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<SuccessResponse<?>> updatePlayerCurrency(
             @AuthenticationPrincipal Long userId,
             @RequestBody PlayerCurrencyDTO requestDTO

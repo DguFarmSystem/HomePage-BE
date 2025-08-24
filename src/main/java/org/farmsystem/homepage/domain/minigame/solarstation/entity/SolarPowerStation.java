@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class SolarPowerStation {
 
     @Id
@@ -29,21 +28,26 @@ public class SolarPowerStation {
     @JoinColumn(name = "player_id", nullable = false, unique = true)
     private Player player;
 
-    public static SolarPowerStation createNew(Player player) {
-        return SolarPowerStation.builder()
-                .player(player)
-                .level(0)
-                .chargeStartedAt(null)
-                .build();
+    // 플레이어의 태양광 발전소를 처음 생성
+    public static SolarPowerStation createSolarStation(Player player) {
+        return new SolarPowerStation(player, 0, null);
     }
 
-    public void startChargeAt(LocalDateTime startedAt) {
-        this.chargeStartedAt = startedAt;
+    // 발전소 상태 업데이트
+    public void updateState(LocalDateTime startedAt, Integer newLevel) {
+        if (startedAt != null) {
+            this.chargeStartedAt = startedAt;
+        }
+        if (newLevel != null) {
+            int clamped = Math.max(0, Math.min(100, newLevel));
+            this.level = clamped;
+        }
     }
 
-    // 0~100 범위
-    public void changeLevel(int newLevel) {
-        int clamped = Math.max(0, Math.min(100, newLevel));
-        this.level = clamped;
+    // createSolarStation으로만 생성
+    private SolarPowerStation(Player player, int level, LocalDateTime chargeStartedAt) {
+        this.player = player;
+        this.level = level;
+        this.chargeStartedAt = chargeStartedAt;
     }
 }
