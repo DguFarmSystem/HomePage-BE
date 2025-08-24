@@ -27,11 +27,12 @@ public class DailyGameService {
     }
 
     private DailyGame getOrCreateDailyGame(Player player) {
-        Optional<DailyGame> optional = dailyGameRepository.findByPlayer(player);
-        return optional.orElseGet(() -> dailyGameRepository.save(DailyGame.createNew(player)));
+        return dailyGameRepository.findByPlayer(player)
+                .orElseGet(() -> dailyGameRepository.save(DailyGame.createDailyGame(player)));
     }
 
-    @Transactional
+    // 게임의 남은 횟수 조회
+    @Transactional(readOnly = true)
     public GameCountResponseDTO getGameCount(Long userId, String gameType) {
         Player player = findPlayerOrThrow(userId);
         DailyGame dailyGame = getOrCreateDailyGame(player);
@@ -40,18 +41,19 @@ public class DailyGameService {
         return GameCountResponseDTO.from(dailyGame, gameType);
     }
 
+    // 게임 횟수 1회 소모
     @Transactional
-    public GameCountResponseDTO incrementGameCount(Long userId, GameTypeRequestDTO request) {
+    public GameCountResponseDTO useGame(Long userId, GameTypeRequestDTO request) {
         Player player = findPlayerOrThrow(userId);
         DailyGame dailyGame = getOrCreateDailyGame(player);
 
         dailyGame.resetIfNeeded();
 
-        if (dailyGame.getGameCount(request.gameType()) >= 3) {
+        if (dailyGame.getRemainingCount(request.gameType()) <= 0) {
             throw new BusinessException(ErrorCode.DAILY_GAME_LIMIT_EXCEEDED);
         }
 
-        dailyGame.incrementGame(request.gameType());
+        dailyGame.useGame(request.gameType());
         return GameCountResponseDTO.from(dailyGame, request.gameType());
     }
 }
