@@ -6,7 +6,7 @@ public record GardenResponseDTO (
         Long tileId,
         Long x,
         Long y,
-        Integer tileType,
+        Long tileType,
         PlacedObjectResponseDTO object
 ){
     public static GardenResponseDTO from(GardenTile tile, PlacedObjectResponseDTO object) {
@@ -14,7 +14,7 @@ public record GardenResponseDTO (
                 tile.getTileId(),
                 tile.getX(),
                 tile.getY(),
-                tile.getTileType(),
+                tile.getTileType().getStoreGoodsNumber(),
                 object
         );
     }

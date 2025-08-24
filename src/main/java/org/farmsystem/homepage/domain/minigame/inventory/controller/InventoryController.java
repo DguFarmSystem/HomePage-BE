@@ -2,7 +2,6 @@ package org.farmsystem.homepage.domain.minigame.inventory.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.minigame.inventory.dto.request.InventoryUpdateRequestDTO;
-import org.farmsystem.homepage.domain.minigame.inventory.dto.request.InventoryPlantUpdateRequestDTO;
 import org.farmsystem.homepage.domain.minigame.inventory.dto.response.InventoryResponseDTO;
 import org.farmsystem.homepage.domain.minigame.inventory.service.InventoryService;
 import org.farmsystem.homepage.global.common.SuccessResponse;

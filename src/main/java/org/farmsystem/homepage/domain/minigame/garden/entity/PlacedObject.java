@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.garden.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
 
 @Entity
@@ -10,7 +11,7 @@ import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PlacedObject {  //인벤토리에서 보유한 오브젝트 하나를 삭제하고 정원에 하나를 추가하여 배치함.
+public class PlacedObject extends BaseTimeEntity {  //인벤토리에서 보유한 오브젝트 하나를 삭제하고 정원에 하나를 추가하여 배치함.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "object_id", nullable = false)
@@ -32,9 +33,19 @@ public class PlacedObject {  //인벤토리에서 보유한 오브젝트 하나�
     )
     private Store objectKind;
 
+    //PlacedObject 생성 메소드
+    public static PlacedObject createPlacedObject(GardenTile tile, Store objectKind, Rotation rotation) {
+        return PlacedObject.builder()
+                .tile(tile)
+                .objectKind(objectKind)
+                .rotation(rotation)
+                .build();
+    }
+
     //업데이트
     public void updatePlacedLocation(GardenTile newTile){
         this.tile = newTile;
     }
     public void updateRotation(Rotation newRotation){this.rotation = newRotation;}
+    public void updateObjectKind(Store newKind){ this.objectKind = newKind; }
 }

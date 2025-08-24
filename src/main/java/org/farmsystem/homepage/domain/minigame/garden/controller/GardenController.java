@@ -1,12 +1,11 @@
 package org.farmsystem.homepage.domain.minigame.garden.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.garden.dto.AddTileDTO;
-import org.farmsystem.homepage.domain.minigame.garden.dto.request.ChangePlacedObjectRequestDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.request.PlaceObjectRequestDTO;
+import org.farmsystem.homepage.domain.minigame.garden.dto.request.UpdateGardenRequestDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.GardenResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.dto.response.ChangePlacedObjectResponseDTO;
-import org.farmsystem.homepage.domain.minigame.garden.dto.response.PlaceObjectResponseDTO;
+import org.farmsystem.homepage.domain.minigame.garden.dto.response.UpdateGardenResponseDTO;
 import org.farmsystem.homepage.domain.minigame.garden.service.GardenService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
@@ -29,32 +28,15 @@ public class GardenController {
         return SuccessResponse.ok(response);
     }
 
-    //정원 타일 추가
-    @PostMapping("/tile")
-    public ResponseEntity<SuccessResponse<?>> addGardenTile(
-            @AuthenticationPrincipal Long userId, @RequestBody AddTileDTO requestDTO
-    ){
-        AddTileDTO response = gardenService.addGardenTile(userId, requestDTO);
-        return SuccessResponse.created(response);
-    }
-
-    //정원 오브젝트 배치 추가
-    @PostMapping("/place")
-    public ResponseEntity<SuccessResponse<?>> addGardenObject(
-            @AuthenticationPrincipal Long userId, @RequestBody PlaceObjectRequestDTO requestDTO
-    ){
-        PlaceObjectResponseDTO response = gardenService.addGardenObject(userId, requestDTO);
-        return SuccessResponse.created(response);
-
-    }
-
-    //정원 오브젝트 위치 이동
-    @PatchMapping("/move")
-    public ResponseEntity<SuccessResponse<?>> moveGardenObject(
+    //정원 단일 타일 전체 상태 업데이트
+    @PutMapping("/update/{x}/{y}")
+    public ResponseEntity<SuccessResponse<?>> updateGarden(
             @AuthenticationPrincipal Long userId,
-            @RequestBody ChangePlacedObjectRequestDTO request
-    ) {
-        ChangePlacedObjectResponseDTO response = gardenService.moveGardenObject(userId, request);
+            @PathVariable int x,
+            @PathVariable int y,
+            @RequestBody UpdateGardenRequestDTO requestDTO
+    ){
+        UpdateGardenResponseDTO response = gardenService.updateGarden(userId, x, y, requestDTO);
         return SuccessResponse.ok(response);
     }
 
@@ -65,16 +47,6 @@ public class GardenController {
             @RequestBody PlaceObjectRequestDTO requestDTO
     ){
         ChangePlacedObjectResponseDTO response = gardenService.rotateGardenObject(userId, requestDTO);
-        return SuccessResponse.ok(response);
-    }
-
-    //오브젝트 배치 철회 (다시 인벤토리로)
-    @PostMapping("/remove")
-    public ResponseEntity<SuccessResponse<?>> removeGardenObject(
-            @AuthenticationPrincipal Long userId,
-            @RequestBody PlaceObjectRequestDTO requestDTO
-    ){
-        PlaceObjectResponseDTO response = gardenService.removeGardenObject(userId, requestDTO);
         return SuccessResponse.ok(response);
     }
 
