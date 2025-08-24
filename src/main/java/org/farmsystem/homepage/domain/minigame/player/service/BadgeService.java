@@ -21,11 +21,12 @@ public class BadgeService {
     private final BadgeRepository badgeRepository;
     private final PlayerRepository playerRepository;
 
+    // 플레이어 조회
     private Player findPlayerOrThrow(Long userId) {
         return playerRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
     }
-
+    // 플레이어의 전체 칭호 조회
     @Transactional(readOnly = true)
     public List<BadgeResponseDTO> getBadges(Long userId) {
         Player player = findPlayerOrThrow(userId);
@@ -35,7 +36,7 @@ public class BadgeService {
                 .map(BadgeResponseDTO::from)
                 .toList();
     }
-
+    // 새로운 칭호 등록
     @Transactional
     public BadgeResponseDTO addBadge(Long userId, BadgeUpdateRequestDTO request) {
         Player player = findPlayerOrThrow(userId);
@@ -44,7 +45,7 @@ public class BadgeService {
             throw new BusinessException(ErrorCode.BADGE_ALREADY_EXISTS);
         }
 
-        Badge badge = badgeRepository.save(Badge.create(player, request.badgeType()));
+        Badge badge = badgeRepository.save(Badge.createBadge(player, request.badgeType()));
         return BadgeResponseDTO.from(badge);
     }
 }

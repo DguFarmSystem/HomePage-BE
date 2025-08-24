@@ -7,6 +7,6 @@ public record GameCountResponseDTO(
         int count
 ) {
     public static GameCountResponseDTO from(DailyGame dailyGame, String gameType) {
-        return new GameCountResponseDTO(gameType, dailyGame.getGameCount(gameType));
+        return new GameCountResponseDTO(gameType, dailyGame.getRemainingCount(gameType));
     }
 }
