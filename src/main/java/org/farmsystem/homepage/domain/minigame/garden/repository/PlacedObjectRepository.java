@@ -10,4 +10,6 @@ public interface PlacedObjectRepository extends JpaRepository<PlacedObject, Long
     Optional<PlacedObject> findByTile(GardenTile tile);
     boolean existsByTile(GardenTile tile);
 
+    void deleteByTile(GardenTile tile);
+
 }

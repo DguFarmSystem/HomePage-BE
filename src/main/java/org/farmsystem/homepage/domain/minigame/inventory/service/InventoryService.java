@@ -86,7 +86,4 @@ public class InventoryService {
         return inventoryRepository.countInventoryGroupByObjectKind(player);
     }
 
-
-
-
 }
