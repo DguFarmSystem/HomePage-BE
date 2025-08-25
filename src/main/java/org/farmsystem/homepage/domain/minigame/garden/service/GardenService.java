@@ -67,7 +67,7 @@ public class GardenService {
     public List<GardenResponseDTO> getGardenInfo(Long userId) {
         Player player = getPlayerOrThrow(userId);
 
-        List<GardenResponseDTO> gardenList = gardenTileRepository.findByPlayer(player).stream()
+        List<GardenResponseDTO> gardenList = gardenTileRepository.findByPlayerOrderByXAscYAsc(player).stream()
                 .map(tile -> {
                     PlacedObject obj = placedObjectRepository.findByTile(tile).orElse(null);
 
