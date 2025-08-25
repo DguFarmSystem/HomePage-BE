@@ -24,6 +24,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
             FROM Inventory oi
             WHERE oi.player = :player
             GROUP BY oi.objectKind.storeGoodsNumber
+            ORDER BY oi.objectKind.storeGoodsNumber ASC
     """)
     List<InventoryResponseDTO> countInventoryGroupByObjectKind(@Param("player") Player p); //JPQL의 :player 자리에 p 객체를 맵핑
 }
