@@ -88,8 +88,7 @@ public class GardenService {
 
     //배치된 오브젝트 회전 각도 변경
     public ChangePlacedObjectResponseDTO rotateGardenObject(Long userId, PlaceObjectRequestDTO requestDTO) {
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+        Player player = getPlayerOrThrow(userId);
 
         GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y()); //현재 타일 확인
         PlacedObject placedObject = getPlacedObject(tile);  //타일 위 오브젝트 확인
@@ -106,14 +105,14 @@ public class GardenService {
         return ChangePlacedObjectResponseDTO.from(placedObject);
     }
     
-    private UpdateGardenResponseDTO applyTileFinalState(Player player, int x, int y, UpdateGardenRequestDTO req) {
+    private UpdateGardenResponseDTO applyTileFinalState(Player player, int x, int y, UpdateGardenRequestDTO requestDTO) {
         GardenTile tile = gardenTileRepository.findByPlayerAndXAndY(player, (long) x, (long) y).orElse(null);
 
-        Store newTileType = findStoreOrThrow(req.tileType());
-        UpdateGardenObjectRequestDTO object = req.object();
+        Store newTileType = findStoreOrThrow(requestDTO.tileType());
+        UpdateGardenObjectRequestDTO requestObject = requestDTO.object();
 
         // 기본 잔디 & 오브젝트 없음 -> 기본 상태로 초기화
-        if (isDefaultGrass(newTileType) && object == null) {
+        if (isDefaultGrass(newTileType) && requestObject == null) {
             if (tile != null) {
                 placedObjectRepository.deleteByTile(tile);
                 gardenTileRepository.delete(tile);
@@ -130,23 +129,23 @@ public class GardenService {
         gardenTileRepository.save(tile);
 
         //PlacedObject 삭제/생성/업데이트
-        UpdateGardenObjectRequestDTO respObj = null;
-        if (object == null) {
+        UpdateGardenObjectResponseDTO responseObject = null;
+        if (requestObject == null) {
             placedObjectRepository.deleteByTile(tile);
         } else {
-            Store newObjectKind = findStoreOrThrow(object.objectType());
+            Store newObjectKind = findStoreOrThrow(requestObject.objectType());
             PlacedObject placed = placedObjectRepository.findByTile(tile).orElse(null);
 
             if (placed == null) {
-                placed = PlacedObject.createPlacedObject(tile, newObjectKind, object.rotation());
+                placed = PlacedObject.createPlacedObject(tile, newObjectKind, requestObject.rotation());
             } else {
                 placed.updatePlacedLocation(tile);
-                placed.updateRotation(object.rotation());
+                placed.updateRotation(requestObject.rotation());
                 placed.updateObjectKind(newObjectKind);
             }
             placedObjectRepository.save(placed);
 
-            respObj = new UpdateGardenObjectRequestDTO(
+            responseObject = new UpdateGardenObjectResponseDTO(
                     placed.getObjectKind().getStoreGoodsNumber(),
                     placed.getRotation()
             );
@@ -155,7 +154,7 @@ public class GardenService {
         return new UpdateGardenResponseDTO(
                 x, y,
                 tile.getTileType().getStoreGoodsNumber(),
-                respObj
+                responseObject
         );
     }
 

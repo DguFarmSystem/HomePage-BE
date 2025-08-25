@@ -6,6 +6,6 @@ public record UpdateGardenResponseDTO(
         int x,
         int y,
         Long tileType,
-        UpdateGardenObjectRequestDTO object
+        UpdateGardenObjectResponseDTO object
 ) {
 }
