@@ -21,6 +21,12 @@ public class Store {  //enum 대신 오브젝트/식물 넘버와 이름으로 �
     @Column(name = "store_goods_name")
     private String storeGoodsName;  //오브젝트 또는 식물 ..
 
-    @Column(name = "price")
-    private Long price;
+    @Column(name = "store_goods_name_kr")
+    private String storeGoodsNameKr;
+
+    @Column(name = "purchasePrice")
+    private Long purchasePrice;
+
+    @Column(name = "salePrice")
+    private Long salePrice;
 }
