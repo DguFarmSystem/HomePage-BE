@@ -27,6 +27,9 @@ public class Player extends BaseTimeEntity {
     private int sunlight = 0;
 
     @Column(nullable = false)
+    private int seedCount = 0;
+
+    @Column(nullable = false)
     private int level = 1;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
@@ -39,14 +42,20 @@ public class Player extends BaseTimeEntity {
                 .seedTicket(0)
                 .gold(0)
                 .sunlight(0)
+                .seedCount(0)
                 .level(1)
                 .build();
     }
 
-    public void update(int seedTicket, int gold, int sunlight) {
+    public void updateCurrency(int seedTicket, int gold, int sunlight, int seedCount) {
         this.seedTicket = seedTicket;
         this.gold = gold;
         this.sunlight = sunlight;
+        this.seedCount = seedCount;
+    }
+
+    public void updateLevel(int level) {
+        this.level = level;
     }
 
     public void addTotalSeedTicket(int seedAmount) {
