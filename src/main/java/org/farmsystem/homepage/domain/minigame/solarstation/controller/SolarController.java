@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 public class SolarController {
 
     private final SolarService solarService;
-    // 플레이어의 태양광 발전소 상태 조회
+    // 플레이어의 태양광 발전소 충전시작시간 조회
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getSolarStation(@AuthenticationPrincipal Long userId) {
         SolarDTO response = solarService.getSolarStation(userId);
         return SuccessResponse.ok(response);
     }
 
-    // 플레이어의 태양광 발전소 상태 업데이트
+    // 플레이어의 태양광 발전소 충전시작시간 업데이트
     @PatchMapping("/chargetime")
     public ResponseEntity<SuccessResponse<?>> updateChargeTime(
             @AuthenticationPrincipal Long userId,

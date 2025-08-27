@@ -32,7 +32,7 @@ public class DailyGameService {
     }
 
     // 게임의 남은 횟수 조회
-    @Transactional(readOnly = true)
+    @Transactional
     public GameCountResponseDTO getGameCount(Long userId, String gameType) {
         Player player = findPlayerOrThrow(userId);
         DailyGame dailyGame = getOrCreateDailyGame(player);

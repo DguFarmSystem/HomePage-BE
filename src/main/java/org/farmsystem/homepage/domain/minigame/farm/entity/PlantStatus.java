@@ -5,8 +5,8 @@ import org.farmsystem.homepage.global.error.exception.BusinessException;
 
 public enum PlantStatus {
     EMPTY,
-    PLANTED,
-    READY;
+    GROWING,
+    GROWN;
 
     public static PlantStatus fromString(String status) {
         try {

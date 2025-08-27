@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.inventory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
@@ -10,7 +11,7 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Inventory { //획득한 오브젝트들을 관리하는 인벤토리
+public class Inventory extends BaseTimeEntity { //획득한 오브젝트들을 관리하는 인벤토리
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "owned_id", nullable = false)

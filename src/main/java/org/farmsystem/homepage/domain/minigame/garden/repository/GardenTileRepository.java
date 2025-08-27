@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface GardenTileRepository extends JpaRepository<GardenTile, Long> {
     List<GardenTile> findByPlayer(Player player);
+    List<GardenTile> findByPlayerOrderByXAscYAsc(Player player);
     boolean existsByPlayerAndXAndY(Player player, Long x, Long y);
     Optional<GardenTile> findByPlayerAndXAndY(Player player, Long x, Long y);
 }
