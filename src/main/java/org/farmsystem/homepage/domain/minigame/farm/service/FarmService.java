@@ -38,7 +38,7 @@ public class FarmService {
     }
 
     // 전체 텃밭(9칸) 조회 API
-    @Transactional(readOnly = true)
+    @Transactional
     public List<TileResponseDTO> getFarm(Long userId) {
 
         Player player = findPlayerOrThrow(userId);
@@ -102,7 +102,7 @@ public class FarmService {
         }
 
         // PLANTED 또는 READY로 변경 → 필수 필드 검증
-        if (newStatus == PlantStatus.PLANTED || newStatus == PlantStatus.READY) {
+        if (newStatus == PlantStatus.GROWING || newStatus == PlantStatus.GROWN) {
             if (request.plantedAt() == null || request.sunlightCount() == null) {
                 throw new BusinessException(ErrorCode.MISSING_REQUIRED_FIELD);
             }

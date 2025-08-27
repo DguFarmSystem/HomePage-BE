@@ -29,7 +29,7 @@ public class SolarService {
                 .orElseGet(() -> solarRepository.save(SolarPowerStation.createSolarStation(player)));
     }
     // 플레이어의 태양광 발전소 조회
-    @Transactional(readOnly=true)
+    @Transactional
     public SolarDTO getSolarStation(Long userId) {
         Player player = findPlayerOrThrow(userId);
         SolarPowerStation station = getOrCreateStation(player);
@@ -41,7 +41,7 @@ public class SolarService {
         Player player = findPlayerOrThrow(userId);
         SolarPowerStation station = getOrCreateStation(player);
 
-        station.updateState(request.chargeStartTime(), request.level());
+        station.updateChargeStartTime(request.chargeStartTime());
 
         return SolarDTO.from(station);
     }

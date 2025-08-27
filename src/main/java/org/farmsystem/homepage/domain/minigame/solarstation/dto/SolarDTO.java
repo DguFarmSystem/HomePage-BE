@@ -7,13 +7,11 @@ import org.farmsystem.homepage.domain.minigame.solarstation.entity.SolarPowerSta
 import java.time.LocalDateTime;
 
 public record SolarDTO(
-        LocalDateTime chargeStartTime,
-        @Min(0) @Max(100) Integer level
+        LocalDateTime chargeStartTime
 ) {
     public static SolarDTO from(SolarPowerStation station) {
         return new SolarDTO(
-                station.getChargeStartedAt(),
-                station.getLevel()
+                station.getChargeStartedAt()
         );
     }
 }

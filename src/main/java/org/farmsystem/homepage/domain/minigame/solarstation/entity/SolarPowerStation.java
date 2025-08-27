@@ -18,9 +18,6 @@ public class SolarPowerStation {
     @Column(name = "station_id", nullable = false)
     private Long stationId;
 
-    @Column(name = "level", nullable = false)
-    private int level;
-
     @Column(name = "charge_started_at")
     private LocalDateTime chargeStartedAt;
 
@@ -30,24 +27,19 @@ public class SolarPowerStation {
 
     // 플레이어의 태양광 발전소를 처음 생성
     public static SolarPowerStation createSolarStation(Player player) {
-        return new SolarPowerStation(player, 0, null);
+        return new SolarPowerStation(player, null);
     }
 
-    // 발전소 상태 업데이트
-    public void updateState(LocalDateTime startedAt, Integer newLevel) {
+    // 충전 시작 시간 갱신
+    public void updateChargeStartTime(LocalDateTime startedAt) {
         if (startedAt != null) {
             this.chargeStartedAt = startedAt;
-        }
-        if (newLevel != null) {
-            int clamped = Math.max(0, Math.min(100, newLevel));
-            this.level = clamped;
         }
     }
 
     // createSolarStation으로만 생성
-    private SolarPowerStation(Player player, int level, LocalDateTime chargeStartedAt) {
+    private SolarPowerStation(Player player, LocalDateTime chargeStartedAt) {
         this.player = player;
-        this.level = level;
         this.chargeStartedAt = chargeStartedAt;
     }
 }
