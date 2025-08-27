@@ -29,7 +29,7 @@ public class GardenController {
     }
 
     //정원 단일 타일 전체 상태 업데이트
-    @PutMapping("/update/{x}/{y}")
+    @PatchMapping("/update/{x}/{y}")
     public ResponseEntity<SuccessResponse<?>> updateGarden(
             @AuthenticationPrincipal Long userId,
             @PathVariable int x,
