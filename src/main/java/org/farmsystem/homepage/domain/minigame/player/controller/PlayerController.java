@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.player.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.farmsystem.homepage.domain.minigame.player.dto.PlayerCurrencyDTO;
+import org.farmsystem.homepage.domain.minigame.player.dto.request.LevelUpdateRequestDTO;
 import org.farmsystem.homepage.domain.minigame.player.dto.response.PlayerResponseDTO;
 import org.farmsystem.homepage.domain.minigame.player.service.PlayerService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
@@ -21,17 +22,26 @@ public class PlayerController {
     public ResponseEntity<SuccessResponse<?>> getPlayerCurrency(
             @AuthenticationPrincipal Long userId
     ) {
-        PlayerCurrencyDTO response = playerService.getPlayerCurrency(userId);
+        PlayerResponseDTO response = playerService.getPlayerCurrency(userId);
         return SuccessResponse.ok(response);
     }
 
     //재화 업데이트
-    @PutMapping("/update")
+    @PatchMapping("/currency")
     public ResponseEntity<SuccessResponse<?>> updatePlayerCurrency(
             @AuthenticationPrincipal Long userId,
             @RequestBody PlayerCurrencyDTO requestDTO
     ){
-        PlayerCurrencyDTO response = playerService.updatePlayer(userId, requestDTO);
+        PlayerCurrencyDTO response = playerService.updateCurrency(userId, requestDTO);
+        return SuccessResponse.ok(response);
+    }
+
+    @PatchMapping("/level")
+    public ResponseEntity<SuccessResponse<?>> updatePlayerLevel(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody LevelUpdateRequestDTO requestDTO
+    ){
+        PlayerResponseDTO response = playerService.updateLevel(userId, requestDTO);
         return SuccessResponse.ok(response);
     }
 
