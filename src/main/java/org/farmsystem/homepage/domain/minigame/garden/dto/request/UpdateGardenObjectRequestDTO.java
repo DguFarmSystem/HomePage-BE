@@ -1,10 +1,10 @@
 package org.farmsystem.homepage.domain.minigame.garden.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 
 public record UpdateGardenObjectRequestDTO(
-        Long objectType,  //store_goods_number
-        Rotation rotation
+        @NotNull Long objectType,  //store_goods_number
+        @NotNull Rotation rotation
 ) {
 }
