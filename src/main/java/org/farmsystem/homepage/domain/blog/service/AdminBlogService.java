@@ -1,6 +1,7 @@
 package org.farmsystem.homepage.domain.blog.service;
 
 import lombok.RequiredArgsConstructor;
+import org.farmsystem.homepage.domain.blog.dto.request.BlogRequestDTO;
 import org.farmsystem.homepage.domain.blog.dto.response.BlogApprovalResponseDTO;
 import org.farmsystem.homepage.domain.blog.dto.response.PendingBlogResponseDTO;
 import org.farmsystem.homepage.domain.blog.entity.ApprovalStatus;
@@ -8,6 +9,7 @@ import org.farmsystem.homepage.domain.blog.entity.Blog;
 import org.farmsystem.homepage.domain.user.entity.User;
 import org.farmsystem.homepage.domain.blog.repository.BlogRepository;
 import org.farmsystem.homepage.domain.user.repository.UserRepository;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.farmsystem.homepage.global.error.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,5 +60,31 @@ public class AdminBlogService {
         return blogRepository.findByApprovalStatus(ApprovalStatus.PENDING).stream()
                 .map(PendingBlogResponseDTO::fromEntity)
                 .toList();
+    }
+
+    /**
+     * 관리자 - 블로그 직접 생성
+     * 승인 상태를 바로 APPROVED로 설정합니다.
+     */
+    public BlogApprovalResponseDTO createBlog(BlogRequestDTO request, Long adminUserId) {
+        User admin = userRepository.findById(adminUserId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        boolean exists = blogRepository.existsByUserAndLink(admin, request.link());
+        if (exists) {
+            throw new BusinessException(BLOG_DUPLICATED);
+        }
+
+        Blog blog = Blog.builder()
+                .link(request.link())
+                .user(admin)
+                .categories(request.categories())
+                .approvalStatus(ApprovalStatus.APPROVED)
+                .approvedBy(admin)
+                .approvedAt(java.time.LocalDateTime.now())
+                .build();
+
+        blogRepository.save(blog);
+
+        return BlogApprovalResponseDTO.fromEntity(blog, admin);
     }
 }

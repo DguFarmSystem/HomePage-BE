@@ -1,6 +1,8 @@
 package org.farmsystem.homepage.domain.blog.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.farmsystem.homepage.domain.blog.dto.request.BlogRequestDTO;
 import org.farmsystem.homepage.domain.blog.dto.response.BlogApprovalResponseDTO;
 import org.farmsystem.homepage.domain.blog.dto.response.PendingBlogResponseDTO;
 import org.farmsystem.homepage.domain.blog.service.AdminBlogService;
@@ -46,5 +48,16 @@ public class AdminBlogController {
     @GetMapping("/pending")
     public ResponseEntity<List<PendingBlogResponseDTO>> getPendingBlogs() {
         return ResponseEntity.ok(adminBlogService.getPendingBlogs());
+    }
+
+    /**
+     * 관리자 - 블로그 직접 생성
+     */
+    @PostMapping
+    public ResponseEntity<BlogApprovalResponseDTO> createBlog(
+            @RequestBody @Valid BlogRequestDTO request,
+            @AuthenticationPrincipal Long userId
+    ) {
+        return ResponseEntity.ok(adminBlogService.createBlog(request, userId));
     }
 }
