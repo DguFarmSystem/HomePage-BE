@@ -29,7 +29,9 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
 
-    // 블로그 신청
+    /**
+     * 블로그 신청
+     */
     public void applyForBlog(BlogRequestDTO request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
@@ -43,38 +45,38 @@ public class BlogService {
                 .link(request.link())
                 .user(user)
                 .categories(request.categories())
-                .approvalStatus(ApprovalStatus.PENDING)
                 .build();
 
         blogRepository.save(blog);
     }
 
-    // 승인된 블로그 목록 조회
+    /**
+     * 승인된 블로그 목록 조회
+     */
     @Transactional(readOnly = true)
     public List<BlogResponseDTO> getApprovedBlogs() {
         return blogRepository.findByApprovalStatus(ApprovalStatus.APPROVED).stream()
-                .map(this::toResponseDTO)
+                .map(BlogResponseDTO::fromEntity)
                 .toList();
     }
 
-    // '내가 신청한 블로그' 목록 조회
+    /**
+     * '내가 신청한 블로그' 목록 조회
+     */
     @Transactional(readOnly = true)
     public List<MyApplicationResponseDTO> getMyBlogs(Long userId) {
         return blogRepository.findByUser_UserId(userId).stream()
-                .map(blog -> new MyApplicationResponseDTO(blog.getBlogId(), blog.getLink(), blog.getApprovalStatus().name()))
+                .map(MyApplicationResponseDTO::fromEntity)
                 .toList();
     }
 
-    // 최신 승인된 블로그 페이징 조회
+    /**
+     * 최신 승인된 블로그 페이징 조회
+     */
     @Transactional(readOnly = true)
     public Page<BlogResponseDTO> getApprovedBlogsPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "approvedAt"));
         return blogRepository.findByApprovalStatus(ApprovalStatus.APPROVED, pageable)
-                .map(this::toResponseDTO);
-    }
-
-    // 블로그 응답 변환
-    private BlogResponseDTO toResponseDTO(Blog blog) {
-        return new BlogResponseDTO(blog.getBlogId(), blog.getLink(), blog.getCategories(), blog.getApprovalStatus().name());
+                .map(BlogResponseDTO::fromEntity);
     }
 }

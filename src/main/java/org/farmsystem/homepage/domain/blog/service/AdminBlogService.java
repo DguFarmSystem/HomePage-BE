@@ -34,13 +34,7 @@ public class AdminBlogService {
 
         blog.approve(admin);
 
-        return new BlogApprovalResponseDTO(
-                blog.getBlogId(),
-                blog.getLink(),
-                blog.getApprovalStatus().name(),
-                admin.getName(),
-                blog.getApprovedAt()
-        );
+        return BlogApprovalResponseDTO.fromEntity(blog, admin);
     }
 
     /**
@@ -56,20 +50,13 @@ public class AdminBlogService {
         blog.reject(admin);
     }
 
-
-
     /**
      * 승인 대기 중인 블로그 목록 조회
      */
     @Transactional(readOnly = true)
     public List<PendingBlogResponseDTO> getPendingBlogs() {
         return blogRepository.findByApprovalStatus(ApprovalStatus.PENDING).stream()
-                .map(blog -> new PendingBlogResponseDTO(
-                        blog.getBlogId(),
-                        blog.getLink(),
-                        blog.getUser().getName(),
-                        blog.getCreatedAt()
-                ))
+                .map(PendingBlogResponseDTO::fromEntity)
                 .toList();
     }
 }
