@@ -8,7 +8,6 @@ public record UpdateGardenRequestDTO (
         @NotNull
         @JsonProperty(value = "tileType", required = true)
         Long tileType,
-
         @Valid UpdateGardenObjectRequestDTO object
 ){
 }

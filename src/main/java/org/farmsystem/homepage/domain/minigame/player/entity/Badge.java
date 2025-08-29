@@ -25,6 +25,7 @@ public class Badge {  //칭호
     public static Badge createBadge(Player player, Integer badgeType) {
         return new Badge(player, badgeType);
     }
+
     // 생성은 createBadge만 사용
     private Badge(Player player, Integer badgeType) {
         this.player = player;

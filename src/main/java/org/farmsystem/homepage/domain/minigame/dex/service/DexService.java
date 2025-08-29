@@ -25,11 +25,17 @@ public class DexService {
     private final DexRepository dexRepository;
     private final StoreRepository storeRepository;
 
+    //TODO : 플레이어 찾는 메서드가 중복되는 문제를 어떻게 처리할지 고민해보면 좋을 거 같음!
+    private Player getPlayerOrThrow(Long userId) {
+        return playerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+    }
+
     @Transactional
     public DexResponseDTO addDex(Long userId, DexRequestDTO request) {
         // 플레이어 조회
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+        Player player = getPlayerOrThrow(userId);
+
         // 해당 식물이 store에 존재하는지 확인
         Store store = storeRepository.findByStoreGoodsNumber(request.ownedPlant())
                 .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
@@ -44,9 +50,10 @@ public class DexService {
 
     @Transactional(readOnly= true)
     public List<DexResponseDTO> getDexList(Long userId) {
+
         // 플레이어 조회
-        Player player = playerRepository.findByUser_UserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
+        Player player = getPlayerOrThrow(userId);
+
         // 도감 목록 조회 및 반환
         return dexRepository.findByPlayer(player)
                 .stream()
