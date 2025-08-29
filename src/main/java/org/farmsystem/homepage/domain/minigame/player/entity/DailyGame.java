@@ -2,6 +2,8 @@ package org.farmsystem.homepage.domain.minigame.player.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.global.error.ErrorCode;
+import org.farmsystem.homepage.global.error.exception.BusinessException;
 
 import java.time.LocalDate;
 
@@ -55,18 +57,18 @@ public class DailyGame {
     public void useGame(String gameType) {
         switch (gameType.toLowerCase()) {
             case "rock" -> {
-                if (rockScissors <= 0) throw new IllegalStateException("rock game 횟수 모두 소진됨");
+                if (rockScissors <= 0) throw new BusinessException(ErrorCode.GAME_ROCK_NO_REMAINING_USES);
                 this.rockScissors--;
             }
             case "carrot" -> {
-                if (carrotGame <= 0) throw new IllegalStateException("carrot game 횟수 모두 소진됨");
+                if (carrotGame <= 0) throw new BusinessException(ErrorCode.GAME_CARROT_NO_REMAINING_USES);
                 this.carrotGame--;
             }
             case "sunlight" -> {
-                if (sunlightGame <= 0) throw new IllegalStateException("sunlight game 횟수 모두 소진됨");
+                if (sunlightGame <= 0) throw new BusinessException(ErrorCode.GAME_SUNLIGHT_NO_REMAINING_USES);
                 this.sunlightGame--;
             }
-            default -> throw new IllegalArgumentException("Invalid game type: " + gameType);
+            default -> throw new BusinessException(ErrorCode.INVALID_GAME_TYPE);
         }
     }
     // 현재 게임의 남은 횟수 반환
@@ -75,7 +77,7 @@ public class DailyGame {
             case "rock" -> this.rockScissors;
             case "carrot" -> this.carrotGame;
             case "sunlight" -> this.sunlightGame;
-            default -> throw new IllegalArgumentException("Invalid game type: " + gameType);
+            default -> throw new BusinessException(ErrorCode.INVALID_GAME_TYPE);
         };
     }
 

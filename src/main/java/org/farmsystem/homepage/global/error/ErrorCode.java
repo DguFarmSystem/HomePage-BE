@@ -148,8 +148,13 @@ public enum ErrorCode {
     DEX_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 도감에 등록된 식물입니다."),
     BADGE_ALREADY_EXISTS(HttpStatus.CONFLICT,"이미 등록된 칭호입니다." ),
     DAILY_GAME_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "해당 게임은 하루에 최대 3번만 가능합니다."),
+    MISSING_REQUIRED_FIELD(HttpStatus.BAD_REQUEST, "필수 입력값이 누락되었습니다."),
+    GAME_ROCK_NO_REMAINING_USES(HttpStatus.CONFLICT, "(Rock) 남은 게임 횟수가 없습니다."),
+    GAME_CARROT_NO_REMAINING_USES(HttpStatus.CONFLICT, "(Carrot) 남은 게임 횟수가 없습니다."),
+    GAME_SUNLIGHT_NO_REMAINING_USES(HttpStatus.CONFLICT, "(Sunlight) 남은 게임 횟수가 없습니다."),
+    INVALID_GAME_TYPE(HttpStatus.BAD_REQUEST,"유효하지 않은 게임 타입입니다.")
 
-    MISSING_REQUIRED_FIELD(HttpStatus.BAD_REQUEST, "필수 입력값이 누락되었습니다.");
+    ;
 
 
     private final HttpStatus httpStatus;
