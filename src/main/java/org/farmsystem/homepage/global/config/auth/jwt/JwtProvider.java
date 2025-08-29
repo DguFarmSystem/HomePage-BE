@@ -1,6 +1,6 @@
 package org.farmsystem.homepage.global.config.auth.jwt;
 
-import org.farmsystem.homepage.domain.user.entity.Role;
+import org.farmsystem.homepage.domain.community.user.entity.Role;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.UnauthorizedException;
 import com.fasterxml.jackson.core.JsonProcessingException;

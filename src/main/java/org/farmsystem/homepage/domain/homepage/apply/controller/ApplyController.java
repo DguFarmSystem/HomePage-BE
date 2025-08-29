@@ -1,0 +1,48 @@
+package org.farmsystem.homepage.domain.homepage.apply.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.farmsystem.homepage.domain.homepage.apply.dto.request.CreateApplyRequestDTO;
+import org.farmsystem.homepage.domain.homepage.apply.dto.request.ApplyRequestDTO;
+import org.farmsystem.homepage.domain.homepage.apply.dto.request.LoadApplyRequestDTO;
+import org.farmsystem.homepage.domain.homepage.apply.service.ApplyService;
+import org.farmsystem.homepage.global.common.SuccessResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/apply")
+public class ApplyController {
+
+    private final ApplyService applyService;
+
+    @GetMapping
+    public ResponseEntity<SuccessResponse<?>> getQuestions() {
+        return SuccessResponse.ok(applyService.getQuestions());
+    }
+
+    // 지원서 생성
+    @PostMapping
+    public ResponseEntity<SuccessResponse<?>> createApply(@RequestBody @Valid CreateApplyRequestDTO request) {
+        return SuccessResponse.created(applyService.createApply(request));
+    }
+
+    // 지원서 임시저장
+    @PostMapping("/save")
+    public ResponseEntity<SuccessResponse<?>> saveApply(@RequestBody @Valid ApplyRequestDTO request) {
+        return SuccessResponse.ok(applyService.saveApply(request, false));
+    }
+
+    // 지원서 제출
+    @PostMapping("/submit")
+    public ResponseEntity<SuccessResponse<?>> submitApply(@RequestBody @Valid ApplyRequestDTO request) {
+        return SuccessResponse.ok(applyService.saveApply(request, true));
+    }
+
+    // 지원서 불러오기
+    @PostMapping("/load")
+    public ResponseEntity<SuccessResponse<?>> loadApply(@RequestBody @Valid LoadApplyRequestDTO request) {
+        return SuccessResponse.ok(applyService.loadApply(request));
+    }
+}

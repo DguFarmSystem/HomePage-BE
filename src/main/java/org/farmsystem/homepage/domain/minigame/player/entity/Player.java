@@ -3,7 +3,7 @@ package org.farmsystem.homepage.domain.minigame.player.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
-import org.farmsystem.homepage.domain.user.entity.User;
+import org.farmsystem.homepage.domain.community.user.entity.User;
 
 @Entity
 @Table(name = "player")

@@ -6,8 +6,8 @@ import org.farmsystem.homepage.domain.minigame.player.dto.request.LevelUpdateReq
 import org.farmsystem.homepage.domain.minigame.player.dto.response.PlayerResponseDTO;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepository;
-import org.farmsystem.homepage.domain.user.entity.User;
-import org.farmsystem.homepage.domain.user.repository.UserRepository;
+import org.farmsystem.homepage.domain.community.user.entity.User;
+import org.farmsystem.homepage.domain.community.user.repository.UserRepository;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
 import org.springframework.dao.DataIntegrityViolationException;
