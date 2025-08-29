@@ -94,4 +94,4 @@ jobs:
           ~/deploy.sh
 
           echo "🧹 사용하지 않는 Docker 이미지 정리"
-          docker image prune -f
+          docker image prune -a -f
