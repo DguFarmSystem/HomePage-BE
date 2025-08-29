@@ -13,6 +13,7 @@ public record ApplyRequestDTO(
         String major,
         String phoneNumber,
         String email,
+        @NotNull
         Track track,
         List<AnswerDTO> answers
 ) {
