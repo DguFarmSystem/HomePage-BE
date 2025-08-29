@@ -12,6 +12,7 @@ import org.farmsystem.homepage.domain.user.entity.User;
 @AllArgsConstructor
 @Builder
 public class Player extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "player_id", nullable = false)

@@ -22,7 +22,7 @@ public class DailyGameController {
             @AuthenticationPrincipal Long userId,
             @PathVariable String gameType
     ) {
-        GameCountResponseDTO response = dailyGameService.getGameCount(userId, gameType);
+        GameCountResponseDTO response = dailyGameService.getOrResetGameCount(userId, gameType);
         return SuccessResponse.ok(response);
     }
 
