@@ -11,6 +11,7 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Dex {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dex_id", nullable = false)

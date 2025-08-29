@@ -5,7 +5,7 @@ import org.farmsystem.homepage.domain.minigame.garden.entity.PlacedObject;
 import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 
 public record PlaceObjectResponseDTO(
-        Long x,
+        Long x, // TODO: Long 인 이유? objectType까지!
         Long y,
         @JsonProperty("object_type") Long objectType,
         Rotation rotation,

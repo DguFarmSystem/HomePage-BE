@@ -11,10 +11,13 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+// TODO: public class Solar | @Table(name = "solar") 은 어때요
+// TODO: 패키지도 solar로 통일하기?
 public class SolarPowerStation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // TODO: 같은 맥락으로 solarId
     @Column(name = "station_id", nullable = false)
     private Long stationId;
 

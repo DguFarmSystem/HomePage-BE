@@ -12,6 +12,7 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// TODO: public class Tile | @Table(name = "tile") 은 어때요
 public class GardenTile extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
