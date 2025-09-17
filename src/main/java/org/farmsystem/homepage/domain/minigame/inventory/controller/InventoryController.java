@@ -32,9 +32,4 @@ public class InventoryController {
         List<InventoryResponseDTO> inventoryList = inventoryService.updateInventoryObject(userId, requestDTO);
         return SuccessResponse.ok(inventoryList);
     }
-
-
-
-
-
 }

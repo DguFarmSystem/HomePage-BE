@@ -10,9 +10,7 @@ import org.farmsystem.homepage.domain.minigame.garden.entity.PlacedObject;
 import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 import org.farmsystem.homepage.domain.minigame.garden.repository.GardenTileRepository;
 import org.farmsystem.homepage.domain.minigame.garden.repository.PlacedObjectRepository;
-import org.farmsystem.homepage.domain.minigame.inventory.entity.Inventory;
 import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
-import org.farmsystem.homepage.domain.minigame.inventory.repository.InventoryRepository;
 import org.farmsystem.homepage.domain.minigame.inventory.repository.StoreRepository;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepository;
@@ -31,7 +29,6 @@ public class GardenService {
     private final GardenTileRepository gardenTileRepository;
     private final PlacedObjectRepository placedObjectRepository;
     private final PlayerRepository playerRepository;
-    private final InventoryRepository inventoryRepository;
     private final StoreRepository storeRepository;
 
     private static final long DEFAULT_GRASS_TILE_NUMBER = 400010L;
