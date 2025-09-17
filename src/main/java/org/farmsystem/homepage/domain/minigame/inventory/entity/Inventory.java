@@ -16,18 +16,18 @@ public class Inventory extends BaseTimeEntity { //획득한 오브젝트들을 �
     // TODO: 각종 ID는 엔티티명_id로 일치시켜주세요! ex. inventoryId (inventory_id)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "owned_id", nullable = false)
-    private Long ownedId;
+    @Column(name = "inventory_id", nullable = false)
+    private Long inventoryId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 
-    // 획득 오브젝트 종류(FK)
+    // 획득 오브젝트, 식물, 타일 종류(FK)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "object_kind", nullable = false,
-            referencedColumnName = "store_goods_number" // Store 테이블에서 참조할 컬럼명(DB 컬럼명)
+            name = "goods_type", nullable = false,
+            referencedColumnName = "goods_number" // Goods 테이블에서 참조할 컬럼명(DB 컬럼명)
     )
-    private Store objectKind;
+    private Goods goodsType;
 }
