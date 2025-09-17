@@ -16,8 +16,8 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 public class GardenTile extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tile_id", nullable = false)
-    private Long tileId;
+    @Column(name = "garden_tile_id", nullable = false)
+    private Long gardenTileId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(

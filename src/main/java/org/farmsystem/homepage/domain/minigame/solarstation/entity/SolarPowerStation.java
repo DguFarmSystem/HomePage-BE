@@ -18,8 +18,8 @@ public class SolarPowerStation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     // TODO: 같은 맥락으로 solarId
-    @Column(name = "station_id", nullable = false)
-    private Long stationId;
+    @Column(name = "solar_id", nullable = false)
+    private Long solarId;
 
     @Column(name = "charge_started_at")
     private LocalDateTime chargeStartedAt;

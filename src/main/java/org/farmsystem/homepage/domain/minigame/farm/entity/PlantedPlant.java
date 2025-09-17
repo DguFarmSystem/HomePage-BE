@@ -16,8 +16,8 @@ public class PlantedPlant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "plant_id", nullable = false)
-    private Long plantId;
+    @Column(name = "planted_plant_id", nullable = false)
+    private Long plantedPlantId;
 
     @Column(name = "planted_at")
     private LocalDateTime plantedAt;

@@ -90,7 +90,7 @@ public class GardenService {
         GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y()); //현재 타일 확인
         PlacedObject placedObject = getPlacedObject(tile);  //타일 위 오브젝트 확인
 
-        if (!placedObject.getObjectKind().getStoreGoodsNumber().equals(requestDTO.objectType())) {
+        if (!placedObject.getObjectType().getStoreGoodsNumber().equals(requestDTO.objectType())) {
             throw new BusinessException(ErrorCode.OBJECT_TYPE_MISMATCH);
         }
 
@@ -130,20 +130,20 @@ public class GardenService {
         if (requestObject == null) {
             placedObjectRepository.deleteByTile(tile);
         } else {
-            Store newObjectKind = findStoreOrThrow(requestObject.objectType());
+            Store newObjectType = findStoreOrThrow(requestObject.objectType());
             PlacedObject placed = placedObjectRepository.findByTile(tile).orElse(null);
 
             if (placed == null) {
-                placed = PlacedObject.createPlacedObject(tile, newObjectKind, requestObject.rotation());
+                placed = PlacedObject.createPlacedObject(tile, newObjectType, requestObject.rotation());
             } else {
                 placed.updatePlacedLocation(tile);
                 placed.updateRotation(requestObject.rotation());
-                placed.updateObjectKind(newObjectKind);
+                placed.updateObjectType(newObjectType);
             }
             placedObjectRepository.save(placed);
 
             responseObject = new UpdateGardenObjectResponseDTO(
-                    placed.getObjectKind().getStoreGoodsNumber(),
+                    placed.getObjectType().getStoreGoodsNumber(),
                     placed.getRotation()
             );
         }

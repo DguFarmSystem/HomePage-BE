@@ -14,8 +14,8 @@ public class FarmplotTile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tile_id", nullable = false)
-    private Long tileId; // PK
+    @Column(name = "farm_plot_tile_id", nullable = false)
+    private Long farmPlotTileId; // PK
 
     @Column(name = "tile_num", nullable = false) // 1~9 타일 번호
     private Integer tileNum;

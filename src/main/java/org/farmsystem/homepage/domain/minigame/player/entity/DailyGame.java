@@ -17,8 +17,8 @@ public class DailyGame {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "game_id", nullable = false)
-    private Long gameId;
+    @Column(name = "daily_game_id", nullable = false)
+    private Long dailyGameId;
 
     @Column(name = "rock_scissors_game", nullable = false)
     private Integer rockScissors; // 남은 횟수

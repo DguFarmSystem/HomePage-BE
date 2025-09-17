@@ -31,7 +31,7 @@ public class InventoryService {
         for (int i = 0; i < count; i++) {
             temp.add(Inventory.builder()
                     .player(player)
-                    .objectKind(store)
+                    .objectType(store)
                     .build());
         }
         return temp;
