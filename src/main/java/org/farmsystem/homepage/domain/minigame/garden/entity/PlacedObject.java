@@ -3,7 +3,7 @@ package org.farmsystem.homepage.domain.minigame.garden.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
-import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
+import org.farmsystem.homepage.domain.minigame.inventory.entity.Goods;
 
 @Entity
 @Table(name = "placed_object")
@@ -18,31 +18,31 @@ public class PlacedObject extends BaseTimeEntity {  //인벤토리에서 보유�
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "object_id", nullable = false)
-    private Long objectId;
+    @Column(name = "placed_object_id", nullable = false)
+    private Long placedObjectId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rotation", nullable = false)
     private Rotation rotation;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tile_id", nullable = false)
+    @JoinColumn(name = "garden_tile_id", nullable = false)
     private GardenTile tile;
 
     // 오브젝트 종류
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "object_kind", nullable = false,
-            referencedColumnName = "store_goods_number" // Store 테이블에서 참조할 컬럼명(DB 컬럼명)
+            name = "object_type", nullable = false,
+            referencedColumnName = "goods_number" // Goods 테이블에서 참조할 컬럼명(DB 컬럼명)
     )
     // TODO: objectType으로 통일 (ex. TileType)
-    private Store objectKind;
+    private Goods objectType;
 
     //PlacedObject 생성 메소드
-    public static PlacedObject createPlacedObject(GardenTile tile, Store objectKind, Rotation rotation) {
+    public static PlacedObject createPlacedObject(GardenTile tile, Goods objectType, Rotation rotation) {
         return PlacedObject.builder()
                 .tile(tile)
-                .objectKind(objectKind)
+                .objectType(objectType)
                 .rotation(rotation)
                 .build();
     }
@@ -56,7 +56,7 @@ public class PlacedObject extends BaseTimeEntity {  //인벤토리에서 보유�
         this.rotation = newRotation;
     }
 
-    public void updateObjectKind(Store newKind) {
-        this.objectKind = newKind;
+    public void updateObjectType(Goods newObjectType) {
+        this.objectType = newObjectType;
     }
 }

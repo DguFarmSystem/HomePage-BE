@@ -11,20 +11,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
-    List<Inventory> findByPlayerAndObjectKind_StoreGoodsNumber(Player player, Long storeGoodsNumber);
-    Optional<Inventory> findFirstByPlayerAndObjectKind_StoreGoodsNumberOrderByOwnedIdAsc(
+    Optional<Inventory> findFirstByPlayerAndGoodsType_GoodsNumberOrderByInventoryIdAsc(
             Player player, Long storeGoodsNumber);
-    int countByPlayerAndObjectKind_StoreGoodsNumber(Player player, Long storeGoodsNumber);
+    int countByPlayerAndGoodsType_GoodsNumber(Player player, Long storeGoodsNumber);
 
     @Query("""
             SELECT new org.farmsystem.homepage.domain.minigame.inventory.dto.response.InventoryResponseDTO(
-                oi.objectKind.storeGoodsNumber,
+                oi.goodsType.goodsNumber,
                 COUNT(oi)
             )
             FROM Inventory oi
             WHERE oi.player = :player
-            GROUP BY oi.objectKind.storeGoodsNumber
-            ORDER BY oi.objectKind.storeGoodsNumber ASC
+            GROUP BY oi.goodsType.goodsNumber
+            ORDER BY oi.goodsType.goodsNumber ASC
     """)
-    List<InventoryResponseDTO> countInventoryGroupByObjectKind(@Param("player") Player p); //JPQL의 :player 자리에 p 객체를 맵핑
+    List<InventoryResponseDTO> countInventoryGroupByGoodsType(@Param("player") Player p); //JPQL의 :player 자리에 p 객체를 맵핑
 }
