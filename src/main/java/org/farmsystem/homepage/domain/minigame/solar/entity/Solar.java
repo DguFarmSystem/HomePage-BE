@@ -1,4 +1,4 @@
-package org.farmsystem.homepage.domain.minigame.solarstation.entity;
+package org.farmsystem.homepage.domain.minigame.solar.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,13 +7,12 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "solar_power_station")
+@Table(name = "solar")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 // TODO: public class Solar | @Table(name = "solar") 은 어때요
-// TODO: 패키지도 solar로 통일하기?
-public class SolarPowerStation {
+public class Solar {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +28,8 @@ public class SolarPowerStation {
     private Player player;
 
     // 플레이어의 태양광 발전소를 처음 생성
-    public static SolarPowerStation createSolarStation(Player player) {
-        return new SolarPowerStation(player, null);
+    public static Solar createSolarStation(Player player) {
+        return new Solar(player, null);
     }
 
     // 충전 시작 시간 갱신
@@ -41,7 +40,7 @@ public class SolarPowerStation {
     }
 
     // createSolarStation으로만 생성
-    private SolarPowerStation(Player player, LocalDateTime chargeStartedAt) {
+    private Solar(Player player, LocalDateTime chargeStartedAt) {
         this.player = player;
         this.chargeStartedAt = chargeStartedAt;
     }

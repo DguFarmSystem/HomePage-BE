@@ -1,8 +1,8 @@
-package org.farmsystem.homepage.domain.minigame.solarstation.controller;
+package org.farmsystem.homepage.domain.minigame.solar.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.farmsystem.homepage.domain.minigame.solarstation.dto.SolarDTO;
-import org.farmsystem.homepage.domain.minigame.solarstation.service.SolarService;
+import org.farmsystem.homepage.domain.minigame.solar.dto.SolarDTO;
+import org.farmsystem.homepage.domain.minigame.solar.service.SolarService;
 import org.farmsystem.homepage.global.common.SuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
