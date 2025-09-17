@@ -45,7 +45,7 @@ public class UserController implements UserApi {
     }
 
     //다른 사용자 정보 조회 API
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId:\\d+}") // userId가 숫자인 경우에만 매핑(String형 경로 변수 충돌 방지)
     public ResponseEntity<SuccessResponse<?>> getOtherUserInfo(@PathVariable Long userId) {
         OtherUserInfoResponseDTO userInfo = userService.getOtherUserInfo(userId);
         return SuccessResponse.ok(userInfo);

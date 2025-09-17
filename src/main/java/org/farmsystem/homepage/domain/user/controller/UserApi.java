@@ -132,5 +132,34 @@ public interface UserApi {
     })
     @GetMapping("/{userId}/daily-seed")
     ResponseEntity<SuccessResponse<?>> getTodaySeed(Long userId);
+
+    @Operation(
+            summary = "사용자 검색",
+            description = "사용자 전체 이름을 기준으로 사용자 목록을 검색하는 API입니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용자 검색 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserSearchResponseDTO.class)
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    ResponseEntity<SuccessResponse<?>> searchUser(String query);
+
+    @Operation(
+            summary = "사용자 검색 자동완성",
+            description = "사용자 이름 일부분을 기준으로 사용자 목록을 검색하는 API입니다.  \n"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용자 검색 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserSearchResponseDTO.class)
+                    )),
+            @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
+    })
+    ResponseEntity<SuccessResponse<?>> searchUserSuggest(String query);
+
 }
 
