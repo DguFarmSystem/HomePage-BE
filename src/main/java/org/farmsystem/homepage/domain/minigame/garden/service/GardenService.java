@@ -10,8 +10,8 @@ import org.farmsystem.homepage.domain.minigame.garden.entity.PlacedObject;
 import org.farmsystem.homepage.domain.minigame.garden.entity.Rotation;
 import org.farmsystem.homepage.domain.minigame.garden.repository.GardenTileRepository;
 import org.farmsystem.homepage.domain.minigame.garden.repository.PlacedObjectRepository;
-import org.farmsystem.homepage.domain.minigame.inventory.entity.Store;
-import org.farmsystem.homepage.domain.minigame.inventory.repository.StoreRepository;
+import org.farmsystem.homepage.domain.minigame.inventory.entity.Goods;
+import org.farmsystem.homepage.domain.minigame.inventory.repository.GoodsRepository;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 import org.farmsystem.homepage.domain.minigame.player.repository.PlayerRepository;
 import org.farmsystem.homepage.global.error.ErrorCode;
@@ -29,7 +29,7 @@ public class GardenService {
     private final GardenTileRepository gardenTileRepository;
     private final PlacedObjectRepository placedObjectRepository;
     private final PlayerRepository playerRepository;
-    private final StoreRepository storeRepository;
+    private final GoodsRepository goodsRepository;
 
     private static final long DEFAULT_GRASS_TILE_NUMBER = 400010L;
 
@@ -49,13 +49,13 @@ public class GardenService {
     }
     
     //요청 데이터의 타일 타입이 기본 잔디 타일인지 확인
-    private boolean isDefaultGrass(Store store) {
-        return store.getStoreGoodsNumber() == DEFAULT_GRASS_TILE_NUMBER;
+    private boolean isDefaultGrass(Goods goods) {
+        return goods.getGoodsNumber() == DEFAULT_GRASS_TILE_NUMBER;
     }
 
     //상점에 존재하는 넘버인지 확인
-    private Store findStoreOrThrow(Long goodsNumber) {
-        return storeRepository.findByStoreGoodsNumber(goodsNumber)
+    private Goods findStoreOrThrow(Long goodsNumber) {
+        return goodsRepository.findByGoodsNumber(goodsNumber)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
     }
 
@@ -90,7 +90,7 @@ public class GardenService {
         GardenTile tile = getGardenTile(player, requestDTO.x(), requestDTO.y()); //현재 타일 확인
         PlacedObject placedObject = getPlacedObject(tile);  //타일 위 오브젝트 확인
 
-        if (!placedObject.getObjectType().getStoreGoodsNumber().equals(requestDTO.objectType())) {
+        if (!placedObject.getObjectType().getGoodsNumber().equals(requestDTO.objectType())) {
             throw new BusinessException(ErrorCode.OBJECT_TYPE_MISMATCH);
         }
 
@@ -105,7 +105,7 @@ public class GardenService {
     private UpdateGardenResponseDTO applyTileFinalState(Player player, int x, int y, UpdateGardenRequestDTO requestDTO) {
         GardenTile tile = gardenTileRepository.findByPlayerAndXAndY(player, (long) x, (long) y).orElse(null);
 
-        Store newTileType = findStoreOrThrow(requestDTO.tileType());
+        Goods newTileType = findStoreOrThrow(requestDTO.tileType());
         UpdateGardenObjectRequestDTO requestObject = requestDTO.object();
 
         // 기본 잔디 & 오브젝트 없음 -> 기본 상태로 초기화
@@ -114,7 +114,7 @@ public class GardenService {
                 placedObjectRepository.deleteByTile(tile);
                 gardenTileRepository.delete(tile);
             }
-            return new UpdateGardenResponseDTO(x, y, newTileType.getStoreGoodsNumber(), null);
+            return new UpdateGardenResponseDTO(x, y, newTileType.getGoodsNumber(), null);
         }
 
         //타일 생성 또는 업데이트
@@ -130,7 +130,7 @@ public class GardenService {
         if (requestObject == null) {
             placedObjectRepository.deleteByTile(tile);
         } else {
-            Store newObjectType = findStoreOrThrow(requestObject.objectType());
+            Goods newObjectType = findStoreOrThrow(requestObject.objectType());
             PlacedObject placed = placedObjectRepository.findByTile(tile).orElse(null);
 
             if (placed == null) {
@@ -143,14 +143,14 @@ public class GardenService {
             placedObjectRepository.save(placed);
 
             responseObject = new UpdateGardenObjectResponseDTO(
-                    placed.getObjectType().getStoreGoodsNumber(),
+                    placed.getObjectType().getGoodsNumber(),
                     placed.getRotation()
             );
         }
 
         return new UpdateGardenResponseDTO(
                 x, y,
-                tile.getTileType().getStoreGoodsNumber(),
+                tile.getTileType().getGoodsNumber(),
                 responseObject
         );
     }

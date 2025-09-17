@@ -10,7 +10,7 @@ public record PlacedObjectResponseDTO(
     public static PlacedObjectResponseDTO from(PlacedObject object) {
         if (object == null) return null;
         return new PlacedObjectResponseDTO(
-                object.getObjectKind().getStoreGoodsNumber(),
+                object.getObjectType().getGoodsNumber(),
                 object.getRotation()
         );
     }

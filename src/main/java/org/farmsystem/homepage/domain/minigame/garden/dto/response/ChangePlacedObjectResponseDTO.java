@@ -14,7 +14,7 @@ public record ChangePlacedObjectResponseDTO(
         return new ChangePlacedObjectResponseDTO(
                 placedObject.getTile().getX(),
                 placedObject.getTile().getY(),
-                placedObject.getObjectKind().getStoreGoodsNumber(),
+                placedObject.getObjectType().getGoodsNumber(),
                 placedObject.getRotation()
         );
     }

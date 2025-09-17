@@ -9,7 +9,7 @@ public record DexResponseDTO(
     public static DexResponseDTO from(Dex dex) {
         return new DexResponseDTO(
                 dex.getDexId(),
-                dex.getOwnedPlant().getStoreGoodsNumber()
+                dex.getOwnedPlant().getGoodsNumber()
         );
     }
 }
