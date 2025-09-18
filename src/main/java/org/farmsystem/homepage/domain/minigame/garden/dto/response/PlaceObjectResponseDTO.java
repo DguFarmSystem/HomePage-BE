@@ -15,7 +15,7 @@ public record PlaceObjectResponseDTO(
         return new PlaceObjectResponseDTO(
                 placedObject.getTile().getX(),
                 placedObject.getTile().getY(),
-                placedObject.getObjectKind().getStoreGoodsNumber(),
+                placedObject.getObjectType().getGoodsNumber(),
                 placedObject.getRotation(),
                 objectCount
         );

@@ -11,10 +11,10 @@ public record GardenResponseDTO (
 ){
     public static GardenResponseDTO from(GardenTile tile, PlacedObjectResponseDTO object) {
         return new GardenResponseDTO(
-                tile.getTileId(),
+                tile.getGardenTileId(),
                 tile.getX(),
                 tile.getY(),
-                tile.getTileType().getStoreGoodsNumber(),
+                tile.getTileType().getGoodsNumber(),
                 object
         );
     }
