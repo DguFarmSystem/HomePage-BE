@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.solar.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 import java.time.LocalDateTime;
@@ -11,12 +12,12 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-// TODO: public class Solar | @Table(name = "solar") 은 어때요
-public class Solar {
+
+public class Solar extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // TODO: 같은 맥락으로 solarId
+
     @Column(name = "solar_id", nullable = false)
     private Long solarId;
 

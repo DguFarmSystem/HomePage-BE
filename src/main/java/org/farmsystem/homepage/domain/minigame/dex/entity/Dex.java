@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.dex.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.minigame.inventory.entity.Goods;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
@@ -10,7 +11,7 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Dex {
+public class Dex extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

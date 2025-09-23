@@ -2,13 +2,14 @@ package org.farmsystem.homepage.domain.minigame.player.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 
 @Entity
 @Table(name = "badge")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Badge {  //칭호
+public class Badge extends BaseTimeEntity {  //칭호
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "badge_id", nullable = false)

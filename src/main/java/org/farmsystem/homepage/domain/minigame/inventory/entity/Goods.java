@@ -9,9 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// TODO: Goods 대신 Goods 같은 이름으로 바꾸는 것을 추천
-//  이유: GardenTile에서 'private Goods tileType;' 이 있는데, 이해하기 어렵다.
-// 필드명에서도 store 빼서 한꺼번에 슉슉 정리하고
+
 public class Goods {  //enum 대신 오브젝트/식물 넘버와 이름으로 존재하는 전체 오브젝트/식물 관리
 
     @Id
