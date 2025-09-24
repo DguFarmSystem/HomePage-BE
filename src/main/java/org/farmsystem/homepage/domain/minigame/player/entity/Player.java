@@ -27,7 +27,7 @@ public class Player extends BaseTimeEntity {
     @Column(nullable = false)
     private int sunlight = 0;
 
-    @Column(nullable = false)
+    @Column(name = "seed_count", nullable = false)
     private int seedCount = 0;
 
     @Column(nullable = false)
