@@ -13,7 +13,6 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @Builder
 public class Inventory extends BaseTimeEntity { //획득한 오브젝트들을 관리하는 인벤토리
 
-    // TODO: 각종 ID는 엔티티명_id로 일치시켜주세요! ex. inventoryId (inventory_id)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id", nullable = false)

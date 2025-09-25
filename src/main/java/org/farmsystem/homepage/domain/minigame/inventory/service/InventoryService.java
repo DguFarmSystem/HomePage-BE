@@ -66,7 +66,7 @@ public class InventoryService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLAYER_NOT_FOUND));
 
         Goods goods = goodsRepository.findByGoodsNumber(requestDTO.objectType())
-                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOODS_NOT_FOUND));
 
         Long storeGoodsNumber = requestDTO.objectType();
         int newCount = requestDTO.objectCount();

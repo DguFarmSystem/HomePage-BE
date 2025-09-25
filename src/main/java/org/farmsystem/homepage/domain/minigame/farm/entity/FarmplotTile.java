@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.farm.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
 @Entity
@@ -10,7 +11,7 @@ import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FarmplotTile {
+public class FarmplotTile extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

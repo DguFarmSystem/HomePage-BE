@@ -11,9 +11,7 @@ import org.farmsystem.homepage.domain.minigame.inventory.entity.Goods;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// TODO: 진수) 이것도 이름 바꾸고 싶은데 고민.. 소은) 그냥 유지하고 placed_object_id 안되나? 꼭 placed를 붙여야 하는 이유가 있다면 그렇게 하는 게 맞는 거 같은데...
-// 하연 ) 상관없는데 아이디랑 테이블 명 통일만 해줬으면 좋겠다.
-// 소은 ) 인정.
+
 public class PlacedObject extends BaseTimeEntity {  //인벤토리에서 보유한 오브젝트 하나를 삭제하고 정원에 하나를 추가하여 배치함.
 
     @Id

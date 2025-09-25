@@ -37,7 +37,7 @@ public class DexService {
 
         // 해당 식물이 store에 존재하는지 확인
         Goods goods = goodsRepository.findByGoodsNumber(request.ownedPlant())
-                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOODS_NOT_FOUND));
         // 이미 등록된 식물인지 확인
         if (dexRepository.existsByPlayerAndOwnedPlant(player, goods)) {
             throw new BusinessException(ErrorCode.DEX_ALREADY_REGISTERED);

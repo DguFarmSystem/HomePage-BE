@@ -56,7 +56,7 @@ public class GardenService {
     //상점에 존재하는 넘버인지 확인
     private Goods findStoreOrThrow(Long goodsNumber) {
         return goodsRepository.findByGoodsNumber(goodsNumber)
-                .orElseThrow(() -> new BusinessException(ErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOODS_NOT_FOUND));
     }
 
 

@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.minigame.farm.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.farmsystem.homepage.domain.common.entity.BaseTimeEntity;
 import org.farmsystem.homepage.domain.minigame.farm.dto.request.TileUpdateRequestDTO;
 import org.farmsystem.homepage.domain.minigame.player.entity.Player;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlantedPlant {
+public class PlantedPlant extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
