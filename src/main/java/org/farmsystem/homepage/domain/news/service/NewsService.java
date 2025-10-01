@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NewsService {
 
     private final NewsRepository newsRepository;
@@ -32,6 +33,7 @@ public class NewsService {
         return NewsDetailResponseDTO.fromEntity(news);
     }
 
+    @Transactional
     public NewsDetailResponseDTO createNews(NewsRequestDTO request) {
         News news = new News(
                 request.title(),
@@ -44,6 +46,7 @@ public class NewsService {
         return NewsDetailResponseDTO.fromEntity(news);
     }
 
+    @Transactional
     public NewsDetailResponseDTO updateNews(Long newsId, NewsRequestDTO request) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NEWS_NOT_FOUND));

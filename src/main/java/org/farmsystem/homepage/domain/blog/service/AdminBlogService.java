@@ -17,7 +17,7 @@ import java.util.List;
 import static org.farmsystem.homepage.global.error.ErrorCode.*;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminBlogService {
 
@@ -25,8 +25,18 @@ public class AdminBlogService {
     private final UserRepository userRepository;
 
     /**
+     * 승인 대기 중인 블로그 목록 조회
+     */
+    public List<PendingBlogResponseDTO> getPendingBlogs() {
+        return blogRepository.findByApprovalStatus(ApprovalStatus.PENDING).stream()
+                .map(PendingBlogResponseDTO::fromEntity)
+                .toList();
+    }
+
+    /**
      * 블로그 승인
      */
+    @Transactional
     public BlogApprovalResponseDTO approveBlog(Long blogId, Long adminUserId) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new EntityNotFoundException(BLOG_NOT_FOUND));
@@ -42,6 +52,7 @@ public class AdminBlogService {
     /**
      * 블로그 거절
      */
+    @Transactional
     public void rejectBlog(Long blogId, Long adminUserId) {
         Blog blog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new EntityNotFoundException(BLOG_NOT_FOUND));
@@ -52,20 +63,12 @@ public class AdminBlogService {
         blog.reject(admin);
     }
 
-    /**
-     * 승인 대기 중인 블로그 목록 조회
-     */
-    @Transactional(readOnly = true)
-    public List<PendingBlogResponseDTO> getPendingBlogs() {
-        return blogRepository.findByApprovalStatus(ApprovalStatus.PENDING).stream()
-                .map(PendingBlogResponseDTO::fromEntity)
-                .toList();
-    }
 
     /**
      * 관리자 - 블로그 직접 생성
      * 승인 상태를 바로 APPROVED로 설정합니다.
      */
+    @Transactional
     public BlogApprovalResponseDTO createBlog(BlogRequestDTO request, Long adminUserId) {
         User admin = userRepository.findById(adminUserId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
