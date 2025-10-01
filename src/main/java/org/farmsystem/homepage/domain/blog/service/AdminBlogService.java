@@ -72,20 +72,13 @@ public class AdminBlogService {
     public BlogApprovalResponseDTO createBlog(BlogRequestDTO request, Long adminUserId) {
         User admin = userRepository.findById(adminUserId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
         boolean exists = blogRepository.existsByUserAndLink(admin, request.link());
         if (exists) {
             throw new BusinessException(BLOG_DUPLICATED);
         }
 
-        Blog blog = Blog.builder()
-                .link(request.link())
-                .user(admin)
-                .categories(request.categories())
-                .approvalStatus(ApprovalStatus.APPROVED)
-                .approvedBy(admin)
-                .approvedAt(java.time.LocalDateTime.now())
-                .build();
-
+        Blog blog = Blog.createByAdmin(request, admin);
         blogRepository.save(blog);
 
         return BlogApprovalResponseDTO.fromEntity(blog, admin);
