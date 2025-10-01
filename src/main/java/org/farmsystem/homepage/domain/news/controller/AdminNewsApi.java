@@ -24,7 +24,7 @@ public interface AdminNewsApi {
             description = "새로운 소식을 등록합니다.",
             security = @SecurityRequirement(name = "token")
     )
-
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
@@ -43,6 +43,7 @@ public interface AdminNewsApi {
             description = "기존 소식 제목과 내용을 수정합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -64,6 +65,7 @@ public interface AdminNewsApi {
             description = "ID를 통해 특정 소식을 삭제합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 소식 ID")

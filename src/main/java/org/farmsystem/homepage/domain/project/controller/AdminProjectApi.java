@@ -27,6 +27,7 @@ public interface AdminProjectApi {
             description = "관리자가 프로젝트를 승인합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -49,6 +50,7 @@ public interface AdminProjectApi {
             description = "관리자가 프로젝트를 거절합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -71,6 +73,7 @@ public interface AdminProjectApi {
             description = "관리자가 아직 승인되지 않은 프로젝트들을 조회합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",

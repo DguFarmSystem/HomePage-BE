@@ -27,6 +27,7 @@ public interface AdminUserApi {
                     "generation과 track 값 변경 시 변경 이력이 저장됩니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "사용자 정보 수정 성공",
                     content = @Content(
@@ -45,6 +46,7 @@ public interface AdminUserApi {
             description = "관리자가 사용자를 삭제하는 API입니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "사용자 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "사용자 정보 없음")
@@ -60,6 +62,7 @@ public interface AdminUserApi {
                     "- 페이징 응답 값(pageResponseDTO 스키마 참고하기): pageSize(페이지당 데이터 개수), totalElements(총 데이터 개수), currentPageElements(현재 페이지 데이터 개수), totalPages(총 페이지 개수), currentPage(현재 페이지), sortBy(정렬 기준), hasNextPage(다음 페이지 존재 여부), hasPreviousPage(이전 페이지 존재 여부)  \n" ,
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "사용자 조회 성공",
                     content = @Content(
@@ -80,6 +83,7 @@ public interface AdminUserApi {
                     "- 페이징 요청 옵션: page(페이지 번호), size(페이지 사이즈) + sort(정렬 기준)  \n" ,
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "삭제된 사용자 조회 성공",
                     content = @Content(
