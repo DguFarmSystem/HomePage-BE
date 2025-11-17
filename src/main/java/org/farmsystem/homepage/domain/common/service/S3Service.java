@@ -1,16 +1,18 @@
 package org.farmsystem.homepage.domain.common.service;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.farmsystem.homepage.domain.common.dto.request.PresignedUrlRequestDTO;
 import org.farmsystem.homepage.domain.common.dto.response.PresignedUrlResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -19,7 +21,7 @@ import java.util.Date;
 @Slf4j
 public class S3Service {
 
-    private final AmazonS3 amazonS3;
+    private final S3Presigner s3Presigner;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -38,17 +40,23 @@ public class S3Service {
     }
 
     // presigned url 생성
-    public PresignedUrlResponseDTO generatePresignedUrl(PresignedUrlRequestDTO presignedUrlRequest) {
-        String filePath = presignedUrlRequest.directory() + "/" + presignedUrlRequest.fileName();
-        Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 15);
+    public PresignedUrlResponseDTO generatePresignedUrl(PresignedUrlRequestDTO request) {
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, filePath)
-                .withMethod(HttpMethod.PUT)
-                .withExpiration(expiration);
+        String filePath = request.directory() + "/" + request.fileName();
 
-        URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(filePath)
+                .contentType("image/png")
+                .build();
 
-        return PresignedUrlResponseDTO.of(url.toString());
+        PresignedPutObjectRequest presignedRequest =
+                s3Presigner.presignPutObject(builder -> builder
+                        .signatureDuration(Duration.ofMinutes(15))
+                        .putObjectRequest(putObjectRequest)
+                );
+
+        return PresignedUrlResponseDTO.of(presignedRequest.url().toString());
     }
 
     // 파일 확장자 추출
