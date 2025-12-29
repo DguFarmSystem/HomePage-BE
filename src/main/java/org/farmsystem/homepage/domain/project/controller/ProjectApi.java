@@ -27,6 +27,7 @@ public interface ProjectApi {
             description = "유저가 프로젝트를 신청합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "신청 성공")
     })
@@ -47,6 +48,7 @@ public interface ProjectApi {
             description = "유저가 신청한 프로젝트 목록을 조회합니다.",
             security = @SecurityRequirement(name = "token")
     )
+    @SecurityRequirement(name = "JWT")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",

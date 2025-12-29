@@ -29,7 +29,7 @@ public class News extends BaseTimeEntity {
 
     @ElementCollection
     @CollectionTable(name = "news_images", joinColumns = @JoinColumn(name = "news_id"))
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private List<String> imageUrls;
 
     @ElementCollection
