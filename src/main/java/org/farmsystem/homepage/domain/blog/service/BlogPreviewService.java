@@ -2,6 +2,7 @@ package org.farmsystem.homepage.domain.blog.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.farmsystem.homepage.domain.blog.entity.ApprovalStatus;
 import org.farmsystem.homepage.domain.blog.entity.Blog;
 import org.farmsystem.homepage.domain.blog.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,11 +46,12 @@ public class BlogPreviewService {
     @Value("${api.base-url}")
     private String apiBaseUrl;
 
-    // 미리보기(title)가 없는 블로그의 OG 정보를 채움 (기존 데이터 백필 + 신규 등록/승인 블로그)
+    // 미리보기(title)가 없는 승인된 블로그의 OG 정보를 채움 (기존 데이터 백필 + 신규 승인 블로그)
+    // 사용자가 제출한 링크를 서버가 요청하므로, 관리자가 승인한 링크만 대상으로 함 (SSRF 방지)
     // ponytail: 계속 실패하는 블로그는 10분마다 재시도됨, 문제가 되면 시도 시각 컬럼 추가
     @Scheduled(fixedDelay = 10 * 60 * 1000, initialDelay = 30 * 1000)
     public void fillMissingPreviews() {
-        for (Blog blog : blogRepository.findByTitleIsNull()) {
+        for (Blog blog : blogRepository.findByTitleIsNullAndApprovalStatus(ApprovalStatus.APPROVED)) {
             try {
                 fillPreview(blog);
             } catch (Exception e) {

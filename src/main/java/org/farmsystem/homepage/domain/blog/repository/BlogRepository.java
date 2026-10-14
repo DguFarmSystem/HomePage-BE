@@ -13,6 +13,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> findByUser_UserId(Long userId);
     boolean existsByUserAndLink(User user, String link);
     Page<Blog> findByApprovalStatus(ApprovalStatus status, Pageable pageable);
-    List<Blog> findByTitleIsNull();
+    List<Blog> findByTitleIsNullAndApprovalStatus(ApprovalStatus approvalStatus);
 
 }
