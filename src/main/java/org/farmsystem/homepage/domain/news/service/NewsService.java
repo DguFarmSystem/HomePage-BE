@@ -8,6 +8,7 @@ import org.farmsystem.homepage.domain.news.entity.News;
 import org.farmsystem.homepage.domain.news.repository.NewsRepository;
 import org.farmsystem.homepage.global.error.ErrorCode;
 import org.farmsystem.homepage.global.error.exception.BusinessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class NewsService {
     private final NewsRepository newsRepository;
 
     public List<NewsListResponseDTO> getAllNews() {
-        return newsRepository.findAll().stream()
+        return newsRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(NewsListResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
