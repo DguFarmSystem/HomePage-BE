@@ -40,7 +40,8 @@ public class SecurityConfig {
             "api/user/verify/**",
             "api/blogs/page/**",
             "api/news/**",
-            "api/home/**"
+            "api/home/**",
+            "api/s3/files/**"
             };
 
     @Bean

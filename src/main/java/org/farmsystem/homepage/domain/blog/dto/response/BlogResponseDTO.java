@@ -10,14 +10,20 @@ public record BlogResponseDTO(
         Long blogId,
         String link,
         Set<BlogCategory> categories,
-        String approvalStatus
+        String approvalStatus,
+        String title,
+        String description,
+        String thumbnailUrl
 ) {
     public static BlogResponseDTO fromEntity(Blog blog) {
         return new BlogResponseDTO(
                 blog.getBlogId(),
                 blog.getLink(),
                 blog.getCategories(),
-                blog.getApprovalStatus().name()
+                blog.getApprovalStatus().name(),
+                blog.getTitle(),
+                blog.getDescription(),
+                blog.getThumbnailUrl()
         );
     }
 }
