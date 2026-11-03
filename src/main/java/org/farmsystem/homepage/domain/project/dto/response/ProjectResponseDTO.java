@@ -16,6 +16,7 @@ public record ProjectResponseDTO(
         String deploymentLink,
         String resourceLink,
         List<String> participants,
+        List<String> imageUrls,
         String approvalStatus,
         Track track
 ) {
@@ -31,6 +32,7 @@ public record ProjectResponseDTO(
                 project.getDeploymentLink(),
                 project.getResourceLink(),
                 project.getParticipants(),
+                project.getImageUrls(),
                 project.getApprovalStatus().name(),
                 project.getTrack()
         );

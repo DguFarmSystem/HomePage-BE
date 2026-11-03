@@ -7,8 +7,10 @@ import org.farmsystem.homepage.domain.common.dto.request.PresignedUrlRequestDTO;
 import org.farmsystem.homepage.domain.common.dto.response.PresignedUrlResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 import java.net.URL;
@@ -28,6 +30,9 @@ public class S3Service {
 
     @Value("${s3.profile-directory}")
     private String profileDirectory;
+
+    @Value("${api.base-url}")
+    private String apiBaseUrl;
 
     // 프로필 사진 업로드용 presigned url 생성
     public PresignedUrlResponseDTO generateProfilePresignedUrl(Long userId) {
@@ -56,7 +61,24 @@ public class S3Service {
                         .putObjectRequest(putObjectRequest)
                 );
 
-        return PresignedUrlResponseDTO.of(presignedRequest.url().toString());
+        return PresignedUrlResponseDTO.of(presignedRequest.url().toString(), apiBaseUrl + "/api/s3/files/" + filePath);
+    }
+
+    // 파일 조회용 presigned url 생성 (버킷이 private이라 조회 API에서 이 URL로 redirect)
+    public String generateGetPresignedUrl(String filePath) {
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(filePath)
+                .build();
+
+        PresignedGetObjectRequest presignedRequest =
+                s3Presigner.presignGetObject(builder -> builder
+                        .signatureDuration(Duration.ofHours(1))
+                        .getObjectRequest(getObjectRequest)
+                );
+
+        return presignedRequest.url().toString();
     }
 
     // 파일 확장자 추출
