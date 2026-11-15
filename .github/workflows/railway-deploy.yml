@@ -1,0 +1,29 @@
+name: 🚂 Railway 배포 (homepage-be)
+
+# main에 push되면 Railway production의 homepage-be로 배포
+# 필요한 시크릿: RAILWAY_TOKEN (Railway 프로젝트 Settings → Tokens, 환경 production)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: railway-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # 루트 Dockerfile은 미리 빌드한 jar를 복사하는 AWS용이라, 지우고 Railpack이 gradle로 빌드하게 둔다
+      - run: rm Dockerfile
+
+      - run: npm install -g @railway/cli
+
+      - run: railway up --service homepage-be --ci
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

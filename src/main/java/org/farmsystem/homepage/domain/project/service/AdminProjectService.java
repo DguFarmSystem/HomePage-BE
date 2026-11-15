@@ -83,6 +83,7 @@ public class AdminProjectService {
                 project.getDeploymentLink(),
                 project.getResourceLink(),
                 project.getParticipants(),
+                project.getImageUrls(),
                 project.getApprovalStatus().name(),
                 project.getTrack()
         );

@@ -1,8 +1,8 @@
 name: 🌱Farm Website CI/CD pipeline on development environment🌱
 
+# AWS 계정 종료로 자동 실행 중지 (현재 배포: Railway). 참고용으로만 남겨 둠
 on:
-  push:
-    branches: [ "release/v**" ]
+  workflow_dispatch:
 
 jobs:
   build:

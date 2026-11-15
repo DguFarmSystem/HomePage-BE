@@ -64,6 +64,13 @@ public class Project extends BaseTimeEntity {
     @Column(name = "participant_info")
     private List<String> participants;
 
+    // 상세 페이지 갤러리 이미지 (순서 유지)
+    @ElementCollection
+    @CollectionTable(name = "project_images", joinColumns = @JoinColumn(name = "project_id"))
+    @OrderColumn(name = "image_order")
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private List<String> imageUrls;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;

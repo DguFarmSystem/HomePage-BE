@@ -44,6 +44,16 @@ public class Blog extends BaseTimeEntity {
 
     private LocalDateTime approvedAt;
 
+    // 링크 미리보기 (OG 태그, 스케줄러가 채움)
+    @Column(columnDefinition = "TEXT")
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String thumbnailUrl;
+
     // 관리자 생성
     private Blog(BlogRequestDTO request, User admin) {
         this.link = request.link();
@@ -86,6 +96,12 @@ public class Blog extends BaseTimeEntity {
         this.approvalStatus = ApprovalStatus.REJECTED;
         this.approvedBy = admin;
         this.approvedAt = LocalDateTime.now();
+    }
+
+    public void updatePreview(String title, String description, String thumbnailUrl) {
+        this.title = title;
+        this.description = description;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
 }
